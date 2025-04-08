@@ -1,0 +1,43 @@
+import { Switch, Route } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+
+// Pages
+import Dashboard from "@/pages/dashboard";
+import Events from "@/pages/events";
+import EventDetails from "@/pages/event-details";
+import Courses from "@/pages/courses";
+import CourseDetails from "@/pages/course-details";
+import CpdCredits from "@/pages/cpd-credits";
+import Community from "@/pages/community";
+import Profile from "@/pages/profile";
+import NotFound from "@/pages/not-found";
+
+function Router() {
+  return (
+    <Switch>
+      <Route path="/" component={Dashboard} />
+      <Route path="/events" component={Events} />
+      <Route path="/events/:id" component={EventDetails} />
+      <Route path="/courses" component={Courses} />
+      <Route path="/courses/:id" component={CourseDetails} />
+      <Route path="/cpd-credits" component={CpdCredits} />
+      <Route path="/community" component={Community} />
+      <Route path="/profile" component={Profile} />
+      {/* Fallback to 404 */}
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Router />
+      <Toaster />
+    </QueryClientProvider>
+  );
+}
+
+export default App;
