@@ -10,7 +10,7 @@ const CpdProgressTracker = () => {
   });
 
   return (
-    <Card className="h-full">
+    <Card id="cpd-tracker" className="h-full">
       <CardHeader className="pb-0">
         <CardTitle>CPD Credit Tracker</CardTitle>
       </CardHeader>

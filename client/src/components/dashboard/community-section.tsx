@@ -15,7 +15,7 @@ const CommunitySection = () => {
   });
 
   return (
-    <div>
+    <div id="community-section">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Community Highlights</h2>
         <Link href="/community" className="text-sm text-primary hover:text-primary-dark flex items-center">

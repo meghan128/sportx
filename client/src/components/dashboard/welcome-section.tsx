@@ -16,7 +16,7 @@ const WelcomeSection = () => {
   });
 
   return (
-    <Card className="h-full">
+    <Card id="welcome-section" className="h-full">
       <CardContent className="p-6">
         <div className="flex flex-col h-full">
           <div className="mb-4">

@@ -13,6 +13,7 @@ import {
   HelpCircle,
   Library
 } from "lucide-react";
+import { TourButton } from "@/components/dashboard/tour-button";
 
 interface SidebarLinkProps {
   href: string;
@@ -82,7 +83,7 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <aside className="bg-primary text-white w-full md:w-64 md:fixed md:h-full z-10">
+    <aside id="main-sidebar" className="bg-primary text-white w-full md:w-64 md:fixed md:h-full z-10">
       <div className="flex justify-between items-center p-4 md:p-6">
         <div className="flex items-center space-x-2">
           <Heart className="h-6 w-6 text-secondary" />
@@ -142,9 +143,14 @@ const Sidebar = () => {
       <div className="hidden md:block px-6 py-4 mt-auto">
         <div className="bg-primary-light rounded-lg p-3">
           <p className="text-sm">Need help?</p>
-          <button className="text-secondary text-sm flex items-center mt-1 bg-transparent border-0">
-            <HelpCircle className="h-4 w-4 mr-1" /> Contact support
-          </button>
+          <div className="flex items-center mt-2 gap-2">
+            <button className="text-secondary text-sm flex items-center bg-transparent border-0">
+              <HelpCircle className="h-4 w-4 mr-1" /> Contact support
+            </button>
+            <div className="flex-1 text-right">
+              <TourButton variant="ghost" size="sm" className="text-white hover:bg-primary" />
+            </div>
+          </div>
         </div>
       </div>
     </aside>

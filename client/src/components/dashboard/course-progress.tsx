@@ -18,7 +18,7 @@ const CourseProgress = () => {
   });
 
   return (
-    <div className="mb-6">
+    <div id="course-progress" className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">My Courses</h2>
         <Link href="/courses" className="text-sm text-primary hover:text-primary-dark flex items-center">

@@ -17,8 +17,14 @@ const UpcomingEvents = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const categories = events 
-    ? [...new Set(events.map(event => event.category).filter(Boolean))] as string[]
+  // Extract unique categories from events
+  const categories: string[] = events 
+    ? events.reduce((uniqueCategories: string[], event) => {
+        if (event.category && !uniqueCategories.includes(event.category)) {
+          uniqueCategories.push(event.category);
+        }
+        return uniqueCategories;
+      }, [])
     : [];
 
   const filteredEvents = events
@@ -35,7 +41,7 @@ const UpcomingEvents = () => {
   };
 
   return (
-    <div className="mb-6">
+    <div id="upcoming-events" className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <CalendarClock className="h-5 w-5 text-primary" />
