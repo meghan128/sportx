@@ -86,8 +86,8 @@ const Sidebar = () => {
     <aside id="main-sidebar" className="bg-primary text-white w-full md:w-64 md:fixed md:h-full z-10">
       <div className="flex justify-between items-center p-4 md:p-6">
         <div className="flex items-center space-x-2">
-          <Heart className="h-6 w-6 text-secondary" />
-          <h1 className="text-xl font-bold">SportX India</h1>
+          <CalendarDays className="h-6 w-6 text-secondary" />
+          <h1 className="text-xl font-bold">Book My Workshop</h1>
         </div>
         <button 
           className="md:hidden text-white focus:outline-none" 
