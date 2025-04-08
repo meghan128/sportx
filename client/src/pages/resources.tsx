@@ -34,6 +34,31 @@ import {
   Star
 } from "lucide-react";
 
+// Helper functions
+const getResourceIcon = (type: string) => {
+  switch (type) {
+    case 'research':
+      return <FileBarChart className="h-10 w-10 text-blue-500" />;
+    case 'protocol':
+      return <FileCheck className="h-10 w-10 text-green-500" />;
+    case 'guidelines':
+      return <FileText className="h-10 w-10 text-amber-500" />;
+    case 'tools':
+      return <FilePieChartIcon className="h-10 w-10 text-purple-500" />;
+    default:
+      return <FileIcon className="h-10 w-10 text-gray-500" />;
+  }
+};
+
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric',
+    month: 'short', 
+    day: 'numeric' 
+  });
+};
+
 interface Resource {
   id: string;
   title: string;
@@ -296,29 +321,6 @@ interface ResourceCardProps {
 }
 
 const ResourceCard = ({ resource }: ResourceCardProps) => {
-  const getResourceIcon = (type: string) => {
-    switch (type) {
-      case 'research':
-        return <FileBarChart className="h-10 w-10 text-blue-500" />;
-      case 'protocol':
-        return <FileCheck className="h-10 w-10 text-green-500" />;
-      case 'guidelines':
-        return <FileText className="h-10 w-10 text-amber-500" />;
-      case 'tools':
-        return <FilePieChartIcon className="h-10 w-10 text-purple-500" />;
-      default:
-        return <FileIcon className="h-10 w-10 text-gray-500" />;
-    }
-  };
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric',
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
   
   return (
     <Card className="overflow-hidden">
