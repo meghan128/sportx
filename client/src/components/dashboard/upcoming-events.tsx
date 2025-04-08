@@ -46,8 +46,8 @@ const UpcomingEvents = () => {
             <div className="col-span-full text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No upcoming events</h3>
               <p className="text-gray-500 mb-4">Check back soon for new events or explore our courses.</p>
-              <Link href="/courses">
-                <a className="text-primary hover:text-primary-dark font-medium">Browse Courses</a>
+              <Link href="/courses" className="text-primary hover:text-primary-dark font-medium">
+                Browse Courses
               </Link>
             </div>
           )}

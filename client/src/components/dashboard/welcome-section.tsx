@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "@/lib/types";
+import { CalendarDays, BookOpen } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const WelcomeSection = () => {
   const { data: user, isLoading } = useQuery<User>({
@@ -14,39 +16,53 @@ const WelcomeSection = () => {
   });
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
-      <div className="md:flex">
-        <div className="p-6 md:p-8 flex-1">
-          <h1 className="text-2xl font-bold text-gray-800">
-            {isLoading ? 'Welcome' : `Welcome back, ${user?.name.split(' ')[0]}`}
-          </h1>
-          <p className="mt-2 text-gray-600">
-            {cpdStatus ? `You have ${cpdStatus.pointsNeeded} CPD points to earn this quarter.` : 'Track your CPD progress and explore opportunities.'}
-          </p>
+    <Card className="h-full">
+      <CardContent className="p-6">
+        <div className="flex flex-col h-full">
+          <div className="mb-4">
+            <h1 className="text-2xl font-bold text-gray-800">
+              {isLoading ? 'Welcome' : `Welcome back, ${user?.name.split(' ')[0]}`}
+            </h1>
+            <p className="mt-2 text-gray-600">
+              {cpdStatus ? `You have ${cpdStatus.pointsNeeded} CPD points to earn this quarter.` : 'Track your CPD progress and explore opportunities.'}
+            </p>
+          </div>
           
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild className="bg-primary hover:bg-primary-dark">
-              <Link href="/events">
-                <CalendarDays className="mr-2 h-4 w-4" /> Explore Events
-              </Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/courses">
-                <BookOpen className="mr-2 h-4 w-4" /> Browse Courses
-              </Link>
-            </Button>
+          <div className="flex flex-col flex-1 space-y-4">
+            <div className="bg-gradient-to-r from-primary-light to-primary p-4 rounded-lg flex items-center">
+              <div className="bg-white p-2 rounded-full mr-4">
+                <CalendarDays className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-white">Explore Events</h3>
+                <p className="text-white text-sm opacity-90">Find workshops, conferences & symposiums</p>
+              </div>
+              <Button size="sm" variant="secondary" asChild className="ml-2">
+                <Link href="/events">
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="bg-gradient-to-r from-secondary-light to-secondary p-4 rounded-lg flex items-center">
+              <div className="bg-white p-2 rounded-full mr-4">
+                <BookOpen className="h-6 w-6 text-secondary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-white">Browse Courses</h3>
+                <p className="text-white text-sm opacity-90">Access accredited learning material</p>
+              </div>
+              <Button size="sm" variant="secondary" asChild className="ml-2">
+                <Link href="/courses">
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="hidden md:block bg-gradient-to-r from-[#57c5b6] to-[#159895] w-1/3 relative overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center opacity-20">
-            {/* Abstract medical symbols pattern */}
-          </div>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
-
-import { CalendarDays, BookOpen } from "lucide-react";
 
 export default WelcomeSection;

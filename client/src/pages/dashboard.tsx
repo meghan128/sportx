@@ -8,8 +8,10 @@ import CommunitySection from "@/components/dashboard/community-section";
 const Dashboard = () => {
   return (
     <DashboardLayout title="Dashboard">
-      <WelcomeSection />
-      <CpdProgressTracker />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <WelcomeSection />
+        <CpdProgressTracker />
+      </div>
       <UpcomingEvents />
       <CourseProgress />
       <CommunitySection />

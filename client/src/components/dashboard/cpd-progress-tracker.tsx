@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { CpdSummary, CpdCategory } from "@/lib/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "wouter";
 
 const CpdProgressTracker = () => {
   const { data: cpdSummary, isLoading } = useQuery<CpdSummary>({
@@ -8,9 +10,11 @@ const CpdProgressTracker = () => {
   });
 
   return (
-    <div className="mb-6">
-      <h2 className="text-xl font-semibold mb-4">CPD Credit Tracker</h2>
-      <div className="bg-white rounded-xl shadow-sm p-6">
+    <Card className="h-full">
+      <CardHeader className="pb-0">
+        <CardTitle>CPD Credit Tracker</CardTitle>
+      </CardHeader>
+      <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-2 lg:col-span-1">
             <div className="flex flex-col items-center justify-center h-full">
@@ -89,14 +93,14 @@ const CpdProgressTracker = () => {
               )}
             </div>
             <div className="mt-4 flex justify-end">
-              <a href="/cpd-credits" className="text-sm text-primary hover:text-primary-dark flex items-center">
+              <Link href="/cpd-credits" className="text-sm text-primary hover:text-primary-dark flex items-center">
                 View detailed report <ArrowRight className="ml-1 h-4 w-4" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
