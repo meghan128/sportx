@@ -10,7 +10,8 @@ import {
   User, 
   Settings, 
   LogOut,
-  HelpCircle
+  HelpCircle,
+  Library
 } from "lucide-react";
 
 interface SidebarLinkProps {
@@ -23,14 +24,14 @@ interface SidebarLinkProps {
 const SidebarLink = ({ href, icon, children, isActive }: SidebarLinkProps) => {
   return (
     <Link href={href}>
-      <a 
+      <div 
         className={`flex items-center space-x-2 px-2 py-2 rounded-lg ${
           isActive ? "bg-primary-light" : "hover:bg-primary-light"
-        } mt-1`}
+        } mt-1 cursor-pointer`}
       >
         {icon}
         <span>{children}</span>
-      </a>
+      </div>
     </Link>
   );
 };
@@ -116,6 +117,9 @@ const Sidebar = () => {
           <SidebarLink href="/community" icon={<Users className="h-4 w-4" />} isActive={location === "/community"}>
             Community
           </SidebarLink>
+          <SidebarLink href="/resources" icon={<Library className="h-4 w-4" />} isActive={location === "/resources"}>
+            Resource Library
+          </SidebarLink>
         </div>
         
         <div className="mt-6">
@@ -127,10 +131,10 @@ const Sidebar = () => {
             Settings
           </SidebarLink>
           <Link href="#">
-            <a className="flex items-center space-x-2 px-2 py-2 rounded-lg hover:bg-primary-light mt-1">
+            <div className="flex items-center space-x-2 px-2 py-2 rounded-lg hover:bg-primary-light mt-1 cursor-pointer">
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
-            </a>
+            </div>
           </Link>
         </div>
       </nav>
@@ -138,9 +142,9 @@ const Sidebar = () => {
       <div className="hidden md:block px-6 py-4 mt-auto">
         <div className="bg-primary-light rounded-lg p-3">
           <p className="text-sm">Need help?</p>
-          <a href="#" className="text-secondary text-sm flex items-center mt-1">
+          <button className="text-secondary text-sm flex items-center mt-1 bg-transparent border-0">
             <HelpCircle className="h-4 w-4 mr-1" /> Contact support
-          </a>
+          </button>
         </div>
       </div>
     </aside>
