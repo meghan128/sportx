@@ -1,0 +1,75 @@
+Project Name:
+SportX India – CPD Platform for Sports & Allied Health Professionals
+
+Project Description:
+Develop a unified web platform that integrates event ticketing, accredited course delivery, CPD credit tracking, and community networking, specifically tailored for sports physiotherapists, nutritionists, psychologists, and related professionals. The goal is to simplify CPD (Continuing Professional Development) through a centralized, intuitive platform with hybrid (in-person + virtual) support.
+
+⚙️ Functional Modules & Features
+1. Hybrid Event Ticketing Module
+Allow organizers to create, manage, and schedule sports-specific events/workshops.
+
+Enable users to register and buy tickets (with multiple ticket types: early bird, group).
+
+Support live event streaming, session recording, and on-demand access.
+
+(Optional future enhancement) Integration with wearable tech for athlete data.
+
+2. Learning Management System (LMS)
+Accredited course catalog with filter/search and easy enrollment.
+
+Role-specific interactive content:
+
+Physiotherapists: Injury simulations, gait analysis.
+
+Nutritionists: Diet planners.
+
+Psychologists: Mental performance case studies.
+
+Self-paced learning with assessments and auto-certification on completion.
+
+3. Community & Networking
+Role-based forums (e.g., Physio Hub).
+
+Virtual mentorship tools for connecting experts with learners.
+
+Peer messaging, resource library uploads, and virtual networking events.
+
+4. Compliance Tracking & CPD Credit Allocation
+Automatically track and display CPD credits earned via events or courses.
+
+Integrate credit allocation based on accreditation standards (e.g., HCPC, BASES).
+
+Generate downloadable and shareable CPD compliance reports.
+
+🔐 Non-Functional Requirements
+Must be HIPAA/GDPR compliant.
+
+Scalable and high-performance (support for HD video and spikes post large events).
+
+User-friendly and mobile-responsive design.
+
+🧪 MVP Priorities
+Start with:
+
+Hybrid Event Ticketing System (core user journey: discover → register → attend event).
+
+Basic LMS with one sample accredited course + progress tracking.
+
+CPD Credit Tracker Dashboard to show credits earned from both events and LMS.
+
+💻 Platform
+Target Platform: Web-first (desktop + responsive mobile support).
+
+Operating Environment: Online
+
+Hosting Suggestion: AWS (can be flexible depending on scalability needs)
+
+🖼️ Interface Style
+Clean, professional, and minimal.
+
+Inspired by tools like MedBridge and Physitrack.
+
+🌍 Language Preferences
+Replit Agent Interaction Language: English
+
+Application Interface Language: English (with future scope for multilingual support)
