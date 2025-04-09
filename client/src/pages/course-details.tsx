@@ -40,10 +40,15 @@ import {
   ChevronRight,
   LockOpen,
   Lock,
+  Zap,
+  Layers,
+  MessageCircle,
+  Medal
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { AccreditationBadge, AccreditationBody } from "@/components/accreditation/accreditation-badge";
 import CourseAccreditation from "@/components/accreditation/course-accreditation";
 
@@ -213,6 +218,114 @@ const CourseDetails = () => {
                         ))}
                       </ul>
                       
+                      {/* Role-specific content section */}
+                      {course.roleSpecificContent && course.roleSpecificContent.length > 0 && (
+                        <>
+                          <h3 className="text-lg font-semibold mt-6 mb-2">Role-Specific Content</h3>
+                          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <Tabs defaultValue={course.roleSpecificContent[0].role}>
+                              <TabsList className="mb-3 bg-white">
+                                {course.roleSpecificContent.map((content) => (
+                                  <TabsTrigger key={content.role} value={content.role}>
+                                    {content.role}
+                                  </TabsTrigger>
+                                ))}
+                              </TabsList>
+                              
+                              {course.roleSpecificContent.map((content) => (
+                                <TabsContent key={content.role} value={content.role} className="space-y-3">
+                                  <div className="flex items-center mb-2">
+                                    <Users className="mr-2 h-5 w-5 text-blue-600" />
+                                    <h4 className="font-medium text-blue-800">Content for {content.role}</h4>
+                                  </div>
+                                  
+                                  <p className="text-gray-700">{content.description}</p>
+                                  
+                                  <div className="space-y-2 mt-3">
+                                    <h5 className="font-medium text-gray-800">Learning outcomes for {content.role}:</h5>
+                                    <ul className="space-y-1">
+                                      {content.learningOutcomes.map((outcome, idx) => (
+                                        <li key={idx} className="flex items-start">
+                                          <CheckCircle className="mr-2 h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+                                          <span className="text-sm">{outcome}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                  
+                                  {content.materials && content.materials.length > 0 && (
+                                    <div className="space-y-2 mt-3">
+                                      <h5 className="font-medium text-gray-800">Additional materials:</h5>
+                                      <ul className="space-y-1">
+                                        {content.materials.map((material, idx) => (
+                                          <li key={idx} className="flex items-start">
+                                            <FileText className="mr-2 h-4 w-4 text-gray-600 shrink-0 mt-0.5" />
+                                            <span className="text-sm">{material}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  
+                                  {content.case_studies && content.case_studies.length > 0 && (
+                                    <div className="space-y-2 mt-3">
+                                      <h5 className="font-medium text-gray-800">Case studies:</h5>
+                                      <ul className="space-y-1">
+                                        {content.case_studies.map((study, idx) => (
+                                          <li key={idx} className="flex items-start">
+                                            <Users className="mr-2 h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
+                                            <span className="text-sm">{study}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                </TabsContent>
+                              ))}
+                            </Tabs>
+                          </div>
+                        </>
+                      )}
+                      
+                      {/* Interactive elements section */}
+                      {course.interactiveElements && course.interactiveElements.length > 0 && (
+                        <>
+                          <h3 className="text-lg font-semibold mt-6 mb-2">Interactive Elements</h3>
+                          <div className="space-y-3 mb-6">
+                            {course.interactiveElements.map((element, idx) => (
+                              <div key={idx} className="border border-purple-100 rounded-lg p-4 bg-purple-50">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Zap className="h-5 w-5 text-purple-600" />
+                                  <h4 className="font-medium text-purple-800">{element.title}</h4>
+                                  <Badge variant="outline" className="ml-auto">
+                                    {element.type.replace('_', ' ')}
+                                  </Badge>
+                                </div>
+                                <p className="text-gray-700 text-sm mb-2">{element.description}</p>
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
+                                  {element.estimatedTime && (
+                                    <span className="flex items-center">
+                                      <Clock className="mr-1 h-3 w-3" /> {element.estimatedTime}
+                                    </span>
+                                  )}
+                                  {element.points && (
+                                    <span className="flex items-center">
+                                      <Award className="mr-1 h-3 w-3" /> {element.points} CPD points
+                                    </span>
+                                  )}
+                                  {element.forRoles && element.forRoles.length > 0 && (
+                                    <span className="flex items-center">
+                                      <Users className="mr-1 h-3 w-3" /> For: {element.forRoles.join(', ')}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                      
+                      {/* CPD Information section */}
                       <h3 className="text-lg font-semibold mt-6 mb-2">CPD Information</h3>
                       <div className="flex flex-wrap gap-2 mb-3">
                         <AccreditationBadge 
@@ -228,6 +341,19 @@ const CourseDetails = () => {
                         <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
                         If you've connected your {course.accreditedBy} account in the Accreditation section, these points will be automatically added to your professional record upon completion.
                       </p>
+                      
+                      {/* Certification exam */}
+                      {course.certificationExam && (
+                        <div className="mt-4 p-4 border border-amber-200 rounded-lg bg-amber-50">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Medal className="h-5 w-5 text-amber-600" />
+                            <h4 className="font-medium text-amber-800">Certification Available</h4>
+                          </div>
+                          <p className="text-gray-700">
+                            This course includes a certification exam. Upon successful completion, you will receive an official certification that can be added to your professional profile and shared with employers.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </TabsContent>
                   
@@ -462,6 +588,16 @@ const getLessonIcon = (type: string) => {
       return <ChevronRight className="h-4 w-4 text-primary" />;
     case 'download':
       return <Download className="h-4 w-4 text-primary" />;
+    case 'interactive':
+      return <Zap className="h-4 w-4 text-purple-600" />;
+    case 'case_study':
+      return <Users className="h-4 w-4 text-blue-600" />;
+    case 'simulation':
+      return <Layers className="h-4 w-4 text-orange-600" />;
+    case 'reflective':
+      return <BookOpen className="h-4 w-4 text-teal-600" />;
+    case 'discussion':
+      return <MessageCircle className="h-4 w-4 text-indigo-600" />;
     default:
       return <BookOpen className="h-4 w-4 text-primary" />;
   }

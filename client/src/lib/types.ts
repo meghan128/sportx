@@ -80,6 +80,8 @@ export interface EventFilter {
 }
 
 // Course related types
+export type ProfessionRole = 'Physiotherapist' | 'Nutritionist' | 'Sports Psychologist' | 'Athletic Trainer' | 'Exercise Physiologist' | 'All';
+
 export interface Course {
   id: string;
   title: string;
@@ -105,6 +107,36 @@ export interface Course {
   instructors?: Instructor[];
   curriculum?: CourseModule[];
   lessons?: number;
+  isFeatured?: boolean;
+  isPopular?: boolean;
+  forRoles?: ProfessionRole[];
+  roleSpecificContent?: RoleSpecificContent[];
+  interactiveElements?: InteractiveElement[];
+  certificationExam?: boolean;
+  publicationDate?: string;
+  updatedDate?: string;
+  completionRate?: number;
+  nextSessionDate?: string;
+  prerequisites?: string[];
+}
+
+export interface RoleSpecificContent {
+  role: ProfessionRole;
+  description: string;
+  learningOutcomes: string[];
+  materials?: string[];
+  case_studies?: string[];
+  assessmentCriteria?: string[];
+}
+
+export interface InteractiveElement {
+  id: string;
+  type: 'case_study' | 'simulation' | 'interactive_assessment' | 'discussion' | 'reflective_practice' | 'virtual_lab';
+  title: string;
+  description: string;
+  forRoles?: ProfessionRole[];
+  estimatedTime?: string;
+  points?: number;
 }
 
 export interface Instructor {
@@ -127,9 +159,15 @@ export interface CourseModule {
 export interface CourseLesson {
   id: string;
   title: string;
-  type: 'video' | 'text' | 'quiz' | 'download';
+  type: 'video' | 'text' | 'quiz' | 'download' | 'interactive' | 'case_study' | 'simulation' | 'reflective' | 'discussion';
   duration: string;
   completed?: boolean;
+  description?: string;
+  forRoles?: ProfessionRole[];
+  interactiveType?: string;
+  interactiveContent?: any;
+  cpdPoints?: number;
+  requiredForCertification?: boolean;
 }
 
 export interface CourseFilter {
@@ -137,6 +175,12 @@ export interface CourseFilter {
   duration: string;
   cpdPoints: string;
   difficulty: string;
+  roles?: ProfessionRole[];
+  interactiveTypes?: string[];
+  hasCertification?: boolean;
+  query?: string;
+  featured?: boolean;
+  sort?: 'newest' | 'popular' | 'rating' | 'cpdPoints';
 }
 
 // CPD related types
