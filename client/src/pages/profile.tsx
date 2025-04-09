@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { User } from "@/lib/types";
@@ -20,17 +21,44 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { Switch } from "@/components/ui/switch";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
+  Award,
   BadgeCheck, 
   Building2, 
   Calendar, 
   Edit, 
+  Eye,
   Globe, 
-  MapPin, 
+  MapPin,
+  MoreVertical, 
   Phone, 
+  Trash,
   UserCircle,
   Mail,
   Link as LinkIcon,
@@ -425,21 +453,198 @@ const Profile = () => {
           
           <TabsContent value="credentials">
             <Card>
-              <CardHeader>
-                <CardTitle>Professional Credentials</CardTitle>
-                <CardDescription>Your certifications and qualifications</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Professional Credentials</CardTitle>
+                  <CardDescription>Your certifications and qualifications</CardDescription>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <BadgeCheck className="mr-2 h-4 w-4" />
+                      Add Credential
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add Professional Credential</DialogTitle>
+                      <DialogDescription>
+                        Add your professional certifications, licenses, and educational qualifications to showcase your expertise.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="credential-type">Credential Type</Label>
+                        <Select defaultValue="certification">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="certification">Certification</SelectItem>
+                            <SelectItem value="license">License</SelectItem>
+                            <SelectItem value="degree">Degree</SelectItem>
+                            <SelectItem value="course">Course Certificate</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="credential-name">Credential Name</Label>
+                        <Input id="credential-name" placeholder="E.g., Certified Strength and Conditioning Specialist" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="issuing-organization">Issuing Organization</Label>
+                        <Input id="issuing-organization" placeholder="E.g., National Strength and Conditioning Association" />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="issue-date">Issue Date</Label>
+                          <Input id="issue-date" type="date" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="expiry-date">Expiry Date (Optional)</Label>
+                          <Input id="expiry-date" type="date" />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="credential-id">Credential ID (Optional)</Label>
+                        <Input id="credential-id" placeholder="E.g., CSC-123456" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="credential-url">Credential URL (Optional)</Label>
+                        </div>
+                        <Input id="credential-url" placeholder="Link to digital certificate or verification page" />
+                      </div>
+                    </form>
+                    <DialogFooter>
+                      <Button variant="outline" type="button">Cancel</Button>
+                      <Button type="submit">Add Credential</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <BadgeCheck className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No credentials added yet</h3>
-                  <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                    Add your professional certifications, licenses, and educational qualifications to showcase your expertise.
-                  </p>
-                  <Button>
-                    Add Credentials
-                  </Button>
-                </div>
+                {isLoading ? (
+                  <div className="h-40 flex items-center justify-center">
+                    <p className="text-muted-foreground">Loading credentials...</p>
+                  </div>
+                ) : (
+                  <div>
+                    {/* Sample credentials - in a real app, these would come from the API */}
+                    <div className="space-y-4">
+                      <div className="flex flex-col md:flex-row border rounded-lg overflow-hidden">
+                        <div className="bg-primary p-4 text-white md:w-1/4 flex items-center justify-center">
+                          <BadgeCheck className="h-8 w-8" />
+                        </div>
+                        <div className="p-4 flex-1">
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                            <div>
+                              <h3 className="font-semibold text-lg">Certified Sports Physiotherapist</h3>
+                              <p className="text-muted-foreground">Chartered Society of Physiotherapy</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge className="bg-green-600">Active</Badge>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Certificate
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem className="text-destructive">
+                                    <Trash className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-sm">
+                            <div className="flex items-center gap-6 mt-2">
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <Calendar className="h-4 w-4" />
+                                <span>Issued: May 2021</span>
+                              </div>
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <Calendar className="h-4 w-4" />
+                                <span>Expires: May 2024</span>
+                              </div>
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <BadgeCheck className="h-4 w-4" />
+                                <span>ID: CSP-12345</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col md:flex-row border rounded-lg overflow-hidden">
+                        <div className="bg-primary p-4 text-white md:w-1/4 flex items-center justify-center">
+                          <Award className="h-8 w-8" />
+                        </div>
+                        <div className="p-4 flex-1">
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                            <div>
+                              <h3 className="font-semibold text-lg">MSc Sports Science</h3>
+                              <p className="text-muted-foreground">University of Manchester</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge className="bg-primary">Degree</Badge>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Certificate
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem className="text-destructive">
+                                    <Trash className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-sm">
+                            <div className="flex items-center gap-6 mt-2">
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <Calendar className="h-4 w-4" />
+                                <span>Issued: June 2019</span>
+                              </div>
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <Award className="h-4 w-4" />
+                                <span>First Class Honors</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -451,19 +656,107 @@ const Profile = () => {
                 <CardDescription>Control who can see your information</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <UserCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Privacy settings coming soon</h3>
-                  <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                    We're working on enhanced privacy controls for your profile. Stay tuned for updates.
-                  </p>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium mb-3">Profile Visibility</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="profile-public">Public Profile</Label>
+                          <p className="text-sm text-muted-foreground">Make your profile visible to all platform users</p>
+                        </div>
+                        <Switch id="profile-public" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-email">Show Email Address</Label>
+                          <p className="text-sm text-muted-foreground">Display your email to other users</p>
+                        </div>
+                        <Switch id="show-email" />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-phone">Show Phone Number</Label>
+                          <p className="text-sm text-muted-foreground">Display your phone number to other users</p>
+                        </div>
+                        <Switch id="show-phone" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-medium mb-3">Connection Settings</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="allow-messages">Allow Direct Messages</Label>
+                          <p className="text-sm text-muted-foreground">Allow other professionals to send you messages</p>
+                        </div>
+                        <Switch id="allow-messages" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="allow-mentorship">Allow Mentorship Requests</Label>
+                          <p className="text-sm text-muted-foreground">Allow others to request mentorship connections</p>
+                        </div>
+                        <Switch id="allow-mentorship" defaultChecked />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-medium mb-3">Activity Privacy</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-courses">Show Enrolled Courses</Label>
+                          <p className="text-sm text-muted-foreground">Display your enrolled courses on your public profile</p>
+                        </div>
+                        <Switch id="show-courses" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-events">Show Event Registrations</Label>
+                          <p className="text-sm text-muted-foreground">Display your upcoming events on your public profile</p>
+                        </div>
+                        <Switch id="show-events" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-cpd">Show CPD Activities</Label>
+                          <p className="text-sm text-muted-foreground">Display your CPD activities on your public profile</p>
+                        </div>
+                        <Switch id="show-cpd" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
+              <CardFooter>
+                <Button className="ml-auto">Save Privacy Settings</Button>
+              </CardFooter>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
     </DashboardLayout>
+  );
+};
+
+// Badge component for the card
+const Badge = ({ children, className = "", ...props }: any) => {
+  return (
+    <span 
+      className={`inline-flex items-center text-xs font-medium text-white rounded px-2 py-1 ${className}`}
+      {...props}
+    >
+      {children}
+    </span>
   );
 };
 

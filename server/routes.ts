@@ -5,6 +5,19 @@ import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // AUTH ROUTES
+  
+  // Logout user
+  app.post('/api/auth/logout', (req, res) => {
+    try {
+      // In a real app with sessions, we would destroy the session
+      // req.session.destroy();
+      res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to logout' });
+    }
+  });
+  
   // USERS ROUTES
   
   // Get current user

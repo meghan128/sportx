@@ -136,12 +136,23 @@ const Sidebar = () => {
           <SidebarLink href="/settings" icon={<Settings className="h-4 w-4" />} isActive={location === "/settings"}>
             Settings
           </SidebarLink>
-          <Link href="#">
-            <div className="flex items-center space-x-2 px-2 py-2 rounded-lg hover:bg-primary-light mt-1 cursor-pointer">
-              <LogOut className="h-4 w-4" />
-              <span>Logout</span>
-            </div>
-          </Link>
+          <div 
+            className="flex items-center space-x-2 px-2 py-2 rounded-lg hover:bg-primary-light mt-1 cursor-pointer"
+            onClick={async () => {
+              try {
+                await fetch("/api/auth/logout", { 
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" }
+                });
+                window.location.href = "/login";
+              } catch (error) {
+                console.error("Logout failed:", error);
+              }
+            }}
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Logout</span>
+          </div>
         </div>
       </nav>
 
