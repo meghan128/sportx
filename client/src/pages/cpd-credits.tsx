@@ -32,6 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   ArrowUpRight,
+  BadgeCheck,
   Calendar,
   Download,
   FileText,
@@ -42,6 +43,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { Link } from "wouter";
 import { 
   BarChart, 
   Bar, 
@@ -227,10 +229,18 @@ const CpdCredits = () => {
                   <CardTitle>CPD Activities</CardTitle>
                   <CardDescription>All your CPD credit sources</CardDescription>
                 </div>
-                <Button onClick={downloadCpdReport}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Report
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" asChild>
+                    <Link href="/accreditation">
+                      <BadgeCheck className="mr-2 h-4 w-4" />
+                      Manage Accreditations
+                    </Link>
+                  </Button>
+                  <Button onClick={downloadCpdReport}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Report
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>

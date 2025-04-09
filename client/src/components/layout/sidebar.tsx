@@ -11,7 +11,9 @@ import {
   Settings, 
   LogOut,
   HelpCircle,
-  Library
+  Library,
+  Award,
+  BadgeCheck
 } from "lucide-react";
 import { TourButton } from "@/components/dashboard/tour-button";
 
@@ -114,6 +116,9 @@ const Sidebar = () => {
           </SidebarLink>
           <SidebarLink href="/cpd-credits" icon={<Medal className="h-4 w-4" />} isActive={location === "/cpd-credits"}>
             CPD Credits
+          </SidebarLink>
+          <SidebarLink href="/accreditation" icon={<BadgeCheck className="h-4 w-4" />} isActive={location === "/accreditation"}>
+            Accreditation
           </SidebarLink>
           <SidebarLink href="/community" icon={<Users className="h-4 w-4" />} isActive={location === "/community"}>
             Community

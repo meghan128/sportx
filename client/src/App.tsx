@@ -16,6 +16,7 @@ import Messages from "@/pages/messages";
 import Mentorship from "@/pages/mentorship";
 import Profile from "@/pages/profile";
 import Resources from "@/pages/resources";
+import Accreditation from "@/pages/accreditation";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/courses" component={Courses} />
       <Route path="/courses/:id" component={CourseDetails} />
       <Route path="/cpd-credits" component={CpdCredits} />
+      <Route path="/accreditation" component={Accreditation} />
       <Route path="/community" component={Community} />
       <Route path="/forums" component={Forums} />
       <Route path="/messages" component={Messages} />

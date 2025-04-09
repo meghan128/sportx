@@ -44,6 +44,8 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AccreditationBadge, AccreditationBody } from "@/components/accreditation/accreditation-badge";
+import CourseAccreditation from "@/components/accreditation/course-accreditation";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -212,8 +214,19 @@ const CourseDetails = () => {
                       </ul>
                       
                       <h3 className="text-lg font-semibold mt-6 mb-2">CPD Information</h3>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <AccreditationBadge 
+                          body={course.accreditedBy as AccreditationBody || "Other"} 
+                          points={course.cpdPoints}
+                          size="lg"
+                        />
+                      </div>
                       <p>
                         This course is accredited for <strong>{course.cpdPoints} CPD points</strong> under the {course.accreditedBy} guidelines. Upon completion, you will receive a certificate that can be used for your professional development records.
+                      </p>
+                      <p className="mt-2 text-sm bg-blue-50 dark:bg-blue-950 p-3 rounded-md flex items-start">
+                        <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
+                        If you've connected your {course.accreditedBy} account in the Accreditation section, these points will be automatically added to your professional record upon completion.
                       </p>
                     </div>
                   </TabsContent>
@@ -392,6 +405,15 @@ const CourseDetails = () => {
                 )}
                 
                 <div className="pt-4 space-y-3">
+                  <div className="mb-4">
+                    <h4 className="font-medium mb-2">Accreditation:</h4>
+                    <CourseAccreditation 
+                      accreditedBy={course.accreditedBy as AccreditationBody} 
+                      cpdPoints={course.cpdPoints}
+                      showAdditionalInfo={false}
+                    />
+                  </div>
+                  
                   <h4 className="font-medium">This course includes:</h4>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2">
@@ -413,6 +435,10 @@ const CourseDetails = () => {
                     <li className="flex items-center gap-2">
                       <Download className="h-4 w-4 text-muted-foreground" />
                       <span>Downloadable materials</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span>Automatic CPD credit submission</span>
                     </li>
                   </ul>
                 </div>

@@ -233,6 +233,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ACCREDITATION ROUTES
+  
+  // Get connected accreditation accounts
+  app.get('/api/accreditation/accounts', async (req, res) => {
+    try {
+      // For demo purposes, we'll return sample data
+      // In production, this would fetch from storage
+      res.json([
+        {
+          id: "1",
+          body: "CSP",
+          membershipId: "CSP12345",
+          status: "approved",
+          lastSynced: "2 hours ago",
+          totalCredits: 24,
+          pendingCredits: 3
+        },
+        {
+          id: "2",
+          body: "BASES",
+          membershipId: "B98765",
+          status: "pending",
+          lastSynced: "1 day ago",
+          totalCredits: 12,
+          pendingCredits: 6
+        }
+      ]);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch accreditation accounts' });
+    }
+  });
+  
+  // Get recent accreditation activities
+  app.get('/api/accreditation/activities', async (req, res) => {
+    try {
+      // For demo purposes, we'll return sample data
+      // In production, this would fetch from storage
+      res.json([
+        {
+          id: "1",
+          body: "CSP",
+          activity: "Course completion: Advanced Rehabilitation Techniques",
+          points: 3,
+          status: "approved",
+          date: "2023-05-12"
+        },
+        {
+          id: "2",
+          body: "CSP",
+          activity: "Workshop attendance: Knee Injury Assessment",
+          points: 2,
+          status: "pending",
+          date: "2023-05-10"
+        },
+        {
+          id: "3",
+          body: "BASES",
+          activity: "Webinar: Performance Analytics in Team Sports",
+          points: 1,
+          status: "approved",
+          date: "2023-05-05"
+        }
+      ]);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch accreditation activities' });
+    }
+  });
+  
+  // Connect new accreditation account
+  app.post('/api/accreditation/connect', async (req, res) => {
+    try {
+      // In production, this would validate and store the connection
+      // For demo purposes, we'll just return success
+      setTimeout(() => {
+        res.json({ success: true, message: 'Account connected successfully' });
+      }, 1000);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to connect account' });
+    }
+  });
+  
   // COMMUNITY ROUTES
   
   // Get forum categories
