@@ -1,10 +1,11 @@
-import { ArrowRight, CalendarDays, BookOpen, Award, Bell, FileCheck } from "lucide-react";
+import { ArrowRight, CalendarDays, BookOpen, Award, Bell, FileCheck, Zap, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const WelcomeSection = () => {
   const { data: user, isLoading } = useQuery<User>({
@@ -54,58 +55,104 @@ const WelcomeSection = () => {
 
   const recommendedAction = getRecommendedAction();
 
+  // Current time of day greeting
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
   return (
-    <Card id="welcome-section" className="h-full">
+    <Card id="welcome-section" className="h-full border-0 shadow-md bg-gradient-to-br from-white to-gray-50">
       <CardContent className="p-6">
         <div className="flex flex-col h-full">
           <div className="mb-6">
-            <div className="mb-1">
-              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">
-                {isLoading ? 'Welcome' : `Welcome back, ${getProfessionalTitle(user?.profession)} ${user?.name.split(' ')[0]}`}
-              </h1>
+            <div className="flex items-center gap-4 mb-4">
+              {!isLoading && user?.profileImage && (
+                <Avatar className="h-16 w-16 border-2 border-white shadow-sm">
+                  <AvatarImage src={user?.profileImage} />
+                  <AvatarFallback className="text-lg">{user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+              )}
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">{getTimeBasedGreeting()},</p>
+                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">
+                  {isLoading ? 'Welcome' : `${getProfessionalTitle(user?.profession)} ${user?.name.split(' ')[0]}`}
+                </h1>
+                {user?.specialization && (
+                  <p className="text-sm text-gray-600 mt-1">{user.specialization}</p>
+                )}
+              </div>
             </div>
-            <p className="mt-2 text-gray-600">
-              {cpdStatus 
-                ? `You have ${cpdStatus.pointsNeeded} CPD points to earn this ${cpdStatus.period}. Here's what you can do today:`
-                : 'Track your CPD progress and explore opportunities to grow professionally.'}
-            </p>
+            <div className="relative">
+              <div className="absolute left-0 top-0 h-full w-1 bg-primary rounded-full opacity-20"></div>
+              <p className="pl-4 text-gray-600 text-sm leading-relaxed">
+                {cpdStatus 
+                  ? `You have ${cpdStatus.pointsNeeded} CPD points to earn this ${cpdStatus.period}. Here's what you can do today to advance your professional development.`
+                  : 'Track your CPD progress and explore opportunities to grow professionally.'}
+              </p>
+            </div>
             
             {recommendedAction && (
-              <div className="flex items-center mt-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                {recommendedAction.icon}
-                <span className="ml-2 text-gray-700">{recommendedAction.text}</span>
-                <Badge variant="outline" className="ml-auto">{recommendedAction.badge}</Badge>
+              <div className="flex items-center mt-4 p-4 bg-gradient-to-r from-primary-light/10 to-primary/5 rounded-lg border border-primary/10">
+                <div className="rounded-full bg-white p-2 shadow-sm">
+                  {recommendedAction.icon}
+                </div>
+                <div className="ml-3">
+                  <p className="font-medium text-gray-800">{recommendedAction.text}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Take action now to stay on track with your professional goals</p>
+                </div>
+                <Badge variant="secondary" className="ml-auto bg-primary/10">{recommendedAction.badge}</Badge>
               </div>
             )}
           </div>
           
           <div className="flex flex-col flex-1 space-y-4">
-            <div className="bg-gradient-to-r from-primary-light to-primary p-4 rounded-lg flex items-center">
-              <div className="bg-white p-2 rounded-full mr-4">
-                <CalendarDays className="h-6 w-6 text-primary" />
+            <div className="group bg-gradient-to-r from-primary to-primary-dark p-5 rounded-xl flex items-center shadow-lg transition-transform hover:translate-y-[-2px]">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mr-4">
+                <CalendarDays className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-white">Explore Events</h3>
-                <p className="text-white text-sm opacity-90">Sports Medicine Symposium in 3 days</p>
+                <h3 className="font-semibold text-white text-lg">Explore Events</h3>
+                <p className="text-white/90 text-sm">Sports Medicine Symposium in 3 days</p>
               </div>
-              <Button size="sm" variant="secondary" asChild className="ml-2">
-                <Link href="/events">
-                  <ArrowRight className="h-4 w-4" />
+              <Button size="sm" variant="outline" asChild className="ml-2 text-white bg-white/10 border-white/20 hover:bg-white/20 transition-colors group-hover:bg-white group-hover:text-primary">
+                <Link href="/events" className="flex items-center gap-1">
+                  <span>View</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
             </div>
             
-            <div className="bg-gradient-to-r from-secondary-light to-secondary p-4 rounded-lg flex items-center">
-              <div className="bg-white p-2 rounded-full mr-4">
-                <BookOpen className="h-6 w-6 text-secondary" />
+            <div className="group bg-gradient-to-r from-blue-500 to-indigo-600 p-5 rounded-xl flex items-center shadow-lg transition-transform hover:translate-y-[-2px]">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mr-4">
+                <BookOpen className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-white">Browse Courses</h3>
-                <p className="text-white text-sm opacity-90">5 new courses in your field this month</p>
+                <h3 className="font-semibold text-white text-lg">Browse Courses</h3>
+                <p className="text-white/90 text-sm">5 new courses in your field this month</p>
               </div>
-              <Button size="sm" variant="secondary" asChild className="ml-2">
-                <Link href="/courses">
-                  <ArrowRight className="h-4 w-4" />
+              <Button size="sm" variant="outline" asChild className="ml-2 text-white bg-white/10 border-white/20 hover:bg-white/20 transition-colors group-hover:bg-white group-hover:text-blue-600">
+                <Link href="/courses" className="flex items-center gap-1">
+                  <span>View</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="group bg-gradient-to-r from-amber-500 to-orange-500 p-5 rounded-xl flex items-center shadow-lg transition-transform hover:translate-y-[-2px]">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mr-4">
+                <Zap className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-white text-lg">Trending Topics</h3>
+                <p className="text-white/90 text-sm">ACL rehabilitation techniques discussion</p>
+              </div>
+              <Button size="sm" variant="outline" asChild className="ml-2 text-white bg-white/10 border-white/20 hover:bg-white/20 transition-colors group-hover:bg-white group-hover:text-orange-500">
+                <Link href="/community" className="flex items-center gap-1">
+                  <span>Join</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
             </div>

@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Award, Zap, Clock } from "lucide-react";
+import { ArrowRight, Award, Zap, Clock, AlertTriangle, CalendarDays, TrendingUp, Check, Medal } from "lucide-react";
 import { CpdSummary, CpdCategory } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const CpdProgressTracker = () => {
@@ -22,69 +23,114 @@ const CpdProgressTracker = () => {
     if (percentage >= 75) {
       return {
         label: "On Track",
-        color: "text-emerald-500",
+        color: "text-emerald-500 bg-emerald-50",
         icon: <Zap className="h-4 w-4 text-emerald-500" />
       };
     } else if (percentage >= 40) {
       return {
         label: "In Progress",
-        color: "text-amber-500",
+        color: "text-amber-500 bg-amber-50",
         icon: <Clock className="h-4 w-4 text-amber-500" />
       };
     } else {
       return {
         label: "Needs Attention",
-        color: "text-rose-500",
-        icon: <Clock className="h-4 w-4 text-rose-500" />
+        color: "text-rose-500 bg-rose-50",
+        icon: <AlertTriangle className="h-4 w-4 text-rose-500" />
       };
     }
   };
 
   const status = getStatusInfo(completionPercentage);
 
+  // Time remaining calculation
+  const getTimeRemainingText = () => {
+    // For demo purposes, show 75 days remaining
+    const daysRemaining = 75;
+    return `${daysRemaining} days remaining in this period`;
+  };
+
   return (
-    <Card id="cpd-tracker" className="h-full">
-      <CardHeader className="pb-2">
+    <Card id="cpd-tracker" className="h-full border-0 shadow-md overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-primary/5 to-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+      <CardHeader className="pb-2 relative">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-xl">CPD Credit Tracker</CardTitle>
-            <CardDescription>Your professional development progress</CardDescription>
-          </div>
-          {!isLoading && cpdSummary && (
             <div className="flex items-center gap-2">
-              <span className={`text-sm font-medium flex items-center ${status.color}`}>
-                {status.icon}
-                <span className="ml-1">{status.label}</span>
-              </span>
+              <CardTitle className="text-xl font-bold">CPD Credit Tracker</CardTitle>
+              {!isLoading && cpdSummary && (
+                <Badge className={`${status.color} border-0 flex items-center gap-1 px-2.5`}>
+                  {status.icon}
+                  <span className="font-medium">{status.label}</span>
+                </Badge>
+              )}
             </div>
-          )}
+            <CardDescription className="mt-1">Track your professional development requirements</CardDescription>
+          </div>
+          <div className="flex items-center text-xs text-gray-500 gap-1">
+            <CalendarDays className="h-3.5 w-3.5" />
+            <span>{getTimeRemainingText()}</span>
+          </div>
         </div>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="p-6 relative">
         {!isLoading && cpdSummary && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-500">Overall Progress</span>
-              <Badge variant="secondary">{completionPercentage}% Complete</Badge>
+              <span className="text-sm font-medium text-gray-600">Overall Progress</span>
+              <div className="flex items-center gap-1.5">
+                {completionPercentage >= 100 ? (
+                  <Badge variant="outline" className="text-emerald-600 border-emerald-200 bg-emerald-50 flex items-center gap-1">
+                    <Check className="h-3 w-3" />
+                    <span>Completed</span>
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    <span>{completionPercentage}% Complete</span>
+                  </Badge>
+                )}
+              </div>
             </div>
-            <Progress value={completionPercentage} className="h-2" />
-            <div className="mt-3 flex justify-between text-xs text-gray-500">
-              <span>0 Points</span>
-              <span>{cpdSummary.requiredPoints} Points</span>
+            <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${
+                  completionPercentage >= 100 
+                    ? 'bg-gradient-to-r from-emerald-400 to-green-500' 
+                    : completionPercentage >= 75
+                      ? 'bg-gradient-to-r from-blue-400 to-primary'
+                      : completionPercentage >= 40
+                        ? 'bg-gradient-to-r from-amber-400 to-orange-500'
+                        : 'bg-gradient-to-r from-rose-400 to-red-500'
+                }`}
+                style={{ width: `${Math.min(completionPercentage, 100)}%`, transition: 'width 1s ease-in-out' }}
+              >
+              </div>
+            </div>
+            <div className="mt-2 flex justify-between items-center">
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <span className="font-medium text-gray-700">{cpdSummary.currentPoints} points</span> 
+                <span>earned of {cpdSummary.requiredPoints} required</span>
+              </div>
+              <div className="flex items-center gap-1 text-xs">
+                <Medal className="h-3.5 w-3.5 text-primary" />
+                <span className="text-primary font-medium">{cpdSummary.requiredPoints - cpdSummary.currentPoints} points needed</span>
+              </div>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 bg-gray-50 p-4 rounded-xl">
           {/* Left column with circle progress */}
           <div className="md:col-span-4">
             <div className="flex flex-col items-center justify-center h-full">
-              <div className="relative h-32 w-32">
+              <div className="relative h-36 w-36 drop-shadow-sm">
                 {!isLoading && cpdSummary && (
                   <>
                     <svg className="h-full w-full transform -rotate-90" viewBox="0 0 100 100">
                       {/* Background circle */}
-                      <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="10" />
+                      <circle cx="50" cy="50" r="40" fill="white" />
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" strokeWidth="8" />
                       
                       {/* Progress circle with gradient */}
                       <circle 
@@ -93,7 +139,7 @@ const CpdProgressTracker = () => {
                         r="45" 
                         fill="none" 
                         stroke="url(#cpd-gradient)" 
-                        strokeWidth="10" 
+                        strokeWidth="8" 
                         strokeDasharray="282.7" 
                         strokeDashoffset={282.7 * (1 - cpdSummary.currentPoints / cpdSummary.requiredPoints)}
                         strokeLinecap="round"
@@ -102,20 +148,20 @@ const CpdProgressTracker = () => {
                       {/* Define gradient */}
                       <defs>
                         <linearGradient id="cpd-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#4F46E5" />
-                          <stop offset="100%" stopColor="#06B6D4" />
+                          <stop offset="0%" stopColor="#1e40af" />
+                          <stop offset="100%" stopColor="#3b82f6" />
                         </linearGradient>
                       </defs>
                     </svg>
                     
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="flex items-center">
-                        <span className="text-3xl font-bold">{cpdSummary.currentPoints}</span>
-                        <span className="text-lg text-gray-400">/{cpdSummary.requiredPoints}</span>
+                      <div className="flex items-baseline">
+                        <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">{cpdSummary.currentPoints}</span>
+                        <span className="text-lg text-gray-400 ml-0.5">/{cpdSummary.requiredPoints}</span>
                       </div>
-                      <div className="flex items-center mt-1">
-                        <Award className="h-4 w-4 text-primary mr-1" />
-                        <span className="text-xs text-gray-500">CPD Points</span>
+                      <div className="flex items-center mt-1 bg-primary/10 px-2 py-1 rounded-full">
+                        <Award className="h-3.5 w-3.5 text-primary mr-1" />
+                        <span className="text-xs font-medium text-primary">CPD Points</span>
                       </div>
                     </div>
                   </>
@@ -136,7 +182,12 @@ const CpdProgressTracker = () => {
           {/* Right column with category breakdown */}
           <div className="md:col-span-8">
             <div className="space-y-4">
-              <h3 className="text-sm font-medium border-b pb-2">Credit Breakdown</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">Credit Distribution</h3>
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <span>Tap for details</span>
+                </div>
+              </div>
               
               <div className="space-y-4">
                 {isLoading ? (
@@ -156,31 +207,45 @@ const CpdProgressTracker = () => {
                     <TooltipProvider key={category.id}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="group cursor-pointer">
-                            <div className="flex justify-between items-center mb-1">
-                              <div className="flex items-center">
+                          <div className="group cursor-pointer bg-white rounded-lg p-3 hover:bg-gray-50 transition-colors border border-gray-100">
+                            <div className="flex justify-between items-center mb-2">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${getCategoryDotColor(category.id)}`}></div>
                                 <span className="text-sm font-medium">{category.name}</span>
-                                <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-primary bg-opacity-10 text-primary">
-                                  {category.earnedPoints} pts
-                                </span>
                               </div>
-                              <span className="text-sm text-gray-500">
-                                {category.earnedPoints} of {category.requiredPoints}
-                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold">{category.earnedPoints}</span>
+                                <span className="text-xs text-gray-500">/ {category.requiredPoints}</span>
+                              </div>
                             </div>
-                            <div className="w-full bg-gray-100 rounded-full h-2.5">
+                            <div className="w-full bg-gray-100 rounded-full h-2">
                               <div 
-                                className={`h-2.5 rounded-full ${getCategoryColorClass(category.id)}`}
-                                style={{ width: `${(category.earnedPoints / category.requiredPoints * 100).toFixed(0)}%` }}
+                                className={`h-2 rounded-full ${getCategoryColorClass(category.id)}`}
+                                style={{ width: `${Math.min((category.earnedPoints / category.requiredPoints * 100), 100).toFixed(0)}%` }}
                               ></div>
+                            </div>
+                            <div className="flex justify-between items-center mt-2">
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-primary">
+                                  {Math.round((category.earnedPoints / category.requiredPoints) * 100)}%
+                                </span>
+                                <span className="text-xs text-gray-500">complete</span>
+                              </div>
+                              <Badge 
+                                variant="outline" 
+                                className="text-xs font-normal border-gray-200"
+                              >
+                                {getCategoryStatusText(category)}
+                              </Badge>
                             </div>
                           </div>
                         </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">
-                            {Math.round((category.earnedPoints / category.requiredPoints) * 100)}% complete 
-                            in {category.name} category
-                          </p>
+                        <TooltipContent side="right">
+                          <div className="text-xs space-y-1">
+                            <p className="font-medium">{category.name} Category</p>
+                            <p>{category.earnedPoints} of {category.requiredPoints} points earned</p>
+                            <p>{Math.round((category.earnedPoints / category.requiredPoints) * 100)}% complete</p>
+                          </div>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -188,13 +253,22 @@ const CpdProgressTracker = () => {
                 )}
               </div>
             </div>
-            
-            <div className="mt-4 flex justify-end">
-              <Link href="/cpd-credits" className="text-sm text-primary hover:text-primary-dark flex items-center font-medium">
-                View detailed report <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </div>
           </div>
+        </div>
+        
+        <div className="flex justify-between items-center mt-6">
+          <Button variant="outline" asChild>
+            <Link href="/cpd-credits/log-activity" className="text-sm gap-1">
+              <Award className="h-4 w-4" />
+              <span>Log Activity</span>
+            </Link>
+          </Button>
+          <Button variant="default" asChild className="ml-auto">
+            <Link href="/cpd-credits" className="text-sm gap-1">
+              <span>View Full Report</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -204,15 +278,44 @@ const CpdProgressTracker = () => {
 // Helper function to get color class based on category ID
 const getCategoryColorClass = (id: string | number): string => {
   const colorMap: Record<string, string> = {
-    '1': 'bg-gradient-to-r from-indigo-500 to-blue-500',
-    '2': 'bg-gradient-to-r from-emerald-500 to-teal-500',
-    '3': 'bg-gradient-to-r from-orange-500 to-amber-500',
-    'clinical': 'bg-gradient-to-r from-indigo-500 to-blue-500',
-    'research': 'bg-gradient-to-r from-emerald-500 to-teal-500',
-    'development': 'bg-gradient-to-r from-orange-500 to-amber-500'
+    '1': 'bg-gradient-to-r from-blue-600 to-blue-400',
+    '2': 'bg-gradient-to-r from-emerald-600 to-emerald-400',
+    '3': 'bg-gradient-to-r from-amber-600 to-amber-400',
+    'clinical': 'bg-gradient-to-r from-blue-600 to-blue-400',
+    'research': 'bg-gradient-to-r from-emerald-600 to-emerald-400',
+    'development': 'bg-gradient-to-r from-amber-600 to-amber-400'
   };
   
-  return colorMap[id.toString()] || 'bg-gradient-to-r from-indigo-500 to-blue-500';
+  return colorMap[id.toString()] || 'bg-gradient-to-r from-blue-600 to-blue-400';
+};
+
+// Helper function to get dot color
+const getCategoryDotColor = (id: string | number): string => {
+  const colorMap: Record<string, string> = {
+    '1': 'bg-blue-500',
+    '2': 'bg-emerald-500',
+    '3': 'bg-amber-500',
+    'clinical': 'bg-blue-500',
+    'research': 'bg-emerald-500',
+    'development': 'bg-amber-500'
+  };
+  
+  return colorMap[id.toString()] || 'bg-blue-500';
+};
+
+// Helper function to get category status
+const getCategoryStatusText = (category: CpdCategory): string => {
+  const percentage = (category.earnedPoints / category.requiredPoints) * 100;
+  
+  if (percentage >= 100) {
+    return 'Completed';
+  } else if (percentage >= 75) {
+    return 'On Track';
+  } else if (percentage >= 40) {
+    return 'In Progress';
+  } else {
+    return 'Attention Needed';
+  }
 };
 
 export default CpdProgressTracker;
