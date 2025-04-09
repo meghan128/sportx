@@ -122,6 +122,7 @@ const Settings = () => {
           <TabsList className="mb-6">
             <TabsTrigger value="account">Account</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="privacy">Privacy</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
             <TabsTrigger value="billing">Billing</TabsTrigger>
@@ -318,6 +319,111 @@ const Settings = () => {
                     <div className="flex items-center space-x-2">
                       <Switch id="new-device" defaultChecked />
                       <Label htmlFor="new-device">New device login alerts</Label>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          {/* Privacy Settings */}
+          <TabsContent value="privacy">
+            <Card>
+              <CardHeader>
+                <CardTitle>Privacy Settings</CardTitle>
+                <CardDescription>Control what information is shared with others</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium mb-3">Profile Visibility</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="profile-public">Public Profile</Label>
+                          <p className="text-sm text-muted-foreground">Make your profile visible to other professionals</p>
+                        </div>
+                        <Switch id="profile-public" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-email">Show Email Address</Label>
+                          <p className="text-sm text-muted-foreground">Display your email address on your public profile</p>
+                        </div>
+                        <Switch id="show-email" />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-phone">Show Phone Number</Label>
+                          <p className="text-sm text-muted-foreground">Display your phone number on your public profile</p>
+                        </div>
+                        <Switch id="show-phone" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-medium mb-3">Interaction Settings</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="allow-messages">Allow Direct Messages</Label>
+                          <p className="text-sm text-muted-foreground">Let other professionals message you directly</p>
+                        </div>
+                        <Switch id="allow-messages" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="allow-mentorship">Allow Mentorship Requests</Label>
+                          <p className="text-sm text-muted-foreground">Let others request you as a mentor</p>
+                        </div>
+                        <Switch id="allow-mentorship" defaultChecked />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-medium mb-3">Activity Visibility</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-courses">Show Enrolled Courses</Label>
+                          <p className="text-sm text-muted-foreground">Display courses you're taking on your profile</p>
+                        </div>
+                        <Switch id="show-courses" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-events">Show Registered Events</Label>
+                          <p className="text-sm text-muted-foreground">Display events you're attending on your profile</p>
+                        </div>
+                        <Switch id="show-events" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-cpd">Show CPD Activities</Label>
+                          <p className="text-sm text-muted-foreground">Make your CPD activities visible to others</p>
+                        </div>
+                        <Switch id="show-cpd" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-medium mb-3">Data Management</h3>
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Button variant="outline">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Your Data
+                        </Button>
+                        <p className="text-sm text-muted-foreground">Get a copy of all your personal data</p>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -41,6 +41,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, userData: Partial<User>): Promise<User>;
+  updateUserPrivacySettings(id: number, privacySettings: any): Promise<User>;
   
   // Event operations
   getUpcomingEvents(): Promise<Event[]>;
@@ -67,6 +68,17 @@ export interface IStorage {
   getTrendingDiscussions(): Promise<Discussion[]>;
   getRecentDiscussions(): Promise<Discussion[]>;
   getMentorshipOpportunities(): Promise<MentorshipOpportunity[]>;
+  
+  // Credential operations
+  getUserCredentials(userId: number): Promise<Credential[]>;
+  getCredentialById(id: number): Promise<Credential | undefined>;
+  createCredential(credential: Partial<Credential>): Promise<Credential>;
+  updateCredential(id: number, credentialData: Partial<Credential>): Promise<Credential>;
+  deleteCredential(id: number): Promise<boolean>;
+  
+  // Security operations
+  changePassword(userId: number, currentPassword: string, newPassword: string): Promise<boolean>;
+  logout(userId: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -726,6 +738,126 @@ export class MemStorage implements IStorage {
           };
         })
     );
+  }
+  
+  // PRIVACY SETTINGS OPERATIONS
+  async updateUserPrivacySettings(id: number, privacySettings: any): Promise<User> {
+    const user = await this.getUserById(id);
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
+    }
+    
+    const updatedUser = {
+      ...user,
+      privacySettings: {
+        ...user.privacySettings,
+        ...privacySettings
+      },
+      updatedAt: new Date()
+    };
+    
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  // CREDENTIAL OPERATIONS
+  private credentials: Map<number, Credential> = new Map();
+  private currentCredentialId: number = 1;
+  
+  async getUserCredentials(userId: number): Promise<Credential[]> {
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+    
+    // Return credentials for this user
+    return Array.from(this.credentials.values())
+      .filter(credential => credential.userId === userId)
+      .sort((a, b) => {
+        // Sort by issue date, most recent first
+        return new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime();
+      });
+  }
+  
+  async getCredentialById(id: number): Promise<Credential | undefined> {
+    return this.credentials.get(id);
+  }
+  
+  async createCredential(credentialData: Partial<Credential>): Promise<Credential> {
+    const id = this.currentCredentialId++;
+    const now = new Date();
+    
+    const credential: Credential = {
+      id,
+      userId: credentialData.userId!,
+      type: credentialData.type!,
+      name: credentialData.name!,
+      organization: credentialData.organization!,
+      issueDate: credentialData.issueDate!,
+      expiryDate: credentialData.expiryDate,
+      credentialId: credentialData.credentialId,
+      credentialUrl: credentialData.credentialUrl,
+      status: credentialData.status || "active",
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    this.credentials.set(id, credential);
+    return credential;
+  }
+  
+  async updateCredential(id: number, credentialData: Partial<Credential>): Promise<Credential> {
+    const credential = await this.getCredentialById(id);
+    if (!credential) {
+      throw new Error(`Credential with ID ${id} not found`);
+    }
+    
+    const updatedCredential = {
+      ...credential,
+      ...credentialData,
+      updatedAt: new Date()
+    };
+    
+    this.credentials.set(id, updatedCredential);
+    return updatedCredential;
+  }
+  
+  async deleteCredential(id: number): Promise<boolean> {
+    const credential = await this.getCredentialById(id);
+    if (!credential) {
+      throw new Error(`Credential with ID ${id} not found`);
+    }
+    
+    return this.credentials.delete(id);
+  }
+  
+  // SECURITY OPERATIONS
+  async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<boolean> {
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+    
+    // Check if current password matches
+    if (user.password !== currentPassword) {
+      throw new Error('Current password is incorrect');
+    }
+    
+    // Update password
+    const updatedUser = {
+      ...user,
+      password: newPassword,
+      updatedAt: new Date()
+    };
+    
+    this.users.set(userId, updatedUser);
+    return true;
+  }
+  
+  async logout(userId: number): Promise<boolean> {
+    // In a real application, this would invalidate the user's session
+    // For this demo, we'll just return true
+    return true;
   }
 
   // Initialize sample data
@@ -1508,6 +1640,73 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-05-01")
     };
     this.cpdActivities.set(activity5.id, activity5);
+    
+    // Initialize sample credentials
+    const credential1 = {
+      id: this.currentCredentialId++,
+      userId: 1,
+      type: "certification",
+      name: "Sports Physiotherapy Specialist",
+      organization: "Indian Association of Physiotherapists",
+      issueDate: "2020-05-15",
+      expiryDate: "2024-05-15",
+      credentialId: "SPS-2020-1234",
+      credentialUrl: "https://iap.org/verify/SPS-2020-1234",
+      status: "active",
+      createdAt: new Date("2020-05-15"),
+      updatedAt: new Date("2020-05-15")
+    };
+    this.credentials.set(credential1.id, credential1);
+    
+    const credential2 = {
+      id: this.currentCredentialId++,
+      userId: 1,
+      type: "license",
+      name: "Physiotherapy Practice License",
+      organization: "Medical Council of India",
+      issueDate: "2019-03-10",
+      expiryDate: "2025-03-10",
+      credentialId: "MCI-PT-19-56789",
+      credentialUrl: "https://mci.gov.in/verify/MCI-PT-19-56789",
+      status: "active",
+      createdAt: new Date("2019-03-10"),
+      updatedAt: new Date("2019-03-10")
+    };
+    this.credentials.set(credential2.id, credential2);
+    
+    const credential3 = {
+      id: this.currentCredentialId++,
+      userId: 1,
+      type: "course",
+      name: "Advanced Rehabilitation for ACL Injuries",
+      organization: "International Sports Medicine Federation",
+      issueDate: "2022-11-22",
+      credentialId: "ISMF-ACL-22-789",
+      status: "active",
+      createdAt: new Date("2022-11-22"),
+      updatedAt: new Date("2022-11-22")
+    };
+    this.credentials.set(credential3.id, credential3);
+    
+    // Set default privacy settings for users
+    const privacySettings = {
+      profilePublic: true,
+      showEmail: false,
+      showPhone: false,
+      allowMessages: true,
+      allowMentorship: true,
+      showCourses: true,
+      showEvents: true,
+      showCpd: false
+    };
+    
+    // Update users with privacy settings
+    for (const [id, user] of this.users.entries()) {
+      this.users.set(id, {
+        ...user,
+        privacySettings
+      });
+    }
   }
 }
 

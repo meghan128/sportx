@@ -368,6 +368,143 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to fetch mentorship opportunities' });
     }
   });
+  
+  // CREDENTIALS ROUTES
+  
+  // Get user credentials
+  app.get('/api/credentials', async (req, res) => {
+    try {
+      const userId = 1; // In a real app, this would come from the authenticated user's session
+      const credentials = await storage.getUserCredentials(userId);
+      res.json(credentials);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch credentials' });
+    }
+  });
+  
+  // Get credential by id
+  app.get('/api/credentials/:id', async (req, res) => {
+    try {
+      const credentialId = parseInt(req.params.id);
+      const credential = await storage.getCredentialById(credentialId);
+      if (!credential) {
+        return res.status(404).json({ message: 'Credential not found' });
+      }
+      res.json(credential);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch credential' });
+    }
+  });
+  
+  // Add new credential
+  app.post('/api/credentials', async (req, res) => {
+    try {
+      const schema = z.object({
+        type: z.string(),
+        name: z.string(),
+        organization: z.string(),
+        issueDate: z.string(),
+        expiryDate: z.string().optional(),
+        credentialId: z.string().optional(),
+        credentialUrl: z.string().optional(),
+        status: z.string().default('active')
+      });
+      
+      const data = schema.parse(req.body);
+      const userId = 1; // In a real app, this would come from the authenticated user's session
+      
+      const credential = await storage.createCredential({
+        ...data,
+        userId
+      });
+      
+      res.status(201).json(credential);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid request data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to create credential' });
+    }
+  });
+  
+  // Update credential
+  app.patch('/api/credentials/:id', async (req, res) => {
+    try {
+      const credentialId = parseInt(req.params.id);
+      const updatedCredential = await storage.updateCredential(credentialId, req.body);
+      res.json(updatedCredential);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to update credential' });
+    }
+  });
+  
+  // Delete credential
+  app.delete('/api/credentials/:id', async (req, res) => {
+    try {
+      const credentialId = parseInt(req.params.id);
+      const result = await storage.deleteCredential(credentialId);
+      if (!result) {
+        return res.status(404).json({ message: 'Credential not found' });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete credential' });
+    }
+  });
+  
+  // SECURITY AND PRIVACY ROUTES
+  
+  // Update privacy settings
+  app.patch('/api/users/privacy', async (req, res) => {
+    try {
+      const userId = 1; // In a real app, this would come from the authenticated user's session
+      const schema = z.object({
+        profilePublic: z.boolean().optional(),
+        showEmail: z.boolean().optional(),
+        showPhone: z.boolean().optional(),
+        allowMessages: z.boolean().optional(),
+        allowMentorship: z.boolean().optional(),
+        showCourses: z.boolean().optional(),
+        showEvents: z.boolean().optional(),
+        showCpd: z.boolean().optional()
+      });
+      
+      const data = schema.parse(req.body);
+      const updatedUser = await storage.updateUserPrivacySettings(userId, data);
+      res.json(updatedUser);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid request data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to update privacy settings' });
+    }
+  });
+  
+  // Change password
+  app.post('/api/users/change-password', async (req, res) => {
+    try {
+      const userId = 1; // In a real app, this would come from the authenticated user's session
+      const schema = z.object({
+        currentPassword: z.string(),
+        newPassword: z.string().min(8)
+      });
+      
+      const data = schema.parse(req.body);
+      const result = await storage.changePassword(userId, data.currentPassword, data.newPassword);
+      res.json({ success: result });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid request data', errors: error.errors });
+      }
+      
+      // Handle specific error for incorrect password
+      if (error instanceof Error && error.message === 'Current password is incorrect') {
+        return res.status(401).json({ message: 'Current password is incorrect' });
+      }
+      
+      res.status(500).json({ message: 'Failed to change password' });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

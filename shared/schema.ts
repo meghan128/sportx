@@ -17,6 +17,16 @@ export const users = pgTable("users", {
   profileImage: text("profile_image"),
   contactInfo: jsonb("contact_info"),
   socialLinks: jsonb("social_links"),
+  privacySettings: jsonb("privacy_settings").$type<{
+    profilePublic?: boolean;
+    showEmail?: boolean;
+    showPhone?: boolean;
+    allowMessages?: boolean;
+    allowMentorship?: boolean;
+    showCourses?: boolean;
+    showEvents?: boolean;
+    showCpd?: boolean;
+  }>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -168,6 +178,22 @@ export const mentorshipOpportunities = pgTable("mentorship_opportunities", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Professional Credentials
+export const credentials = pgTable("credentials", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  type: text("type").notNull(), // certification, license, degree, or course
+  name: text("name").notNull(),
+  organization: text("organization").notNull(),
+  issueDate: text("issue_date").notNull(),
+  expiryDate: text("expiry_date"),
+  credentialId: text("credential_id"),
+  credentialUrl: text("credential_url"),
+  status: text("status").notNull().default("active"), // active, expired, pending
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Export types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -181,3 +207,4 @@ export type CpdActivity = typeof cpdActivities.$inferSelect;
 export type ForumCategory = typeof forumCategories.$inferSelect;
 export type Discussion = typeof discussions.$inferSelect;
 export type MentorshipOpportunity = typeof mentorshipOpportunities.$inferSelect;
+export type Credential = typeof credentials.$inferSelect;

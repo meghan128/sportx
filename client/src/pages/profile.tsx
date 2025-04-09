@@ -63,7 +63,8 @@ import {
   Mail,
   Link as LinkIcon,
   Linkedin,
-  Twitter
+  Twitter,
+  Download
 } from "lucide-react";
 
 const Profile = () => {
@@ -413,9 +414,9 @@ const Profile = () => {
                         {user?.socialLinks?.linkedin && (
                           <a 
                             href={user.socialLinks.linkedin}
-                            target="_blank"
+                            target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                            className="p-2 bg-primary-light rounded-full text-primary"
                           >
                             <Linkedin className="h-5 w-5" />
                           </a>
@@ -424,16 +425,12 @@ const Profile = () => {
                         {user?.socialLinks?.twitter && (
                           <a 
                             href={user.socialLinks.twitter}
-                            target="_blank"
+                            target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                            className="p-2 bg-primary-light rounded-full text-primary"
                           >
                             <Twitter className="h-5 w-5" />
                           </a>
-                        )}
-                        
-                        {(!user?.socialLinks?.linkedin && !user?.socialLinks?.twitter) && (
-                          <p className="text-sm text-muted-foreground">No social links added</p>
                         )}
                       </div>
                     </div>
@@ -444,7 +441,7 @@ const Profile = () => {
                 <CardFooter>
                   <Button className="ml-auto" onClick={() => setIsEditing(true)}>
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit Contact Info
+                    Edit Contact Information
                   </Button>
                 </CardFooter>
               )}
@@ -456,195 +453,216 @@ const Profile = () => {
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle>Professional Credentials</CardTitle>
-                  <CardDescription>Your certifications and qualifications</CardDescription>
+                  <CardDescription>Your certifications, licenses, and qualifications</CardDescription>
                 </div>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button>
-                      <BadgeCheck className="mr-2 h-4 w-4" />
-                      Add Credential
-                    </Button>
+                    <Button>Add Credential</Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
                       <DialogTitle>Add Professional Credential</DialogTitle>
                       <DialogDescription>
-                        Add your professional certifications, licenses, and educational qualifications to showcase your expertise.
+                        Add your professional certifications, licenses, and qualifications
                       </DialogDescription>
                     </DialogHeader>
-                    <form className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="credential-type">Credential Type</Label>
-                        <Select defaultValue="certification">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="credential-type" className="text-right">
+                          Type
+                        </Label>
+                        <Select>
+                          <SelectTrigger className="col-span-3">
+                            <SelectValue placeholder="Select credential type" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="certification">Certification</SelectItem>
                             <SelectItem value="license">License</SelectItem>
                             <SelectItem value="degree">Degree</SelectItem>
-                            <SelectItem value="course">Course Certificate</SelectItem>
+                            <SelectItem value="course">Course</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="credential-name">Credential Name</Label>
-                        <Input id="credential-name" placeholder="E.g., Certified Strength and Conditioning Specialist" />
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="credential-name" className="text-right">
+                          Name
+                        </Label>
+                        <Input id="credential-name" placeholder="e.g. Sports Physiotherapy Specialist" className="col-span-3" />
                       </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="issuing-organization">Issuing Organization</Label>
-                        <Input id="issuing-organization" placeholder="E.g., National Strength and Conditioning Association" />
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="credential-org" className="text-right">
+                          Organization
+                        </Label>
+                        <Input id="credential-org" placeholder="e.g. Indian Association of Physiotherapists" className="col-span-3" />
                       </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="issue-date">Issue Date</Label>
-                          <Input id="issue-date" type="date" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="expiry-date">Expiry Date (Optional)</Label>
-                          <Input id="expiry-date" type="date" />
-                        </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="credential-issue-date" className="text-right">
+                          Issue Date
+                        </Label>
+                        <Input id="credential-issue-date" type="date" className="col-span-3" />
                       </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="credential-id">Credential ID (Optional)</Label>
-                        <Input id="credential-id" placeholder="E.g., CSC-123456" />
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="credential-expiry-date" className="text-right">
+                          Expiry Date
+                        </Label>
+                        <Input id="credential-expiry-date" type="date" className="col-span-3" />
                       </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="credential-url">Credential URL (Optional)</Label>
-                        </div>
-                        <Input id="credential-url" placeholder="Link to digital certificate or verification page" />
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="credential-id" className="text-right">
+                          Credential ID
+                        </Label>
+                        <Input id="credential-id" placeholder="e.g. SPS-2020-1234" className="col-span-3" />
                       </div>
-                    </form>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="credential-url" className="text-right">
+                          Credential URL
+                        </Label>
+                        <Input id="credential-url" placeholder="e.g. https://iap.org/verify/SPS-2020-1234" className="col-span-3" />
+                      </div>
+                    </div>
                     <DialogFooter>
-                      <Button variant="outline" type="button">Cancel</Button>
-                      <Button type="submit">Add Credential</Button>
+                      <Button type="submit">Save Credential</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
               </CardHeader>
               <CardContent>
-                {isLoading ? (
-                  <div className="h-40 flex items-center justify-center">
-                    <p className="text-muted-foreground">Loading credentials...</p>
-                  </div>
-                ) : (
-                  <div>
-                    {/* Sample credentials - in a real app, these would come from the API */}
-                    <div className="space-y-4">
-                      <div className="flex flex-col md:flex-row border rounded-lg overflow-hidden">
-                        <div className="bg-primary p-4 text-white md:w-1/4 flex items-center justify-center">
-                          <BadgeCheck className="h-8 w-8" />
+                <div className="space-y-4">
+                  <div className="rounded-lg border p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 p-1.5 bg-primary-light rounded-md">
+                          <Award className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="p-4 flex-1">
-                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                            <div>
-                              <h3 className="font-semibold text-lg">Certified Sports Physiotherapist</h3>
-                              <p className="text-muted-foreground">Chartered Society of Physiotherapy</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge className="bg-green-600">Active</Badge>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    View Certificate
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem className="text-destructive">
-                                    <Trash className="mr-2 h-4 w-4" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold">Sports Physiotherapy Specialist</h3>
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-600 border border-green-200">Active</span>
                           </div>
-                          <div className="mt-2 text-sm">
-                            <div className="flex items-center gap-6 mt-2">
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-4 w-4" />
-                                <span>Issued: May 2021</span>
-                              </div>
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-4 w-4" />
-                                <span>Expires: May 2024</span>
-                              </div>
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <BadgeCheck className="h-4 w-4" />
-                                <span>ID: CSP-12345</span>
-                              </div>
-                            </div>
+                          <p className="text-sm text-muted-foreground">Indian Association of Physiotherapists</p>
+                          <div className="flex items-center gap-4 mt-1">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Calendar className="h-3 w-3" /> Issued: May 15, 2020
+                            </span>
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Calendar className="h-3 w-3" /> Expires: May 15, 2024
+                            </span>
+                          </div>
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">ID: SPS-2020-1234</span>
+                            <a href="https://iap.org/verify/SPS-2020-1234" target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                              <Eye className="h-3 w-3" /> Verify
+                            </a>
                           </div>
                         </div>
                       </div>
-
-                      <div className="flex flex-col md:flex-row border rounded-lg overflow-hidden">
-                        <div className="bg-primary p-4 text-white md:w-1/4 flex items-center justify-center">
-                          <Award className="h-8 w-8" />
-                        </div>
-                        <div className="p-4 flex-1">
-                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                            <div>
-                              <h3 className="font-semibold text-lg">MSc Sports Science</h3>
-                              <p className="text-muted-foreground">University of Manchester</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge className="bg-primary">Degree</Badge>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    View Certificate
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem className="text-destructive">
-                                    <Trash className="mr-2 h-4 w-4" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          </div>
-                          <div className="mt-2 text-sm">
-                            <div className="flex items-center gap-6 mt-2">
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-4 w-4" />
-                                <span>Issued: June 2019</span>
-                              </div>
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <Award className="h-4 w-4" />
-                                <span>First Class Honors</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash className="mr-2 h-4 w-4" /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
-                )}
+                  
+                  <div className="rounded-lg border p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 p-1.5 bg-blue-50 rounded-md">
+                          <BadgeCheck className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold">Physiotherapy Practice License</h3>
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-600 border border-green-200">Active</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">Medical Council of India</p>
+                          <div className="flex items-center gap-4 mt-1">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Calendar className="h-3 w-3" /> Issued: Mar 10, 2019
+                            </span>
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Calendar className="h-3 w-3" /> Expires: Mar 10, 2025
+                            </span>
+                          </div>
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">ID: MCI-PT-19-56789</span>
+                            <a href="https://mci.gov.in/verify/MCI-PT-19-56789" target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                              <Eye className="h-3 w-3" /> Verify
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash className="mr-2 h-4 w-4" /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 p-1.5 bg-amber-50 rounded-md">
+                          <Award className="h-5 w-5 text-amber-600" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold">Advanced Rehabilitation for ACL Injuries</h3>
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-600 border border-green-200">Active</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">International Sports Medicine Federation</p>
+                          <div className="flex items-center gap-4 mt-1">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Calendar className="h-3 w-3" /> Completed: Nov 22, 2022
+                            </span>
+                          </div>
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">ID: ISMF-ACL-22-789</span>
+                          </div>
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash className="mr-2 h-4 w-4" /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -653,7 +671,7 @@ const Profile = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Privacy Settings</CardTitle>
-                <CardDescription>Control who can see your information</CardDescription>
+                <CardDescription>Control how your information is shared</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
@@ -662,16 +680,16 @@ const Profile = () => {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                          <Label htmlFor="profile-public">Public Profile</Label>
-                          <p className="text-sm text-muted-foreground">Make your profile visible to all platform users</p>
+                          <Label htmlFor="public-profile">Public Profile</Label>
+                          <p className="text-sm text-muted-foreground">Make your profile visible to other professionals</p>
                         </div>
-                        <Switch id="profile-public" defaultChecked />
+                        <Switch id="public-profile" defaultChecked />
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                          <Label htmlFor="show-email">Show Email Address</Label>
-                          <p className="text-sm text-muted-foreground">Display your email to other users</p>
+                          <Label htmlFor="show-email">Show Email</Label>
+                          <p className="text-sm text-muted-foreground">Display your email on your public profile</p>
                         </div>
                         <Switch id="show-email" />
                       </div>
@@ -679,7 +697,7 @@ const Profile = () => {
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                           <Label htmlFor="show-phone">Show Phone Number</Label>
-                          <p className="text-sm text-muted-foreground">Display your phone number to other users</p>
+                          <p className="text-sm text-muted-foreground">Display your phone number on your public profile</p>
                         </div>
                         <Switch id="show-phone" />
                       </div>
@@ -687,12 +705,41 @@ const Profile = () => {
                   </div>
                   
                   <div className="pt-4 border-t">
-                    <h3 className="text-lg font-medium mb-3">Connection Settings</h3>
+                    <h3 className="text-lg font-medium mb-3">Activity Sharing</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-courses">Show Enrolled Courses</Label>
+                          <p className="text-sm text-muted-foreground">Show courses you're taking on your profile</p>
+                        </div>
+                        <Switch id="show-courses" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-events">Show Event Attendance</Label>
+                          <p className="text-sm text-muted-foreground">Display events you're attending on your profile</p>
+                        </div>
+                        <Switch id="show-events" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="show-credentials">Show Credentials</Label>
+                          <p className="text-sm text-muted-foreground">Display your professional credentials on your profile</p>
+                        </div>
+                        <Switch id="show-credentials" defaultChecked />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-medium mb-3">Communication Preferences</h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                           <Label htmlFor="allow-messages">Allow Direct Messages</Label>
-                          <p className="text-sm text-muted-foreground">Allow other professionals to send you messages</p>
+                          <p className="text-sm text-muted-foreground">Let other professionals message you</p>
                         </div>
                         <Switch id="allow-messages" defaultChecked />
                       </div>
@@ -700,7 +747,7 @@ const Profile = () => {
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                           <Label htmlFor="allow-mentorship">Allow Mentorship Requests</Label>
-                          <p className="text-sm text-muted-foreground">Allow others to request mentorship connections</p>
+                          <p className="text-sm text-muted-foreground">Let others request mentorship from you</p>
                         </div>
                         <Switch id="allow-mentorship" defaultChecked />
                       </div>
@@ -708,31 +755,13 @@ const Profile = () => {
                   </div>
                   
                   <div className="pt-4 border-t">
-                    <h3 className="text-lg font-medium mb-3">Activity Privacy</h3>
+                    <h3 className="text-lg font-medium mb-3">Data Management</h3>
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="show-courses">Show Enrolled Courses</Label>
-                          <p className="text-sm text-muted-foreground">Display your enrolled courses on your public profile</p>
-                        </div>
-                        <Switch id="show-courses" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="show-events">Show Event Registrations</Label>
-                          <p className="text-sm text-muted-foreground">Display your upcoming events on your public profile</p>
-                        </div>
-                        <Switch id="show-events" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="show-cpd">Show CPD Activities</Label>
-                          <p className="text-sm text-muted-foreground">Display your CPD activities on your public profile</p>
-                        </div>
-                        <Switch id="show-cpd" />
-                      </div>
+                      <Button variant="outline" className="flex items-center gap-2">
+                        <Download className="h-4 w-4" />
+                        Download Your Data
+                      </Button>
+                      <p className="text-sm text-muted-foreground">Request a copy of all your personal information</p>
                     </div>
                   </div>
                 </div>
@@ -745,18 +774,6 @@ const Profile = () => {
         </Tabs>
       </div>
     </DashboardLayout>
-  );
-};
-
-// Badge component for the card
-const Badge = ({ children, className = "", ...props }: any) => {
-  return (
-    <span 
-      className={`inline-flex items-center text-xs font-medium text-white rounded px-2 py-1 ${className}`}
-      {...props}
-    >
-      {children}
-    </span>
   );
 };
 
