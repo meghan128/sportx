@@ -11,6 +11,9 @@ import Courses from "@/pages/courses";
 import CourseDetails from "@/pages/course-details";
 import CpdCredits from "@/pages/cpd-credits";
 import Community from "@/pages/community";
+import Forums from "@/pages/forums";
+import Messages from "@/pages/messages";
+import Mentorship from "@/pages/mentorship";
 import Profile from "@/pages/profile";
 import Resources from "@/pages/resources";
 import NotFound from "@/pages/not-found";
@@ -25,6 +28,9 @@ function Router() {
       <Route path="/courses/:id" component={CourseDetails} />
       <Route path="/cpd-credits" component={CpdCredits} />
       <Route path="/community" component={Community} />
+      <Route path="/forums" component={Forums} />
+      <Route path="/messages" component={Messages} />
+      <Route path="/mentorship" component={Mentorship} />
       <Route path="/resources" component={Resources} />
       <Route path="/profile" component={Profile} />
       {/* Fallback to 404 */}
