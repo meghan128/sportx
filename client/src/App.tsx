@@ -51,3 +51,17 @@ function App() {
 }
 
 export default App;
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Settings from '@/pages/settings';
+import NotFound from '@/pages/not-found';
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  );
+}
