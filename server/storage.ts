@@ -1167,6 +1167,73 @@ export class MemStorage implements IStorage {
       ],
       videoHours: "8 hours",
       resources: "15 downloadable resources",
+      roleSpecificContent: [
+        {
+          role: "Physiotherapist",
+          description: "Specialized content for sports physiotherapists focusing on hands-on rehabilitation techniques and assessment skills.",
+          learningOutcomes: [
+            "Master advanced manual therapy techniques for knee injuries",
+            "Develop sport-specific exercise protocols",
+            "Apply evidence-based assessment methods"
+          ],
+          materials: [
+            "Manual therapy video demonstrations",
+            "Assessment checklist templates",
+            "Return-to-sport testing protocols"
+          ],
+          case_studies: [
+            "Professional footballer with ACL reconstruction",
+            "Basketball player with meniscal tear",
+            "Marathon runner with patellofemoral pain"
+          ]
+        },
+        {
+          role: "Sports Nutritionist",
+          description: "Nutritional considerations for optimal recovery and performance during knee injury rehabilitation.",
+          learningOutcomes: [
+            "Design nutrition plans for injury recovery",
+            "Optimize anti-inflammatory dietary strategies",
+            "Support tissue healing through targeted nutrition"
+          ],
+          materials: [
+            "Injury recovery meal plans",
+            "Supplement timing guides",
+            "Hydration strategies during rehab"
+          ],
+          case_studies: [
+            "Optimizing recovery nutrition for ACL surgery",
+            "Anti-inflammatory diet for chronic knee pain"
+          ]
+        }
+      ],
+      interactiveElements: [
+        {
+          type: "Simulation",
+          title: "Virtual Patient Assessment",
+          description: "Practice assessment techniques on virtual patients with various knee pathologies",
+          duration: "30 minutes"
+        },
+        {
+          type: "Quiz",
+          title: "Differential Diagnosis Challenge",
+          description: "Test your diagnostic skills with complex knee injury scenarios",
+          duration: "15 minutes"
+        },
+        {
+          type: "Case Study",
+          title: "Multi-disciplinary Team Approach",
+          description: "Collaborative decision-making for complex knee injury cases",
+          duration: "45 minutes"
+        }
+      ],
+      certificationExam: {
+        title: "Advanced Knee Rehabilitation Certification",
+        description: "Comprehensive exam covering all aspects of knee injury rehabilitation",
+        duration: "90 minutes",
+        passingScore: 80,
+        attempts: 3,
+        validityPeriod: "2 years"
+      },
       instructors: [
         {
           id: "1",
@@ -1417,6 +1484,67 @@ export class MemStorage implements IStorage {
         "Develop competition nutrition timelines for optimal performance",
         "Create recovery nutrition protocols for different training phases"
       ],
+      roleSpecificContent: [
+        {
+          role: "Sports Nutritionist",
+          description: "Advanced periodization strategies for professional athletes across different sports disciplines.",
+          learningOutcomes: [
+            "Master macronutrient periodization for endurance vs strength sports",
+            "Design competition-day nutrition protocols",
+            "Implement body composition management strategies"
+          ],
+          materials: [
+            "Periodization planning templates",
+            "Competition nutrition checklists",
+            "Body composition monitoring tools"
+          ],
+          case_studies: [
+            "Marathon runner's yearly nutrition plan",
+            "Powerlifter's competition preparation",
+            "Team sport in-season nutrition strategy"
+          ]
+        },
+        {
+          role: "Physiotherapist",
+          description: "Nutritional considerations for injury prevention and recovery support.",
+          learningOutcomes: [
+            "Understand nutrition's role in injury prevention",
+            "Support tissue healing through targeted nutrition",
+            "Collaborate effectively with nutrition professionals"
+          ],
+          materials: [
+            "Injury prevention nutrition guides",
+            "Recovery nutrition protocols",
+            "Referral criteria for nutritional support"
+          ],
+          case_studies: [
+            "Nutrition support during ACL rehabilitation",
+            "Preventing overuse injuries through nutrition"
+          ]
+        }
+      ],
+      interactiveElements: [
+        {
+          type: "Calculator",
+          title: "Nutrition Periodization Planner",
+          description: "Interactive tool to create personalized nutrition periodization plans",
+          duration: "20 minutes"
+        },
+        {
+          type: "Simulation",
+          title: "Competition Day Nutrition Timing",
+          description: "Practice timing nutrition strategies for different competition scenarios",
+          duration: "25 minutes"
+        }
+      ],
+      certificationExam: {
+        title: "Sports Nutrition Periodization Specialist",
+        description: "Certification exam for advanced nutrition periodization competency",
+        duration: "60 minutes",
+        passingScore: 85,
+        attempts: 2,
+        validityPeriod: "3 years"
+      },
       createdAt: new Date("2022-12-10"),
       updatedAt: new Date("2023-03-05")
     };
