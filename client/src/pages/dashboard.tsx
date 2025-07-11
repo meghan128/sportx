@@ -9,12 +9,22 @@ const Dashboard = () => {
   return (
     <DashboardLayout title="Dashboard">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <WelcomeSection />
-        <CpdProgressTracker />
+        <div className="animate-bounce-in">
+          <WelcomeSection />
+        </div>
+        <div className="animate-bounce-in" style={{ animationDelay: '0.2s' }}>
+          <CpdProgressTracker />
+        </div>
       </div>
-      <UpcomingEvents />
-      <CourseProgress />
-      <CommunitySection />
+      <div className="animate-bounce-in" style={{ animationDelay: '0.4s' }}>
+        <UpcomingEvents />
+      </div>
+      <div className="animate-bounce-in" style={{ animationDelay: '0.6s' }}>
+        <CourseProgress />
+      </div>
+      <div className="animate-bounce-in" style={{ animationDelay: '0.8s' }}>
+        <CommunitySection />
+      </div>
     </DashboardLayout>
   );
 };

@@ -69,20 +69,21 @@ const Courses = () => {
   return (
     <DashboardLayout title="Courses">
       <div className="mb-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-              <div>
-                <CardTitle>Accredited Courses</CardTitle>
-                <CardDescription>
-                  Browse and enroll in CPD accredited courses
+        <Card className="bg-gradient-to-br from-orange-400 via-red-500 to-purple-600 text-white border-0 shadow-xl animate-gradient-wave">
+          <CardHeader className="pb-3 relative">
+            <div className="absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-yellow-400/30 to-pink-400/40 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 relative">
+              <div className="animate-float">
+                <CardTitle className="text-2xl font-bold text-white neon-glow">🚀 Accredited Courses</CardTitle>
+                <CardDescription className="text-white/90 font-medium">
+                  ⚡ Browse and enroll in CPD accredited courses - Power up your career!
                 </CardDescription>
               </div>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  className={viewMode === 'grid' ? 'bg-muted' : undefined}
+                  className={`bg-white/10 text-white border-white/20 hover:bg-white hover:text-orange-600 transition-all ${viewMode === 'grid' ? 'bg-white text-orange-600' : ''}`}
                   onClick={() => setViewMode('grid')}
                 >
                   <LayoutGrid className="h-4 w-4" />
@@ -90,7 +91,7 @@ const Courses = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className={viewMode === 'list' ? 'bg-muted' : undefined}
+                  className={`bg-white/10 text-white border-white/20 hover:bg-white hover:text-orange-600 transition-all ${viewMode === 'list' ? 'bg-white text-orange-600' : ''}`}
                   onClick={() => setViewMode('list')}
                 >
                   <ListFilter className="h-4 w-4" />
@@ -101,17 +102,17 @@ const Courses = () => {
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-orange-500" />
                 <Input
                   type="search"
-                  placeholder="Search courses..."
-                  className="pl-8"
+                  placeholder="🔍 Search courses..."
+                  className="pl-8 bg-white/10 text-white placeholder:text-white/70 border-white/20 focus:border-yellow-400 focus:ring-yellow-400"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button>
-                <Filter className="mr-2 h-4 w-4" /> Filter
+              <Button className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold animate-pulse-glow">
+                <Filter className="mr-2 h-4 w-4" /> ⚡ Filter
               </Button>
             </div>
             

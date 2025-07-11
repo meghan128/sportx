@@ -21,23 +21,23 @@ interface CourseCardProps {
   userRole?: ProfessionRole;
 }
 
-// Helper functions to get role-specific colors
+// Helper functions to get role-specific colors - now more vibrant and energetic
 const getRoleBadgeColor = (role: ProfessionRole) => {
   switch (role) {
     case 'Physiotherapist':
-      return 'bg-blue-50 text-blue-700 border-blue-200';
+      return 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 font-bold';
     case 'Nutritionist':
-      return 'bg-green-50 text-green-700 border-green-200';
+      return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 font-bold';
     case 'Sports Psychologist':
-      return 'bg-purple-50 text-purple-700 border-purple-200';
+      return 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 font-bold';
     case 'Athletic Trainer':
-      return 'bg-orange-50 text-orange-700 border-orange-200';
+      return 'bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 font-bold';
     case 'Exercise Physiologist':
-      return 'bg-teal-50 text-teal-700 border-teal-200';
+      return 'bg-gradient-to-r from-teal-500 to-blue-500 text-white border-0 font-bold';
     case 'All':
-      return 'bg-gray-50 text-gray-700 border-gray-200';
+      return 'bg-gradient-to-r from-gray-600 to-gray-800 text-white border-0 font-bold';
     default:
-      return 'bg-gray-50 text-gray-700 border-gray-200';
+      return 'bg-gradient-to-r from-gray-600 to-gray-800 text-white border-0 font-bold';
   }
 };
 
@@ -86,26 +86,26 @@ const CourseCard = ({ course, layout = 'list', userRole }: CourseCardProps) => {
   if (layout === 'list') {
     return (
       <div className={cn(
-        "border border-gray-200 rounded-lg overflow-hidden hover:border-primary hover:shadow-md transition-all",
-        isRecommendedForRole && "ring-1 ring-primary/20"
+        "border-2 border-transparent bg-gradient-to-br from-white via-purple-50 to-pink-50 rounded-xl overflow-hidden hover:border-orange-400 hover:shadow-2xl transition-all duration-300 animate-bounce-in hover:scale-105",
+        isRecommendedForRole && "ring-2 ring-orange-400 ring-offset-2 animate-pulse-glow"
       )}>
         <div className="md:flex">
           <div className="md:w-48 h-32 md:h-auto overflow-hidden relative">
-            <img src={course.thumbnail} alt={course.title} className="h-full w-full object-cover" />
+            <img src={course.thumbnail} alt={course.title} className="h-full w-full object-cover transition-transform duration-300 hover:scale-110" />
             {course.isFeatured && (
-              <div className="absolute top-0 left-0 bg-gradient-to-r from-primary to-blue-600 text-white px-2 py-0.5 text-xs font-medium">
-                Featured
+              <div className="absolute top-0 left-0 bg-gradient-to-r from-orange-500 to-red-600 text-white px-3 py-1 text-xs font-bold animate-pulse-glow">
+                ⭐ FEATURED
               </div>
             )}
             {course.isPopular && (
-              <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white px-2 py-1 text-xs font-medium text-center">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2 py-1 text-xs font-bold text-center animate-shimmer">
                 <Star className="inline-block h-3 w-3 mr-1 fill-yellow-400 text-yellow-400" />
-                Popular Course
+                🔥 POPULAR COURSE
               </div>
             )}
             {course.certificationExam && (
-              <div className="absolute top-1 right-1 bg-amber-600 text-white rounded-full p-1">
-                <Medal className="h-3 w-3" />
+              <div className="absolute top-1 right-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-full p-2 animate-float">
+                <Medal className="h-4 w-4" />
               </div>
             )}
           </div>

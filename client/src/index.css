@@ -2,6 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Energetic animations and effects */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+  50% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes gradient-wave {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s ease-out;
+}
+
+.animate-gradient-wave {
+  background: linear-gradient(45deg, #FF6B35, #8B5CF6, #F59E0B, #10B981);
+  background-size: 400% 400%;
+  animation: gradient-wave 3s ease infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.neon-glow {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -19,20 +81,20 @@
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
 
-    --primary: 197 65% 29%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 12 100% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --primary-light: 197 65% 35%;
-    --primary-dark: 197 65% 24%;
+    --primary-light: 12 100% 70%;
+    --primary-dark: 12 100% 50%;
 
-    --secondary: 172 50% 55%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 280 100% 70%;
+    --secondary-foreground: 0 0% 100%;
     
-    --secondary-light: 172 50% 60%;
-    --secondary-dark: 172 50% 45%;
+    --secondary-light: 280 100% 80%;
+    --secondary-dark: 280 100% 60%;
 
-    --accent: 175 75% 33%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 45 100% 60%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 100% 50%;
     --destructive-foreground: 210 40% 98%;
@@ -41,20 +103,20 @@
 
     --radius: 0.5rem;
 
-    --chart-1: 197 65% 29%;
-    --chart-2: 172 50% 55%;
-    --chart-3: 175 75% 33%;
-    --chart-4: 32 95% 44%;
-    --chart-5: 220 60% 50%;
+    --chart-1: 12 100% 60%;
+    --chart-2: 280 100% 70%;
+    --chart-3: 45 100% 60%;
+    --chart-4: 150 100% 50%;
+    --chart-5: 220 100% 60%;
 
-    --sidebar-background: 197 65% 29%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 172 50% 55%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 175 75% 33%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 197 65% 24%;
-    --sidebar-ring: 172 50% 60%;
+    --sidebar-background: 12 100% 60%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 280 100% 70%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 45 100% 60%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 12 100% 50%;
+    --sidebar-ring: 280 100% 80%;
   }
 
   .dark {

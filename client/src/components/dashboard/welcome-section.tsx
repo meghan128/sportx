@@ -64,33 +64,33 @@ const WelcomeSection = () => {
   };
 
   return (
-    <Card id="welcome-section" className="h-full border-0 shadow-md bg-gradient-to-br from-white to-gray-50">
+    <Card id="welcome-section" className="h-full border-0 shadow-lg bg-gradient-to-br from-orange-400 via-pink-500 to-purple-600 text-white animate-gradient-wave">
       <CardContent className="p-6">
         <div className="flex flex-col h-full">
           <div className="mb-6">
             <div className="flex items-center gap-4 mb-4">
               {!isLoading && user?.profileImage && (
-                <Avatar className="h-16 w-16 border-2 border-white shadow-sm">
+                <Avatar className="h-16 w-16 border-3 border-white shadow-lg animate-pulse-glow">
                   <AvatarImage src={user?.profileImage} />
-                  <AvatarFallback className="text-lg">{user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="text-lg font-bold bg-white text-purple-600">{user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
               )}
               <div>
-                <p className="text-sm font-medium text-gray-500 mb-1">{getTimeBasedGreeting()},</p>
-                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">
+                <p className="text-sm font-medium text-white/90 mb-1">{getTimeBasedGreeting()},</p>
+                <h1 className="text-3xl font-bold text-white neon-glow animate-float">
                   {isLoading ? 'Welcome' : `${getProfessionalTitle(user?.profession)} ${user?.name.split(' ')[0]}`}
                 </h1>
                 {user?.specialization && (
-                  <p className="text-sm text-gray-600 mt-1">{user.specialization}</p>
+                  <p className="text-sm text-white/80 mt-1 font-medium">{user.specialization}</p>
                 )}
               </div>
             </div>
             <div className="relative">
-              <div className="absolute left-0 top-0 h-full w-1 bg-primary rounded-full opacity-20"></div>
-              <p className="pl-4 text-gray-600 text-sm leading-relaxed">
+              <div className="absolute left-0 top-0 h-full w-1 bg-yellow-400 rounded-full animate-pulse"></div>
+              <p className="pl-4 text-white/90 text-sm leading-relaxed font-medium">
                 {cpdStatus 
-                  ? `You have ${cpdStatus.pointsNeeded} CPD points to earn this ${cpdStatus.period}. Here's what you can do today to advance your professional development.`
-                  : 'Track your CPD progress and explore opportunities to grow professionally.'}
+                  ? `⚡ You have ${cpdStatus.pointsNeeded} CPD points to earn this ${cpdStatus.period}. Here's what you can do today to advance your professional development.`
+                  : '🚀 Track your CPD progress and explore opportunities to grow professionally.'}
               </p>
             </div>
             

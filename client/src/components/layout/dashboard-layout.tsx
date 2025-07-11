@@ -29,7 +29,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-purple-50 to-pink-50 flex flex-col md:flex-row">
       <div 
         className={`transition-all duration-300 ease-in-out ${
           sidebarCollapsed ? 'md:w-20' : 'md:w-64'
@@ -47,13 +47,13 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
           {!isMobile && (
             <button 
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="absolute -left-3 top-6 rounded-full bg-white shadow-md border border-gray-100 p-1 z-10 hover:bg-gray-50 transition-colors"
+              className="absolute -left-3 top-6 rounded-full bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg border-0 p-1 z-10 hover:from-orange-500 hover:to-pink-600 transition-all animate-pulse-glow"
               aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {sidebarCollapsed ? (
-                <ArrowRightCircle size={20} className="text-primary" />
+                <ArrowRightCircle size={20} className="text-white" />
               ) : (
-                <ArrowLeftCircle size={20} className="text-primary" />
+                <ArrowLeftCircle size={20} className="text-white" />
               )}
             </button>
           )}

@@ -51,23 +51,23 @@ const CpdProgressTracker = () => {
   };
 
   return (
-    <Card id="cpd-tracker" className="h-full border-0 shadow-md overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-primary/5 to-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+    <Card id="cpd-tracker" className="h-full border-0 shadow-xl overflow-hidden bg-gradient-to-br from-blue-500 via-purple-600 to-pink-600 text-white animate-gradient-wave">
+      <div className="absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-yellow-400/30 to-orange-400/40 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
       <CardHeader className="pb-2 relative">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle className="text-xl font-bold">CPD Credit Tracker</CardTitle>
+              <CardTitle className="text-xl font-bold text-white neon-glow animate-float">🏆 CPD Credit Tracker</CardTitle>
               {!isLoading && cpdSummary && (
-                <Badge className={`${status.color} border-0 flex items-center gap-1 px-2.5`}>
+                <Badge className="bg-yellow-400 text-black border-0 flex items-center gap-1 px-2.5 animate-pulse-glow font-bold">
                   {status.icon}
-                  <span className="font-medium">{status.label}</span>
+                  <span className="font-bold">{status.label}</span>
                 </Badge>
               )}
             </div>
-            <CardDescription className="mt-1">Track your professional development requirements</CardDescription>
+            <CardDescription className="mt-1 text-white/90 font-medium">⚡ Track your professional development requirements</CardDescription>
           </div>
-          <div className="flex items-center text-xs text-gray-500 gap-1">
+          <div className="flex items-center text-xs text-white/80 gap-1 font-medium">
             <CalendarDays className="h-3.5 w-3.5" />
             <span>{getTimeRemainingText()}</span>
           </div>
