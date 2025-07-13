@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "./storage-factory";
 import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
 
@@ -504,6 +504,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(500).json({ message: 'Failed to change password' });
     }
+  });
+
+  // Storage status endpoint
+  app.get("/api/storage/status", (req, res) => {
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+    
+    res.json({
+      type: supabaseUrl && supabaseKey ? 'supabase' : 'memory',
+      connected: true,
+      features: {
+        realtime: !!(supabaseUrl && supabaseKey),
+        persistence: !!(supabaseUrl && supabaseKey),
+        multiUser: !!(supabaseUrl && supabaseKey),
+        analytics: !!(supabaseUrl && supabaseKey)
+      }
+    });
   });
 
   const httpServer = createServer(app);

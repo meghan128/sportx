@@ -33,6 +33,7 @@ import {
   Moon,
   Sun,
 } from "lucide-react";
+import StorageStatus from "@/components/admin/storage-status";
 import {
   AlertDialog,
   AlertDialogAction,
