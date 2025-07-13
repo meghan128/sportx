@@ -30,6 +30,24 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes brain-pulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.1); filter: brightness(1.3); }
+}
+
+@keyframes confetti-burst {
+  0% { transform: scale(0) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+  100% { transform: scale(1) rotate(360deg); opacity: 0; }
+}
+
+@keyframes ai-thinking {
+  0%, 100% { opacity: 0.3; }
+  25% { opacity: 0.7; }
+  50% { opacity: 1; }
+  75% { opacity: 0.7; }
+}
+
 .animate-pulse-glow {
   animation: pulse-glow 2s infinite;
 }
@@ -62,6 +80,18 @@
 
 .neon-glow {
   text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+}
+
+.animate-brain-pulse {
+  animation: brain-pulse 2s ease-in-out infinite;
+}
+
+.animate-confetti-burst {
+  animation: confetti-burst 1s ease-out forwards;
+}
+
+.animate-ai-thinking {
+  animation: ai-thinking 2s ease-in-out infinite;
 }
 
 @layer base {
