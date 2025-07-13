@@ -1,5 +1,6 @@
 import Sidebar from "./sidebar";
 import Header from "./header";
+import Breadcrumb from "@/components/navigation/breadcrumb";
 import { useEffect, useState } from "react";
 import { ArrowLeftCircle, ArrowRightCircle } from "lucide-react";
 
@@ -59,6 +60,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
           )}
         
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <Breadcrumb />
             {children}
           </div>
         </div>

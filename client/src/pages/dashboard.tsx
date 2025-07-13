@@ -5,15 +5,19 @@ import UpcomingEvents from "@/components/dashboard/upcoming-events";
 import CourseProgress from "@/components/dashboard/course-progress";
 import CommunitySection from "@/components/dashboard/community-section";
 import CareerPathSuggestion from "@/components/ai/career-path-suggestion";
+import QuickActions from "@/components/navigation/quick-actions";
 
 const Dashboard = () => {
   return (
     <DashboardLayout title="Dashboard">
+      <div className="animate-bounce-in mb-6">
+        <QuickActions />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="animate-bounce-in">
+        <div className="animate-bounce-in" style={{ animationDelay: '0.2s' }}>
           <WelcomeSection />
         </div>
-        <div className="animate-bounce-in" style={{ animationDelay: '0.2s' }}>
+        <div className="animate-bounce-in" style={{ animationDelay: '0.3s' }}>
           <CpdProgressTracker />
         </div>
       </div>

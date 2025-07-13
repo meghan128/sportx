@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import GlobalSearch from "@/components/navigation/global-search";
 
 interface HeaderProps {
   title: string;
@@ -30,34 +31,25 @@ const Header = ({ title }: HeaderProps) => {
     <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex-1 flex items-center">
-            {showSearchBar ? (
-              <div className="w-full max-w-md relative">
-                <Input 
-                  type="search" 
-                  placeholder="Search workshops, courses, resources..." 
-                  className="pl-10 w-full" 
-                  autoFocus
-                  onBlur={() => setShowSearchBar(false)}
-                />
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-              </div>
-            ) : (
-              <h2 className="text-lg md:text-xl font-bold text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">{title}</h2>
-            )}
+          <div className="flex-1 flex items-center justify-between">
+            <h2 className="text-lg md:text-xl font-bold text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">{title}</h2>
+            
+            <div className="hidden md:block">
+              <GlobalSearch />
+            </div>
           </div>
           
           <div className="flex items-center space-x-3 md:space-x-4">
-            {!showSearchBar && (
+            <div className="md:hidden">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 className="text-gray-600 hover:text-primary"
-                onClick={() => setShowSearchBar(true)}
+                onClick={() => setShowSearchBar(!showSearchBar)}
               >
                 <Search className="h-5 w-5" />
               </Button>
-            )}
+            </div>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -150,6 +142,13 @@ const Header = ({ title }: HeaderProps) => {
           </div>
         </div>
       </div>
+      
+      {/* Mobile Search Bar */}
+      {showSearchBar && (
+        <div className="md:hidden border-t border-gray-100 p-4">
+          <GlobalSearch />
+        </div>
+      )}
     </header>
   );
 };
