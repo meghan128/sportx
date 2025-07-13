@@ -17,6 +17,7 @@ import Mentorship from "@/pages/mentorship";
 import Profile from "@/pages/profile";
 import Resources from "@/pages/resources";
 import Accreditation from "@/pages/accreditation";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/mentorship" component={Mentorship} />
       <Route path="/resources" component={Resources} />
       <Route path="/profile" component={Profile} />
+      <Route path="/settings" component={Settings} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
