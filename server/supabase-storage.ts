@@ -329,19 +329,65 @@ export class SupabaseStorage implements IStorage {
     
     if (error) {
       console.error('Error fetching CPD summary:', error);
-      return { currentPoints: 0, requiredPoints: 36, period: 'Current Year' };
+      return { 
+        currentPoints: 0, 
+        requiredPoints: 36, 
+        period: 'Current Year',
+        categories: [
+          {
+            id: "clinical",
+            name: "Clinical Skills",
+            earnedPoints: 0,
+            requiredPoints: 15
+          },
+          {
+            id: "research",
+            name: "Research & Publication",
+            earnedPoints: 0,
+            requiredPoints: 10
+          },
+          {
+            id: "development",
+            name: "Professional Development",
+            earnedPoints: 0,
+            requiredPoints: 11
+          }
+        ]
+      };
     }
     
     const currentPoints = data.reduce((sum, activity) => sum + activity.cpd_points, 0);
+    
+    // Calculate points by category based on activity type
+    const breakdown = data.reduce((acc, activity) => {
+      acc[activity.activity_type] = (acc[activity.activity_type] || 0) + activity.cpd_points;
+      return acc;
+    }, {});
     
     return {
       currentPoints,
       requiredPoints: 36,
       period: 'Current Year',
-      breakdown: data.reduce((acc, activity) => {
-        acc[activity.activity_type] = (acc[activity.activity_type] || 0) + activity.cpd_points;
-        return acc;
-      }, {})
+      categories: [
+        {
+          id: "clinical",
+          name: "Clinical Skills",
+          earnedPoints: breakdown['Event'] || breakdown['Course'] || 0,
+          requiredPoints: 15
+        },
+        {
+          id: "research",
+          name: "Research & Publication",
+          earnedPoints: breakdown['Publication'] || breakdown['Research'] || 0,
+          requiredPoints: 10
+        },
+        {
+          id: "development",
+          name: "Professional Development",
+          earnedPoints: breakdown['Workshop'] || breakdown['Webinar'] || 0,
+          requiredPoints: 11
+        }
+      ]
     };
   }
 
