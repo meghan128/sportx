@@ -1,53 +1,128 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
+import { Switch, Route, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { Suspense, lazy, useEffect } from "react";
+import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
+import LoadingSpinner from "@/components/ui/loading-spinner";
+import ErrorBoundary from "@/components/error-boundary";
+import { useAuth } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/protected-route";
 
-// Pages
-import Dashboard from "@/pages/dashboard";
-import Events from "@/pages/events";
-import EventDetails from "@/pages/event-details";
-import Courses from "@/pages/courses";
-import CourseDetails from "@/pages/course-details";
-import CpdCredits from "@/pages/cpd-credits";
-import Community from "@/pages/community";
-import Forums from "@/pages/forums";
-import Messages from "@/pages/messages";
-import Mentorship from "@/pages/mentorship";
-import Profile from "@/pages/profile";
-import Resources from "@/pages/resources";
-import Accreditation from "@/pages/accreditation";
-import Settings from "@/pages/settings";
-import NotFound from "@/pages/not-found";
+// Lazy load pages for better performance
+const Dashboard = lazy(() => import("@/pages/dashboard"));
+const Events = lazy(() => import("@/pages/events"));
+const EventDetails = lazy(() => import("@/pages/event-details"));
+const Courses = lazy(() => import("@/pages/courses"));
+const CourseDetails = lazy(() => import("@/pages/course-details"));
+const CpdCredits = lazy(() => import("@/pages/cpd-credits"));
+const Community = lazy(() => import("@/pages/community"));
+const Forums = lazy(() => import("@/pages/forums"));
+const Messages = lazy(() => import("@/pages/messages"));
+const Mentorship = lazy(() => import("@/pages/mentorship"));
+const Profile = lazy(() => import("@/pages/profile"));
+const Resources = lazy(() => import("@/pages/resources"));
+const Accreditation = lazy(() => import("@/pages/accreditation"));
+const Settings = lazy(() => import("@/pages/settings"));
+const Login = lazy(() => import("@/pages/login"));
+const NotFound = lazy(() => import("@/pages/not-found"));
 
-function Router() {
+// Route configuration for better maintainability
+const routes = [
+  { path: "/", component: Dashboard, protected: true, title: "Dashboard" },
+  { path: "/events", component: Events, protected: true, title: "Events" },
+  { path: "/events/:id", component: EventDetails, protected: true, title: "Event Details" },
+  { path: "/courses", component: Courses, protected: true, title: "Courses" },
+  { path: "/courses/:id", component: CourseDetails, protected: true, title: "Course Details" },
+  { path: "/cpd-credits", component: CpdCredits, protected: true, title: "CPD Credits" },
+  { path: "/accreditation", component: Accreditation, protected: true, title: "Accreditation" },
+  { path: "/community", component: Community, protected: true, title: "Community" },
+  { path: "/forums", component: Forums, protected: true, title: "Forums" },
+  { path: "/messages", component: Messages, protected: true, title: "Messages" },
+  { path: "/mentorship", component: Mentorship, protected: true, title: "Mentorship" },
+  { path: "/resources", component: Resources, protected: true, title: "Resources" },
+  { path: "/profile", component: Profile, protected: true, title: "Profile" },
+  { path: "/settings", component: Settings, protected: true, title: "Settings" },
+  { path: "/login", component: Login, protected: false, title: "Login" },
+];
+
+// Custom hook for page title management
+function usePageTitle(title) {
+  useEffect(() => {
+    document.title = title ? `${title} - Your App` : "Your App";
+  }, [title]);
+}
+
+// Loading component with better UX
+function PageLoader() {
   return (
-    <Switch>
-      <Route path="/" component={Dashboard} />
-      <Route path="/events" component={Events} />
-      <Route path="/events/:id" component={EventDetails} />
-      <Route path="/courses" component={Courses} />
-      <Route path="/courses/:id" component={CourseDetails} />
-      <Route path="/cpd-credits" component={CpdCredits} />
-      <Route path="/accreditation" component={Accreditation} />
-      <Route path="/community" component={Community} />
-      <Route path="/forums" component={Forums} />
-      <Route path="/messages" component={Messages} />
-      <Route path="/mentorship" component={Mentorship} />
-      <Route path="/resources" component={Resources} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/settings" component={Settings} />
-      {/* Fallback to 404 */}
-      <Route component={NotFound} />
-    </Switch>
+    <div className="flex items-center justify-center min-h-screen">
+      <LoadingSpinner size="lg" />
+      <span className="ml-2 text-lg">Loading...</span>
+    </div>
   );
 }
 
+// Router component with enhanced features
+function Router() {
+  const [location] = useLocation();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Find current route for title management
+  const currentRoute = routes.find(route => {
+    if (route.path.includes(':')) {
+      const routeRegex = new RegExp(
+        '^' + route.path.replace(/:([^/]+)/g, '([^/]+)') + '$'
+      );
+      return routeRegex.test(location);
+    }
+    return route.path === location;
+  });
+
+  // Set page title
+  usePageTitle(currentRoute?.title);
+
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
+          {routes.map(({ path, component: Component, protected: isProtected }) => (
+            <Route
+              key={path}
+              path={path}
+              component={() => 
+                isProtected ? (
+                  <ProtectedRoute>
+                    <Component />
+                  </ProtectedRoute>
+                ) : (
+                  <Component />
+                )
+              }
+            />
+          ))}
+          {/* Fallback to 404 */}
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+// Enhanced App component with additional providers
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <ErrorBoundary>
+        <div className="min-h-screen bg-background">
+          <Router />
+          <Toaster />
+        </div>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 }
