@@ -1,0 +1,31 @@
+[vite] connecting...
+[vite] connected.
+Warning: Cannot update a component (&#x60;Router&#x60;) while rendering a different component (&#x60;ProtectedRoute&#x60;). To locate the bad setState() call inside &#x60;ProtectedRoute&#x60;, follow the stack trace as described in https://reactjs.org/link/setstate-in-render
+    at ProtectedRoute (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/components/protected-route.tsx:21:34)
+    at component
+    at Route (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f09b38aa:323:16)
+    at Switch (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f09b38aa:379:17)
+    at Suspense
+    at ErrorBoundary (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/components/error-boundary.tsx:10:5)
+    at Router (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/App.tsx?v=OZJnX87xecuykoTBHFkTf:104:22)
+    at div
+    at ErrorBoundary (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/components/error-boundary.tsx:10:5)
+    at AuthProvider (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/hooks/useAuth.tsx:42:32)
+    at QueryClientProvider (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=f09b38aa:2805:3)
+    at App
+at ProtectedRoute (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/components/protected-route.tsx:21:34)
+at component
+at Route (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f09b38aa:323:16)
+at Switch (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f09b38aa:379:17)
+at Suspense
+at ErrorBoundary (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/components/error-boundary.tsx:10:5)
+at Router (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/App.tsx?v=OZJnX87xecuykoTBHFkTf:104:22)
+at div
+at ErrorBoundary (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/components/error-boundary.tsx:10:5)
+at AuthProvider (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/src/hooks/useAuth.tsx:42:32)
+at QueryClientProvider (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=f09b38aa:2805:3)
+at App
+at t.value (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://77e75044-3d70-4fd6-88e5-363be95da3b2-00-16myk11jwe30c.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
