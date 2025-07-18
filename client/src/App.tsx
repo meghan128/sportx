@@ -5,7 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import ErrorBoundary from "@/components/error-boundary";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/protected-route";
 
 // Lazy load pages for better performance
@@ -117,12 +117,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <div className="min-h-screen bg-background">
-          <Router />
-          <Toaster />
-        </div>
-      </ErrorBoundary>
+      <AuthProvider>
+        <ErrorBoundary>
+          <div className="min-h-screen bg-background">
+            <Router />
+            <Toaster />
+          </div>
+        </ErrorBoundary>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
