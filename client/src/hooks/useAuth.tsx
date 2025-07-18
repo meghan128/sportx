@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -24,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const mockLogin = async (email: string, password: string): Promise<User> => {
   // Simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
-  
+
   if (email === "demo@example.com" && password === "password") {
     const user = {
       id: "1",
@@ -47,38 +46,42 @@ const getCurrentUser = async (): Promise<User | null> => {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const { data: currentUser, isLoading } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: getCurrentUser,
+  const { data: user, isLoading, error } = useQuery<User>({
+    queryKey: ['/api/users/current'],
+    retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
-    setUser(currentUser || null);
-  }, [currentUser]);
+    if (user && !error) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, [user, error]);
 
-  const login = async (email: string, password: string) => {
-    const loggedInUser = await mockLogin(email, password);
-    setUser(loggedInUser);
+  const login = async (credentials: LoginCredentials) => {
+    // Implement login logic
+    return Promise.resolve();
   };
 
-  const logout = () => {
-    localStorage.removeItem("auth_user");
-    setUser(null);
-  };
-
-  const value: AuthContextType = {
-    user,
-    isAuthenticated: !!user,
-    isLoading,
-    login,
-    logout,
+  const logout = async () => {
+    // Implement logout logic
+    setIsAuthenticated(false);
+    return Promise.resolve();
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated,
+      isLoading,
+      login,
+      logout,
+    }}>
       {children}
     </AuthContext.Provider>
   );
