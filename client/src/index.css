@@ -2,32 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Energetic animations and effects */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
-  50% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+/* === Animations === */
+@keyframes ai-thinking {
+  0%, 100% { opacity: 0.3; }
+  25% { opacity: 0.7; }
+  50% { opacity: 1; }
+  75% { opacity: 0.7; }
 }
 
 @keyframes bounce-in {
   0% { transform: scale(0.8); opacity: 0; }
   60% { transform: scale(1.05); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes gradient-wave {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
 }
 
 @keyframes brain-pulse {
@@ -41,45 +27,34 @@
   100% { transform: scale(1) rotate(360deg); opacity: 0; }
 }
 
-@keyframes ai-thinking {
-  0%, 100% { opacity: 0.3; }
-  25% { opacity: 0.7; }
-  50% { opacity: 1; }
-  75% { opacity: 0.7; }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 2s infinite;
+@keyframes gradient-wave {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+  50% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* === Animation Utilities === */
+.animate-ai-thinking {
+  animation: ai-thinking 2s ease-in-out infinite;
 }
 
 .animate-bounce-in {
   animation: bounce-in 0.6s ease-out;
-}
-
-.animate-gradient-wave {
-  background: linear-gradient(45deg, #FF6B35, #8B5CF6, #F59E0B, #10B981);
-  background-size: 400% 400%;
-  animation: gradient-wave 3s ease infinite;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.glass-effect {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.neon-glow {
-  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
 }
 
 .animate-brain-pulse {
@@ -90,10 +65,38 @@
   animation: confetti-burst 1s ease-out forwards;
 }
 
-.animate-ai-thinking {
-  animation: ai-thinking 2s ease-in-out infinite;
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
+.animate-gradient-wave {
+  background: linear-gradient(45deg, #FF6B35, #8B5CF6, #F59E0B, #10B981);
+  background-size: 400% 400%;
+  animation: gradient-wave 3s ease infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* === Visual Effects === */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.neon-glow {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+}
+
+/* === Base Theme Variables === */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -113,24 +116,14 @@
 
     --primary: 12 100% 60%;
     --primary-foreground: 0 0% 100%;
-
-    --primary-light: 12 100% 70%;
-    --primary-dark: 12 100% 50%;
-
     --secondary: 280 100% 70%;
     --secondary-foreground: 0 0% 100%;
-    
-    --secondary-light: 280 100% 80%;
-    --secondary-dark: 280 100% 60%;
-
     --accent: 45 100% 60%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 100% 50%;
     --destructive-foreground: 210 40% 98%;
 
     --ring: 215 20.2% 65.1%;
-
     --radius: 0.5rem;
 
     --chart-1: 12 100% 60%;
@@ -142,9 +135,7 @@
     --sidebar-background: 12 100% 60%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 280 100% 70%;
-    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 45 100% 60%;
-    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 12 100% 50%;
     --sidebar-ring: 280 100% 80%;
   }
@@ -155,9 +146,6 @@
 
     --muted: 223 47% 11%;
     --muted-foreground: 215.4 16.3% 56.9%;
-
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
 
     --popover: 224 71% 4%;
     --popover-foreground: 215 20.2% 65.1%;
@@ -174,11 +162,13 @@
     --secondary: 222.2 47.4% 11.2%;
     --secondary-foreground: 210 40% 98%;
 
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
     --ring: 216 34% 17%;
-
     --radius: 0.5rem;
   }
 
@@ -195,32 +185,13 @@
   }
 }
 
+/* === Utility Extensions === */
 @layer utilities {
-  .bg-primary-light {
-    @apply bg-[#2a7090];
-  }
-  
-  .bg-primary-dark {
-    @apply bg-[#164f66];
-  }
-  
-  .bg-secondary-light {
-    @apply bg-[#68d1c3];
-  }
-  
-  .bg-secondary-dark {
-    @apply bg-[#46b4a5];
-  }
-  
-  .bg-accent-light {
-    @apply bg-[#1aa8a5];
-  }
-  
-  .bg-accent-dark {
-    @apply bg-[#128885];
-  }
-  
-  .text-primary-dark {
-    @apply text-[#164f66];
-  }
+  .bg-primary-dark { @apply bg-[#164f66]; }
+  .bg-primary-light { @apply bg-[#2a7090]; }
+  .bg-secondary-dark { @apply bg-[#46b4a5]; }
+  .bg-secondary-light { @apply bg-[#68d1c3]; }
+  .bg-accent-dark { @apply bg-[#128885]; }
+  .bg-accent-light { @apply bg-[#1aa8a5]; }
+  .text-primary-dark { @apply text-[#164f66]; }
 }
