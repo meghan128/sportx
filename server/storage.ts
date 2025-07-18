@@ -42,14 +42,14 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, userData: Partial<User>): Promise<User>;
   updateUserPrivacySettings(id: number, privacySettings: any): Promise<User>;
-  
+
   // Event operations
   getUpcomingEvents(): Promise<Event[]>;
   getAllEvents(filters?: EventFilter): Promise<Event[]>;
   getEventById(id: number): Promise<Event | undefined>;
   getEventCategories(): Promise<string[]>;
   registerForEvent(userId: number, eventId: number, ticketTypeId: string, quantity: number): Promise<EventRegistration>;
-  
+
   // Course operations
   getUserCourses(userId: number, status?: string): Promise<Course[]>;
   getRecommendedCourses(userId: number): Promise<Course[]>;
@@ -57,25 +57,25 @@ export interface IStorage {
   getCourseById(id: number, userId?: number): Promise<Course | undefined>;
   getCourseCategories(): Promise<string[]>;
   enrollInCourse(userId: number, courseId: number): Promise<CourseEnrollment>;
-  
+
   // CPD operations
   getCpdSummary(userId: number): Promise<any>;
   getCpdStatus(userId: number): Promise<any>;
   getCpdActivities(userId: number, filters?: CpdActivityFilter): Promise<CpdActivity[]>;
-  
+
   // Community operations
   getForumCategories(): Promise<ForumCategory[]>;
   getTrendingDiscussions(): Promise<Discussion[]>;
   getRecentDiscussions(): Promise<Discussion[]>;
   getMentorshipOpportunities(): Promise<MentorshipOpportunity[]>;
-  
+
   // Credential operations
   getUserCredentials(userId: number): Promise<Credential[]>;
   getCredentialById(id: number): Promise<Credential | undefined>;
   createCredential(credential: Partial<Credential>): Promise<Credential>;
   updateCredential(id: number, credentialData: Partial<Credential>): Promise<Credential>;
   deleteCredential(id: number): Promise<boolean>;
-  
+
   // Security operations
   changePassword(userId: number, currentPassword: string, newPassword: string): Promise<boolean>;
   logout(userId: number): Promise<boolean>;
@@ -92,7 +92,7 @@ export class MemStorage implements IStorage {
   private discussions: Map<number, Discussion>;
   private mentorshipOpportunities: Map<number, MentorshipOpportunity>;
   private cpdActivities: Map<number, CpdActivity>;
-  
+
   private currentUserId: number;
   private currentEventId: number;
   private currentTicketTypeId: number;
@@ -115,7 +115,7 @@ export class MemStorage implements IStorage {
     this.discussions = new Map();
     this.mentorshipOpportunities = new Map();
     this.cpdActivities = new Map();
-    
+
     this.currentUserId = 1;
     this.currentEventId = 1;
     this.currentTicketTypeId = 1;
@@ -126,7 +126,7 @@ export class MemStorage implements IStorage {
     this.currentDiscussionId = 1;
     this.currentMentorshipOpportunityId = 1;
     this.currentCpdActivityId = 1;
-    
+
     // Initialize with sample data
     this.initializeData();
   }
@@ -169,13 +169,13 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${id} not found`);
     }
-    
+
     const updatedUser = {
       ...user,
       ...userData,
       updatedAt: new Date()
     };
-    
+
     this.users.set(id, updatedUser);
     return updatedUser;
   }
@@ -192,7 +192,7 @@ export class MemStorage implements IStorage {
 
   async getAllEvents(filters?: EventFilter): Promise<Event[]> {
     let events = Array.from(this.events.values());
-    
+
     if (filters) {
       // Apply search filter
       if (filters.search) {
@@ -202,32 +202,32 @@ export class MemStorage implements IStorage {
           event.description.toLowerCase().includes(searchLower)
         );
       }
-      
+
       // Apply type filter
       if (filters.type && filters.type.length > 0) {
         events = events.filter(event => filters.type!.includes(event.type));
       }
-      
+
       // Apply category filter
       if (filters.category && filters.category.length > 0) {
         events = events.filter(event => 
           event.category && filters.category!.includes(event.category)
         );
       }
-      
+
       // Apply date range filter
       if (filters.dateRange && filters.dateRange !== 'all') {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
-        
+
         const nextWeek = new Date(today);
         nextWeek.setDate(nextWeek.getDate() + 7);
-        
+
         const nextMonth = new Date(today);
         nextMonth.setMonth(nextMonth.getMonth() + 1);
-        
+
         switch (filters.dateRange) {
           case 'today':
             events = events.filter(event => {
@@ -250,7 +250,7 @@ export class MemStorage implements IStorage {
           case 'next-month':
             const afterNextMonth = new Date(nextMonth);
             afterNextMonth.setMonth(afterNextMonth.getMonth() + 1);
-            
+
             events = events.filter(event => {
               const eventDate = new Date(event.date);
               return eventDate >= nextMonth && eventDate < afterNextMonth;
@@ -258,7 +258,7 @@ export class MemStorage implements IStorage {
             break;
         }
       }
-      
+
       // Apply CPD points filter
       if (filters.cpdPoints && filters.cpdPoints !== 'all') {
         switch (filters.cpdPoints) {
@@ -274,38 +274,38 @@ export class MemStorage implements IStorage {
         }
       }
     }
-    
+
     // Sort by date
     return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
 
   async getEventById(id: number): Promise<Event | undefined> {
     const event = this.events.get(id);
-    
+
     if (event) {
       // Add ticket types for this event
       const ticketTypesArray = Array.from(this.ticketTypes.values())
         .filter(ticket => ticket.eventId === id);
-      
+
       return {
         ...event,
         ticketTypes: ticketTypesArray
       };
     }
-    
+
     return undefined;
   }
 
   async getEventCategories(): Promise<string[]> {
     // Extract unique categories from events
     const categories = new Set<string>();
-    
+
     this.events.forEach(event => {
       if (event.category) {
         categories.add(event.category);
       }
     });
-    
+
     return Array.from(categories);
   }
 
@@ -314,21 +314,21 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     const event = await this.getEventById(eventId);
     if (!event) {
       throw new Error(`Event with ID ${eventId} not found`);
     }
-    
+
     const ticketType = Array.from(this.ticketTypes.values())
       .find(ticket => ticket.id.toString() === ticketTypeId && ticket.eventId === eventId);
-    
+
     if (!ticketType) {
       throw new Error(`Ticket type with ID ${ticketTypeId} not found for event ${eventId}`);
     }
-    
+
     const totalPrice = ticketType.price * quantity;
-    
+
     const registration: EventRegistration = {
       id: this.currentEventRegistrationId++,
       userId,
@@ -339,16 +339,16 @@ export class MemStorage implements IStorage {
       status: "confirmed",
       createdAt: new Date()
     };
-    
+
     this.eventRegistrations.set(registration.id, registration);
-    
+
     // Update attendees count for the event
     const updatedEvent = {
       ...event,
       attendees: (event.attendees || 0) + quantity
     };
     this.events.set(eventId, updatedEvent);
-    
+
     return registration;
   }
 
@@ -358,13 +358,13 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     const enrollments = Array.from(this.courseEnrollments.values())
       .filter(enrollment => enrollment.userId === userId);
-    
+
     if (status) {
       const filteredEnrollments = enrollments.filter(enrollment => enrollment.status === status);
-      
+
       return Promise.all(
         filteredEnrollments.map(async enrollment => {
           const course = await this.getCourseById(enrollment.courseId, userId);
@@ -372,7 +372,7 @@ export class MemStorage implements IStorage {
         })
       );
     }
-    
+
     return Promise.all(
       enrollments.map(async enrollment => {
         const course = await this.getCourseById(enrollment.courseId, userId);
@@ -386,24 +386,24 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     // Get courses that the user is not enrolled in
     const enrolledCourseIds = new Set(
       Array.from(this.courseEnrollments.values())
         .filter(enrollment => enrollment.userId === userId)
         .map(enrollment => enrollment.courseId)
     );
-    
+
     const recommendedCourses = Array.from(this.courses.values())
       .filter(course => !enrolledCourseIds.has(course.id))
       .slice(0, 2); // Limit to 2 courses
-    
+
     return recommendedCourses;
   }
 
   async getAllCourses(filters?: CourseFilter): Promise<Course[]> {
     let courses = Array.from(this.courses.values());
-    
+
     if (filters) {
       // Apply search filter
       if (filters.search) {
@@ -413,12 +413,12 @@ export class MemStorage implements IStorage {
           course.description.toLowerCase().includes(searchLower)
         );
       }
-      
+
       // Apply category filter
       if (filters.category && filters.category.length > 0) {
         courses = courses.filter(course => filters.category!.includes(course.category));
       }
-      
+
       // Apply duration filter
       if (filters.duration && filters.duration !== 'all') {
         switch (filters.duration) {
@@ -442,7 +442,7 @@ export class MemStorage implements IStorage {
             break;
         }
       }
-      
+
       // Apply CPD points filter
       if (filters.cpdPoints && filters.cpdPoints !== 'all') {
         switch (filters.cpdPoints) {
@@ -457,32 +457,32 @@ export class MemStorage implements IStorage {
             break;
         }
       }
-      
+
       // Apply difficulty filter
       if (filters.difficulty && filters.difficulty !== 'all') {
         courses = courses.filter(course => course.difficulty.toLowerCase() === filters.difficulty!.toLowerCase());
       }
     }
-    
+
     // Sort alphabetically by title
     return courses.sort((a, b) => a.title.localeCompare(b.title));
   }
 
   async getCourseById(id: number, userId?: number): Promise<Course | undefined> {
     const course = this.courses.get(id);
-    
+
     if (!course) return undefined;
-    
+
     // If userId is provided, check if the user is enrolled in the course
     if (userId) {
       const enrollment = Array.from(this.courseEnrollments.values())
         .find(enrollment => enrollment.userId === userId && enrollment.courseId === id);
-      
+
       if (enrollment) {
         // Calculate last accessed days ago
         const daysAgo = Math.floor((new Date().getTime() - enrollment.lastAccessedAt.getTime()) / (1000 * 60 * 60 * 24));
         const lastAccessed = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
-        
+
         return {
           ...course,
           progress: {
@@ -493,18 +493,18 @@ export class MemStorage implements IStorage {
         };
       }
     }
-    
+
     return course;
   }
 
   async getCourseCategories(): Promise<string[]> {
     // Extract unique categories from courses
     const categories = new Set<string>();
-    
+
     this.courses.forEach(course => {
       categories.add(course.category);
     });
-    
+
     return Array.from(categories);
   }
 
@@ -513,20 +513,20 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     const course = await this.getCourseById(courseId);
     if (!course) {
       throw new Error(`Course with ID ${courseId} not found`);
     }
-    
+
     // Check if user is already enrolled
     const existingEnrollment = Array.from(this.courseEnrollments.values())
       .find(enrollment => enrollment.userId === userId && enrollment.courseId === courseId);
-    
+
     if (existingEnrollment) {
       throw new Error(`User is already enrolled in this course`);
     }
-    
+
     const enrollment: CourseEnrollment = {
       id: this.currentCourseEnrollmentId++,
       userId,
@@ -538,7 +538,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    
+
     this.courseEnrollments.set(enrollment.id, enrollment);
     return enrollment;
   }
@@ -549,7 +549,7 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     // Return summary with earned and required points
     return {
       currentPoints: 18,
@@ -583,7 +583,7 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     return {
       pointsNeeded: 18,
       period: "Current Quarter (Apr-Jun 2023)"
@@ -595,10 +595,10 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     let activities = Array.from(this.cpdActivities.values())
       .filter(activity => activity.userId === userId);
-    
+
     if (filters) {
       // Apply year filter
       if (filters.year) {
@@ -607,7 +607,7 @@ export class MemStorage implements IStorage {
           return activityYear === filters.year;
         });
       }
-      
+
       // Apply category filter
       if (filters.category && filters.category !== 'all') {
         activities = activities.filter(activity => {
@@ -617,7 +617,7 @@ export class MemStorage implements IStorage {
           return true;
         });
       }
-      
+
       // Apply search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
@@ -627,7 +627,7 @@ export class MemStorage implements IStorage {
         );
       }
     }
-    
+
     // Sort by date (newest first)
     return activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
@@ -645,13 +645,13 @@ export class MemStorage implements IStorage {
       .map(discussion => {
         const author = this.users.get(discussion.authorId);
         const forum = this.forumCategories.get(discussion.forumId);
-        
+
         // Calculate time ago
         const now = new Date();
         const postedDate = discussion.createdAt;
         const diffTime = Math.abs(now.getTime() - postedDate.getTime());
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+
         let timeAgo;
         if (diffDays === 0) {
           const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
@@ -666,7 +666,7 @@ export class MemStorage implements IStorage {
         } else {
           timeAgo = `${diffDays} days ago`;
         }
-        
+
         return {
           ...discussion,
           author: {
@@ -688,13 +688,13 @@ export class MemStorage implements IStorage {
       .map(discussion => {
         const author = this.users.get(discussion.authorId);
         const forum = this.forumCategories.get(discussion.forumId);
-        
+
         // Calculate time ago
         const now = new Date();
         const postedDate = discussion.createdAt;
         const diffTime = Math.abs(now.getTime() - postedDate.getTime());
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+
         let timeAgo;
         if (diffDays === 0) {
           const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
@@ -709,7 +709,7 @@ export class MemStorage implements IStorage {
         } else {
           timeAgo = `${diffDays} days ago`;
         }
-        
+
         return {
           ...discussion,
           author: {
@@ -730,7 +730,7 @@ export class MemStorage implements IStorage {
         .slice(0, 2) // Limit to 2 opportunities
         .map(async opportunity => {
           const mentor = await this.getUserById(opportunity.userId);
-          
+
           return {
             ...opportunity,
             name: mentor!.name,
@@ -739,14 +739,14 @@ export class MemStorage implements IStorage {
         })
     );
   }
-  
+
   // PRIVACY SETTINGS OPERATIONS
   async updateUserPrivacySettings(id: number, privacySettings: any): Promise<User> {
     const user = await this.getUserById(id);
     if (!user) {
       throw new Error(`User with ID ${id} not found`);
     }
-    
+
     const updatedUser = {
       ...user,
       privacySettings: {
@@ -755,21 +755,21 @@ export class MemStorage implements IStorage {
       },
       updatedAt: new Date()
     };
-    
+
     this.users.set(id, updatedUser);
     return updatedUser;
   }
-  
+
   // CREDENTIAL OPERATIONS
   private credentials: Map<number, Credential> = new Map();
   private currentCredentialId: number = 1;
-  
+
   async getUserCredentials(userId: number): Promise<Credential[]> {
     const user = await this.getUserById(userId);
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     // Return credentials for this user
     return Array.from(this.credentials.values())
       .filter(credential => credential.userId === userId)
@@ -778,15 +778,15 @@ export class MemStorage implements IStorage {
         return new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime();
       });
   }
-  
+
   async getCredentialById(id: number): Promise<Credential | undefined> {
     return this.credentials.get(id);
   }
-  
+
   async createCredential(credentialData: Partial<Credential>): Promise<Credential> {
     const id = this.currentCredentialId++;
     const now = new Date();
-    
+
     const credential: Credential = {
       id,
       userId: credentialData.userId!,
@@ -801,59 +801,59 @@ export class MemStorage implements IStorage {
       createdAt: now,
       updatedAt: now
     };
-    
+
     this.credentials.set(id, credential);
     return credential;
   }
-  
+
   async updateCredential(id: number, credentialData: Partial<Credential>): Promise<Credential> {
     const credential = await this.getCredentialById(id);
     if (!credential) {
       throw new Error(`Credential with ID ${id} not found`);
     }
-    
+
     const updatedCredential = {
       ...credential,
       ...credentialData,
       updatedAt: new Date()
     };
-    
+
     this.credentials.set(id, updatedCredential);
     return updatedCredential;
   }
-  
+
   async deleteCredential(id: number): Promise<boolean> {
     const credential = await this.getCredentialById(id);
     if (!credential) {
       throw new Error(`Credential with ID ${id} not found`);
     }
-    
+
     return this.credentials.delete(id);
   }
-  
+
   // SECURITY OPERATIONS
   async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<boolean> {
     const user = await this.getUserById(userId);
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    
+
     // Check if current password matches
     if (user.password !== currentPassword) {
       throw new Error('Current password is incorrect');
     }
-    
+
     // Update password
     const updatedUser = {
       ...user,
       password: newPassword,
       updatedAt: new Date()
     };
-    
+
     this.users.set(userId, updatedUser);
     return true;
   }
-  
+
   async logout(userId: number): Promise<boolean> {
     // In a real application, this would invalidate the user's session
     // For this demo, we'll just return true
@@ -888,7 +888,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-05-22")
     };
     this.users.set(user.id, user);
-    
+
     // Create more sample users for community interactions
     const user2: User = {
       id: this.currentUserId++,
@@ -908,7 +908,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-04-15")
     };
     this.users.set(user2.id, user2);
-    
+
     const user3: User = {
       id: this.currentUserId++,
       username: "priya_sharma",
@@ -927,7 +927,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-03-18")
     };
     this.users.set(user3.id, user3);
-    
+
     // Create sample events
     const event1: Event = {
       id: this.currentEventId++,
@@ -996,7 +996,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-03-10")
     };
     this.events.set(event1.id, event1);
-    
+
     // Create ticket types for event 1
     const ticket1: TicketType = {
       id: this.currentTicketTypeId++,
@@ -1009,7 +1009,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket1.id.toString(), ticket1);
-    
+
     const ticket2: TicketType = {
       id: this.currentTicketTypeId++,
       eventId: event1.id,
@@ -1020,7 +1020,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket2.id.toString(), ticket2);
-    
+
     const ticket3: TicketType = {
       id: this.currentTicketTypeId++,
       eventId: event1.id,
@@ -1031,7 +1031,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket3.id.toString(), ticket3);
-    
+
     const event2: Event = {
       id: this.currentEventId++,
       title: "Performance Nutrition for Elite Athletes Workshop",
@@ -1057,7 +1057,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-03-15")
     };
     this.events.set(event2.id, event2);
-    
+
     // Create ticket types for event 2
     const ticket4: TicketType = {
       id: this.currentTicketTypeId++,
@@ -1069,7 +1069,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket4.id.toString(), ticket4);
-    
+
     const ticket5: TicketType = {
       id: this.currentTicketTypeId++,
       eventId: event2.id,
@@ -1080,7 +1080,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket5.id.toString(), ticket5);
-    
+
     const ticket6: TicketType = {
       id: this.currentTicketTypeId++,
       eventId: event2.id,
@@ -1091,7 +1091,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket6.id.toString(), ticket6);
-    
+
     const event3: Event = {
       id: this.currentEventId++,
       title: "Mental Toughness & Resilience in Elite Sports",
@@ -1116,7 +1116,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-03-20")
     };
     this.events.set(event3.id, event3);
-    
+
     // Create ticket types for event 3
     const ticket7: TicketType = {
       id: this.currentTicketTypeId++,
@@ -1128,7 +1128,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket7.id.toString(), ticket7);
-    
+
     const ticket8: TicketType = {
       id: this.currentTicketTypeId++,
       eventId: event3.id,
@@ -1139,7 +1139,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.ticketTypes.set(ticket8.id.toString(), ticket8);
-    
+
     // Create sample courses
     const course1: Course = {
       id: this.currentCourseId++,
@@ -1356,7 +1356,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-01-20")
     };
     this.courses.set(course1.id, course1);
-    
+
     const course2: Course = {
       id: this.currentCourseId++,
       title: "Mental Health Support for Athletes: A Comprehensive Approach",
@@ -1464,7 +1464,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-02-15")
     };
     this.courses.set(course2.id, course2);
-    
+
     const course3: Course = {
       id: this.currentCourseId++,
       title: "Sports Nutrition: Periodization for Performance",
@@ -1549,10 +1549,10 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-03-05")
     };
     this.courses.set(course3.id, course3);
-    
+
     const course4: Course = {
       id: this.currentCourseId++,
-      title: "Biomechanics of Running: Analysis & Optimization",
+      title: "Running Biomechanics and Gait Analysis",
       description: "A detailed exploration of running biomechanics, gait analysis techniques, and evidence-based approaches to optimizing running form and preventing injuries.",
       thumbnail: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
       category: "Biomechanics",
@@ -1573,7 +1573,337 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-04-10")
     };
     this.courses.set(course4.id, course4);
-    
+
+    const course5: Course = {
+      id: this.currentCourseId++,
+      title: "Advanced Strength Training for Cricket Performance",
+      description: "Comprehensive course covering periodization, biomechanics, and sport-specific strength training protocols for cricket players across all formats.",
+      thumbnail: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+      category: "Strength & Conditioning",
+      duration: "12 hours",
+      modules: 8,
+      cpdPoints: 10,
+      difficulty: "Advanced",
+      accreditedBy: "National Strength and Conditioning Association",
+      rating: 4.8,
+      reviews: 156,
+      learningOutcomes: [
+        "Design periodized strength programs for cricket players",
+        "Implement biomechanically sound movement patterns",
+        "Assess and improve power development in cricket-specific movements",
+        "Manage training loads across different cricket formats"
+      ],
+      targetAudience: [
+        "Strength & Conditioning Coaches",
+        "Exercise Physiologists",
+        "Athletic Trainers",
+        "Cricket Coaches"
+      ],
+      videoHours: "8 hours",
+      resources: "15 downloadable resources",
+      instructors: [
+        {
+          id: "8",
+          name: "Coach Vikram Singh",
+          title: "Head S&C Coach, Mumbai Indians",
+          bio: "Former national-level cricketer with 10+ years in professional strength training.",
+          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+          credentials: ["CSCS", "NSCA-CPT", "Cricket Australia Level 3"]
+        }
+      ],
+      curriculum: [
+        {
+          id: "m1",
+          title: "Cricket Movement Analysis",
+          duration: "1.5 hours",
+          lessons: [
+            {
+              id: "l1",
+              title: "Batting Biomechanics",
+              type: "video",
+              duration: "25 min",
+              completed: false
+            },
+            {
+              id: "l2",
+              title: "Bowling Action Assessment",
+              type: "video",
+              duration: "30 min",
+              completed: false
+            },
+            {
+              id: "l3",
+              title: "Fielding Movement Patterns",
+              type: "video",
+              duration: "20 min",
+              completed: false
+            },
+            {
+              id: "l4",
+              title: "Movement Screen for Cricketers",
+              type: "practical",
+              duration: "15 min",
+              completed: false
+            }
+          ]
+        },
+        {
+          id: "m2",
+          title: "Periodization for Cricket",
+          duration: "2 hours",
+          lessons: [
+            {
+              id: "l5",
+              title: "Pre-season Preparation",
+              type: "video",
+              duration: "35 min",
+              completed: false
+            },
+            {
+              id: "l6",
+              title: "In-season Maintenance",
+              type: "video",
+              duration: "30 min",
+              completed: false
+            },
+            {
+              id: "l7",
+              title: "Format-Specific Programming",
+              type: "video",
+              duration: "25 min",
+              completed: false
+            },
+            {
+              id: "l8",
+              title: "Recovery Protocols",
+              type: "text",
+              duration: "10 min",
+              completed: false
+            }
+          ]
+        }
+      ],
+      lessons: 16,
+      createdAt: new Date("2023-02-15"),
+      updatedAt: new Date("2023-06-20")
+    };
+    this.courses.set(course5.id, course5);
+
+    const course6: Course = {
+      id: this.currentCourseId++,
+      title: "Nutrition Strategies for Endurance Athletes",
+      description: "Evidence-based nutrition protocols for marathon runners, cyclists, and triathletes, covering pre, during, and post-exercise nutrition strategies.",
+      thumbnail: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+      category: "Sports Nutrition",
+      duration: "10 hours",
+      modules: 7,
+      cpdPoints: 8,
+      difficulty: "Intermediate",
+      accreditedBy: "Sports Nutrition Association",
+      rating: 4.7,
+      reviews: 203,
+      learningOutcomes: [
+        "Calculate energy and macronutrient requirements for endurance athletes",
+        "Design nutrition periodization plans",
+        "Implement race-day fueling strategies",
+        "Address common nutritional challenges in endurance sports"
+      ],
+      targetAudience: [
+        "Sports Nutritionists",
+        "Dietitians",
+        "Endurance Coaches",
+        "Athletic Trainers"
+      ],
+      videoHours: "7 hours",
+      resources: "20 downloadable meal plans and calculators",
+      instructors: [
+        {
+          id: "9",
+          name: "Dr. Meera Krishnan",
+          title: "Senior Sports Nutritionist",
+          bio: "PhD in Sports Nutrition with extensive experience working with Olympic endurance athletes.",
+          image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+          credentials: ["PhD Sports Nutrition", "CSSD", "IOC Diploma"]
+        }
+      ],
+      lessons: 21,
+      createdAt: new Date("2023-03-10"),
+      updatedAt: new Date("2023-07-15")
+    };
+    this.courses.set(course6.id, course6);
+
+    const course7: Course = {
+      id: this.currentCourseId++,
+      title: "Concussion Management in Contact Sports",
+      description: "Comprehensive guide to concussion assessment, management, and return-to-play protocols for healthcare professionals working with contact sport athletes.",
+      thumbnail: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+      category: "Sports Medicine",
+      duration: "8 hours",
+      modules: 6,
+      cpdPoints: 6,
+      difficulty: "Advanced",
+      accreditedBy: "Indian Medical Association",
+      rating: 4.9,
+      reviews: 89,
+      learningOutcomes: [
+        "Perform comprehensive concussion assessments",
+        "Implement evidence-based management protocols",
+        "Design graduated return-to-play progressions",
+        "Educate athletes and coaches on concussion recognition"
+      ],
+      targetAudience: [
+        "Sports Medicine Physicians",
+        "Athletic Trainers",
+        "Physiotherapists",
+        "Team Doctors"
+      ],
+      videoHours: "5 hours",
+      resources: "Assessment tools and protocols",
+      instructors: [
+        {
+          id: "10",
+          name: "Dr. Rakesh Sharma",
+          title: "Sports Medicine Physician",
+          bio: "Team doctor for Indian national rugby team with specialization in head injuries.",
+          image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+          credentials: ["MBBS", "MS Sports Medicine", "FIMS Diploma"]
+        }
+      ],
+      lessons: 18,
+      createdAt: new Date("2023-04-05"),
+      updatedAt: new Date("2023-08-10")
+    };
+    this.courses.set(course7.id, course7);
+
+    const course8: Course = {
+      id: this.currentCourseId++,
+      title: "Youth Athlete Development and Long-Term Planning",
+      description: "Specialized course focusing on physical, mental, and technical development of young athletes with emphasis on injury prevention and talent identification.",
+      thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+      category: "Youth Development",
+      duration: "9 hours",
+      modules: 7,
+      cpdPoints: 7,
+      difficulty: "Intermediate",
+      accreditedBy: "Youth Sports Development Council",
+      rating: 4.6,
+      reviews: 134,
+      learningOutcomes: [
+        "Understand physical development stages in young athletes",
+        "Design age-appropriate training programs",
+        "Implement injury prevention strategies for youth",
+        "Recognize and nurture athletic talent"
+      ],
+      targetAudience: [
+        "Youth Coaches",
+        "Exercise Physiologists",
+        "Athletic Trainers",
+        "Sports Psychologists"
+      ],
+      videoHours: "6 hours",
+      resources: "Age-specific training templates",
+      instructors: [
+        {
+          id: "11",
+          name: "Coach Anita Desai",
+          title: "Youth Development Specialist",
+          bio: "Former national athlete turned youth coach with 15 years developing junior talent.",
+          image: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+          credentials: ["M.Sc. Exercise Science", "Level 4 Coaching", "Child Protection Certified"]
+        }
+      ],
+      lessons: 22,
+      createdAt: new Date("2023-05-12"),
+      updatedAt: new Date("2023-09-18")
+    };
+    this.courses.set(course8.id, course8);
+
+    const course9: Course = {
+      id: this.currentCourseId++,
+      title: "Advanced Taping and Strapping Techniques",
+      description: "Master professional taping and strapping methods for injury prevention, support, and rehabilitation across various sports and conditions.",
+      thumbnail: "https://images.unsplash.com/photo-1571772996211-2f02c9727629?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+      category: "Physiotherapy",
+      duration: "6 hours",
+      modules: 5,
+      cpdPoints: 5,
+      difficulty: "Beginner",
+      accreditedBy: "International Taping Association",
+      rating: 4.4,
+      reviews: 267,
+      learningOutcomes: [
+        "Master fundamental taping principles and techniques",
+        "Apply sport-specific taping methods",
+        "Understand when and how to use different tape types",
+        "Troubleshoot common taping issues"
+      ],
+      targetAudience: [
+        "Physiotherapists",
+        "Athletic Trainers",
+        "Sports Massage Therapists",
+        "Team Medical Staff"
+      ],
+      videoHours: "4 hours",
+      resources: "Step-by-step taping guides and video library",
+      instructors: [
+        {
+          id: "12",
+          name: "Therapist Ravi Kumar",
+          title: "Senior Sports Physiotherapist",
+          bio: "Certified taping specialist with experience across cricket, football, and athletics.",
+          image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+          credentials: ["BPT", "Sports Physiotherapy Diploma", "Kinesio Taping Certified"]
+        }
+      ],
+      lessons: 15,
+      createdAt: new Date("2023-06-20"),
+      updatedAt: new Date("2023-10-25")
+    };
+    this.courses.set(course9.id, course9);
+
+    const course10: Course = {
+      id: this.currentCourseId++,
+      title: "Performance Psychology for Team Sports",
+      description: "Explore psychological strategies to enhance team cohesion, individual performance, and mental resilience in team sport environments.",
+      thumbnail: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+      category: "Sports Psychology",
+      duration: "11 hours",
+      modules: 8,
+      cpdPoints: 9,
+      difficulty: "Advanced",
+      accreditedBy: "Association for Applied Sport Psychology",
+      rating: 4.8,
+      reviews: 92,
+      learningOutcomes: [
+        "Implement team building and cohesion strategies",
+        "Develop mental skills training programs",
+        "Manage performance anxiety and pressure",
+        "Create supportive team environments"
+      ],
+      targetAudience: [
+        "Sports Psychologists",
+        "Team Coaches",
+        "Performance Directors",
+        "Team Managers"
+      ],
+      videoHours: "8 hours",
+      resources: "Mental skills worksheets and assessment tools",
+      instructors: [
+        {
+          id: "13",
+          name: "Dr. Kavita Nair",
+          title: "Lead Sports Psychologist",
+          bio: "PhD in Sports Psychology with extensive work in professional team environments.",
+          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+          credentials: ["PhD Sports Psychology", "AASP Certified", "Mental Performance Consultant"]
+        }
+      ],
+      lessons: 24,
+      createdAt: new Date("2023-07-08"),
+      updatedAt: new Date("2023-11-12")
+    };
+    this.courses.set(course10.id, course10);
+
     // Create sample course enrollments
     const enrollment1: CourseEnrollment = {
       id: this.currentCourseEnrollmentId++,
@@ -1587,7 +1917,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-05-25")
     };
     this.courseEnrollments.set(enrollment1.id, enrollment1);
-    
+
     const enrollment2: CourseEnrollment = {
       id: this.currentCourseEnrollmentId++,
       userId: 1, // Sarah Chen
@@ -1600,7 +1930,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2023-05-20")
     };
     this.courseEnrollments.set(enrollment2.id, enrollment2);
-    
+
     // Create sample forum categories
     const category1: ForumCategory = {
       id: this.currentForumCategoryId++,
@@ -1612,7 +1942,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2022-10-15")
     };
     this.forumCategories.set(category1.id, category1);
-    
+
     const category2: ForumCategory = {
       id: this.currentForumCategoryId++,
       name: "Sports Nutrition",
@@ -1623,7 +1953,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2022-10-15")
     };
     this.forumCategories.set(category2.id, category2);
-    
+
     const category3: ForumCategory = {
       id: this.currentForumCategoryId++,
       name: "Mental Performance",
@@ -1634,7 +1964,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2022-10-15")
     };
     this.forumCategories.set(category3.id, category3);
-    
+
     const category4: ForumCategory = {
       id: this.currentForumCategoryId++,
       name: "Research Collaboration",
@@ -1645,7 +1975,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2022-10-15")
     };
     this.forumCategories.set(category4.id, category4);
-    
+
     // Create sample discussions
     const discussion1: Discussion = {
       id: this.currentDiscussionId++,
@@ -1660,7 +1990,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
     };
     this.discussions.set(discussion1.id, discussion1);
-    
+
     const discussion2: Discussion = {
       id: this.currentDiscussionId++,
       title: "Nutrition Strategies for Ultra-Endurance Events",
@@ -1674,7 +2004,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
     };
     this.discussions.set(discussion2.id, discussion2);
-    
+
     // Create sample mentorship opportunities
     const mentorship1: MentorshipOpportunity = {
       id: this.currentMentorshipOpportunityId++,
@@ -1687,7 +2017,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-03-15")
     };
     this.mentorshipOpportunities.set(mentorship1.id, mentorship1);
-    
+
     const mentorship2: MentorshipOpportunity = {
       id: this.currentMentorshipOpportunityId++,
       userId: 3, // Priya Sharma
@@ -1699,7 +2029,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-04-02")
     };
     this.mentorshipOpportunities.set(mentorship2.id, mentorship2);
-    
+
     // Create sample CPD activities
     const activity1: CpdActivity = {
       id: this.currentCpdActivityId++,
@@ -1714,7 +2044,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-04-15")
     };
     this.cpdActivities.set(activity1.id, activity1);
-    
+
     const activity2: CpdActivity = {
       id: this.currentCpdActivityId++,
       userId: 1,
@@ -1728,7 +2058,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-03-22")
     };
     this.cpdActivities.set(activity2.id, activity2);
-    
+
     const activity3: CpdActivity = {
       id: this.currentCpdActivityId++,
       userId: 1,
@@ -1741,7 +2071,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-05-10")
     };
     this.cpdActivities.set(activity3.id, activity3);
-    
+
     const activity4: CpdActivity = {
       id: this.currentCpdActivityId++,
       userId: 1,
@@ -1755,7 +2085,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-02-18")
     };
     this.cpdActivities.set(activity4.id, activity4);
-    
+
     const activity5: CpdActivity = {
       id: this.currentCpdActivityId++,
       userId: 1,
@@ -1768,7 +2098,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date("2023-05-01")
     };
     this.cpdActivities.set(activity5.id, activity5);
-    
+
     // Initialize sample credentials
     const credential1 = {
       id: this.currentCredentialId++,
@@ -1785,7 +2115,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2020-05-15")
     };
     this.credentials.set(credential1.id, credential1);
-    
+
     const credential2 = {
       id: this.currentCredentialId++,
       userId: 1,
@@ -1801,7 +2131,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2019-03-10")
     };
     this.credentials.set(credential2.id, credential2);
-    
+
     const credential3 = {
       id: this.currentCredentialId++,
       userId: 1,
@@ -1815,7 +2145,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date("2022-11-22")
     };
     this.credentials.set(credential3.id, credential3);
-    
+
     // Set default privacy settings for users
     const privacySettings = {
       profilePublic: true,
@@ -1827,7 +2157,7 @@ export class MemStorage implements IStorage {
       showEvents: true,
       showCpd: false
     };
-    
+
     // Update users with privacy settings
     for (const [id, user] of this.users.entries()) {
       this.users.set(id, {
