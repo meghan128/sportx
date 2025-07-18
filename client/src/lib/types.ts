@@ -1,13 +1,14 @@
 // User related types
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  username: string;
+  role: "user" | "resource_person";
   profileImage?: string;
+  bio?: string;
+  username: string;
   profession: string;
   specialization?: string;
-  bio?: string;
   organization?: string;
   location?: string;
   contactInfo?: {

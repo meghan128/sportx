@@ -7,6 +7,52 @@ import { insertUserSchema } from "@shared/schema";
 export async function registerRoutes(app: Express): Promise<Server> {
   // AUTH ROUTES
   
+  // Login endpoint for general users
+  app.post('/api/auth/login/user', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      // Mock authentication for demo - replace with real authentication
+      if (email === "user@example.com" && password === "password") {
+        const user = {
+          id: "1",
+          name: "Demo User",
+          email: "user@example.com",
+          role: "user",
+          profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+        };
+        res.json({ user, token: "mock-token-user" });
+      } else {
+        res.status(401).json({ message: "Invalid credentials" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Login endpoint for resource persons
+  app.post('/api/auth/login/resource-person', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      // Mock authentication for demo - replace with real authentication
+      if (email === "resource@example.com" && password === "password") {
+        const user = {
+          id: "2",
+          name: "Demo Resource Person",
+          email: "resource@example.com",
+          role: "resource_person",
+          profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face"
+        };
+        res.json({ user, token: "mock-token-resource" });
+      } else {
+        res.status(401).json({ message: "Invalid credentials" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+  
   // Logout user
   app.post('/api/auth/logout', (req, res) => {
     try {
@@ -23,12 +69,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
   app.get('/api/users/current', async (req, res) => {
     try {
-      // For demo purposes, return a sample user
-      const user = await storage.getUserById(1);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+      // For demo purposes, check authorization header for role
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ message: 'No authorization header' });
       }
-      res.json(user);
+      
+      // Mock user based on token
+      if (authHeader.includes('mock-token-user')) {
+        const user = {
+          id: 1,
+          name: "Demo User",
+          email: "user@example.com",
+          role: "user",
+          username: "demouser",
+          profession: "Sports Therapist",
+          bio: "Passionate about sports rehabilitation",
+          profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+        };
+        res.json(user);
+      } else if (authHeader.includes('mock-token-resource')) {
+        const user = {
+          id: 2,
+          name: "Demo Resource Person",
+          email: "resource@example.com",
+          role: "resource_person", 
+          username: "demoresource",
+          profession: "Senior Physiotherapist",
+          bio: "Expert in sports medicine and rehabilitation",
+          profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face"
+        };
+        res.json(user);
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch user' });
     }

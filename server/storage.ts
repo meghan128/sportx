@@ -923,8 +923,7 @@ export class MemStorage implements IStorage {
       location: "Bangalore, India",
       contactInfo: {},
       socialLinks: {},
-      createdAt: new Date("2023-01-22"),
-      updatedAt: new Date("2023-03-18")
+      createdAt: new Date("2023-01-22"),      updatedAt: new Date("2023-03-18")
     };
     this.users.set(user3.id, user3);
 
@@ -2165,6 +2164,12 @@ export class MemStorage implements IStorage {
         privacySettings
       });
     }
+  }
+
+  async getUserByRole(role: string): Promise<User[]> {
+    return Array.from(this.users.values())
+      .filter(u => u.role === role)
+      .map(({ password, ...user }) => user as User);
   }
 }
 

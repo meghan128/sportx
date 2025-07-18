@@ -5,54 +5,86 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role: "user" | "resource_person";
   profileImage?: string;
   bio?: string;
+  profession?: string;
+  username?: string;
+}
+
+interface LoginCredentials {
+  email: string;
+  password: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  loginUser: (credentials: LoginCredentials) => Promise<void>;
+  loginResourcePerson: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock authentication functions - replace with real implementation
-const mockLogin = async (email: string, password: string): Promise<User> => {
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  if (email === "demo@example.com" && password === "password") {
-    const user = {
-      id: "1",
-      name: "Demo User",
-      email: "demo@example.com",
-      profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
-    };
-    localStorage.setItem("auth_user", JSON.stringify(user));
-    return user;
+// Authentication API calls
+const loginUserApi = async (credentials: LoginCredentials): Promise<{ user: User; token: string }> => {
+  const response = await fetch('/api/auth/login/user', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Invalid credentials');
   }
-  throw new Error("Invalid credentials");
+  
+  return response.json();
+};
+
+const loginResourcePersonApi = async (credentials: LoginCredentials): Promise<{ user: User; token: string }> => {
+  const response = await fetch('/api/auth/login/resource-person', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Invalid credentials');
+  }
+  
+  return response.json();
 };
 
 const getCurrentUser = async (): Promise<User | null> => {
-  const stored = localStorage.getItem("auth_user");
-  if (stored) {
-    return JSON.parse(stored);
+  const token = localStorage.getItem("auth_token");
+  if (!token) {
+    return null;
   }
-  return null;
+  
+  const response = await fetch('/api/users/current', {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  
+  if (!response.ok) {
+    localStorage.removeItem("auth_token");
+    return null;
+  }
+  
+  return response.json();
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const { data: user, isLoading, error } = useQuery<User>({
+  const { data: user, isLoading, error, refetch } = useQuery<User>({
     queryKey: ['/api/users/current'],
+    queryFn: getCurrentUser,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    enabled: !!localStorage.getItem("auth_token"),
   });
 
   useEffect(() => {
@@ -63,15 +95,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user, error]);
 
-  const login = async (credentials: LoginCredentials) => {
-    // Implement login logic
-    return Promise.resolve();
+  const loginUser = async (credentials: LoginCredentials) => {
+    const { user, token } = await loginUserApi(credentials);
+    localStorage.setItem("auth_token", token);
+    localStorage.setItem("auth_user", JSON.stringify(user));
+    setIsAuthenticated(true);
+    refetch();
+  };
+
+  const loginResourcePerson = async (credentials: LoginCredentials) => {
+    const { user, token } = await loginResourcePersonApi(credentials);
+    localStorage.setItem("auth_token", token);
+    localStorage.setItem("auth_user", JSON.stringify(user));
+    setIsAuthenticated(true);
+    refetch();
   };
 
   const logout = async () => {
-    // Implement logout logic
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
     setIsAuthenticated(false);
-    return Promise.resolve();
+    refetch();
   };
 
   return (
@@ -79,7 +123,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       isAuthenticated,
       isLoading,
-      login,
+      loginUser,
+      loginResourcePerson,
       logout,
     }}>
       {children}

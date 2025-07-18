@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  role: text("role").notNull().default("user"), // "user" or "resource_person"
   profession: text("profession"),
   specialization: text("specialization"),
   bio: text("bio"),
@@ -37,6 +38,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   name: true,
   email: true,
   profession: true,
+  role: true,
 });
 
 // Events
