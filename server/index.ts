@@ -10,6 +10,7 @@ import {
 import { logger, requestLogger, errorLogger } from "./utils/logger";
 
 const app = express();
+app.set('trust proxy', true); // Trust proxy headers for rate limiting
 
 // Security middleware
 app.use(helmetConfig);
@@ -57,13 +58,13 @@ app.use((req, res, next) => {
   const server = await registerRoutes(app);
 
   app.use(errorLogger);
-  
+
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ message });
-    
+
     if (status >= 500) {
       logger.error('Server Error', { error: err.message, stack: err.stack });
     }
