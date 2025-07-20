@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useAsyncToast } from "./use-async-toast";
 
 interface User {
   id: string;
@@ -35,11 +36,11 @@ const loginUserApi = async (credentials: LoginCredentials): Promise<{ user: User
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
   });
-  
+
   if (!response.ok) {
     throw new Error('Invalid credentials');
   }
-  
+
   return response.json();
 };
 
@@ -49,11 +50,11 @@ const loginResourcePersonApi = async (credentials: LoginCredentials): Promise<{ 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
   });
-  
+
   if (!response.ok) {
     throw new Error('Invalid credentials');
   }
-  
+
   return response.json();
 };
 
@@ -62,21 +63,22 @@ const getCurrentUser = async (): Promise<User | null> => {
   if (!token) {
     return null;
   }
-  
+
   const response = await fetch('/api/users/current', {
     headers: { 'Authorization': `Bearer ${token}` },
   });
-  
+
   if (!response.ok) {
     localStorage.removeItem("auth_token");
     return null;
   }
-  
+
   return response.json();
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { executeWithToast, showSuccess, showError } = useAsyncToast();
 
   const { data: user, isLoading, error, refetch } = useQuery<User>({
     queryKey: ['/api/users/current'],
@@ -96,26 +98,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, error]);
 
   const loginUser = async (credentials: LoginCredentials) => {
-    const { user, token } = await loginUserApi(credentials);
-    localStorage.setItem("auth_token", token);
-    localStorage.setItem("auth_user", JSON.stringify(user));
-    setIsAuthenticated(true);
-    refetch();
+    const loginAction = async () => {
+      const { user, token } = await loginUserApi(credentials);
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("auth_user", JSON.stringify(user));
+      setIsAuthenticated(true);
+      refetch();
+      return { success: true, user: user }; // Return success status
+    };
+
+    await executeWithToast(loginAction, {
+      loadingMessage: "Signing in...",
+      successMessage: `Welcome back, ${credentials.email}!`,
+      errorMessage: "Failed to sign in. Please check your credentials.",
+    });
   };
 
   const loginResourcePerson = async (credentials: LoginCredentials) => {
-    const { user, token } = await loginResourcePersonApi(credentials);
-    localStorage.setItem("auth_token", token);
-    localStorage.setItem("auth_user", JSON.stringify(user));
-    setIsAuthenticated(true);
-    refetch();
+    const loginAction = async () => {
+      const { user, token } = await loginResourcePersonApi(credentials);
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("auth_user", JSON.stringify(user));
+      setIsAuthenticated(true);
+      refetch();
+       return { success: true, user: user }; // Return success status
+    };
+
+    await executeWithToast(loginAction, {
+      loadingMessage: "Signing in...",
+      successMessage: `Welcome back, ${credentials.email}!`,
+      errorMessage: "Failed to sign in. Please check your credentials.",
+    });
   };
 
   const logout = async () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("auth_user");
-    setIsAuthenticated(false);
-    refetch();
+    const logoutAction = async () => {
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+      setIsAuthenticated(false);
+      refetch();
+      return { success: true };
+    };
+
+    await executeWithToast(logoutAction, {
+      loadingMessage: "Logging out...",
+      successMessage: "Logged out successfully.",
+      errorMessage: "Failed to logout.",
+    });
   };
 
   return (

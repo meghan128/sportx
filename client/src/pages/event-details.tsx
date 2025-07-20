@@ -41,6 +41,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAsyncToast } from "@/hooks/use-async-toast";
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -48,6 +49,7 @@ const EventDetails = () => {
   const [selectedTicket, setSelectedTicket] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [isRegistering, setIsRegistering] = useState(false);
+  const { executeWithToast, isLoading: actionLoading } = useAsyncToast();
 
   const { data: event, isLoading } = useQuery<Event>({
     queryKey: [`/api/events/${id}`],
@@ -63,30 +65,21 @@ const EventDetails = () => {
       return;
     }
 
-    try {
-      setIsRegistering(true);
-      
-      await apiRequest("POST", "/api/events/register", {
+    const registerAction = async () => {
+      const response = await apiRequest("POST", "/api/events/register", {
         eventId: id,
         ticketTypeId: selectedTicket,
         quantity,
       });
 
-      toast({
-        title: "Registration successful",
-        description: "You have successfully registered for this event",
-      });
-      
-      // Redirect to dashboard or registration confirmation page
-    } catch (error: any) {
-      toast({
-        title: "Registration failed",
-        description: error.message || "An error occurred during registration",
-        variant: "destructive",
-      });
-    } finally {
-      setIsRegistering(false);
-    }
+      return response;
+    };
+
+    await executeWithToast(registerAction, {
+      loadingMessage: "Registering for event...",
+      successMessage: `Successfully registered for "${event?.title}"`,
+      errorMessage: "Failed to register for event. Please try again.",
+    });
   };
 
   if (isLoading) {
@@ -156,7 +149,7 @@ const EventDetails = () => {
             Back to Events
           </Link>
         </Button>
-        
+
         <div className="relative rounded-xl overflow-hidden h-64 mb-6">
           <img 
             src={event.image} 
@@ -187,7 +180,7 @@ const EventDetails = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-white">{event.title}</h1>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
             <Card>
@@ -231,7 +224,7 @@ const EventDetails = () => {
                   <TabsContent value="details">
                     <div className="prose max-w-none">
                       <p className="text-gray-600">{event.description}</p>
-                      
+
                       <h3 className="text-lg font-semibold mt-6 mb-2">What you'll learn</h3>
                       <ul className="space-y-1">
                         {event.learningOutcomes && event.learningOutcomes.map((outcome, index) => (
@@ -241,12 +234,12 @@ const EventDetails = () => {
                           </li>
                         ))}
                       </ul>
-                      
+
                       <h3 className="text-lg font-semibold mt-6 mb-2">CPD Information</h3>
                       <p>
                         This event is accredited for <strong>{event.cpdPoints} CPD points</strong> under the {event.accreditationBody} guidelines.
                       </p>
-                      
+
                       {event.type !== 'In-person' && (
                         <>
                           <h3 className="text-lg font-semibold mt-6 mb-2">Virtual Attendance</h3>
@@ -313,7 +306,7 @@ const EventDetails = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           <div>
             <Card>
               <CardHeader>
@@ -343,7 +336,7 @@ const EventDetails = () => {
                     )}
                   </div>
                 ))}
-                
+
                 {selectedTicket && (
                   <div className="mt-4">
                     <label className="block text-sm font-medium mb-1">Quantity</label>
@@ -381,15 +374,15 @@ const EventDetails = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <Button 
                   className="w-full" 
-                  disabled={!selectedTicket || isRegistering}
+                  disabled={!selectedTicket || actionLoading}
                   onClick={handleRegister}
                 >
-                  {isRegistering ? "Processing..." : "Register Now"}
+                  {actionLoading ? "Processing..." : "Register Now"}
                 </Button>
-                
+
                 <p className="text-xs text-center text-muted-foreground">
                   By registering, you agree to our terms and conditions.
                 </p>

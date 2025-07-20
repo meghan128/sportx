@@ -42,7 +42,7 @@ import {
   Search,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { 
   BarChart, 
@@ -54,6 +54,7 @@ import {
   ResponsiveContainer,
   Cell
 } from "recharts";
+import { useAsyncToast } from "@/hooks/use-async-toast";
 
 const CpdCredits = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,7 +102,7 @@ const CpdCredits = () => {
               <p className="text-xs text-muted-foreground mt-1">{cpdSummary?.period || 'Current Period'}</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Events Attended</CardTitle>
@@ -117,7 +118,7 @@ const CpdCredits = () => {
               <p className="text-xs text-muted-foreground mt-1">Last 12 months</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Courses Completed</CardTitle>
@@ -133,7 +134,7 @@ const CpdCredits = () => {
               <p className="text-xs text-muted-foreground mt-1">Last 12 months</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Certificates Earned</CardTitle>
@@ -150,7 +151,7 @@ const CpdCredits = () => {
             </CardContent>
           </Card>
         </div>
-        
+
         {/* CPD Analytics & Activities */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-1">
@@ -221,7 +222,7 @@ const CpdCredits = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="lg:col-span-2">
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -252,7 +253,7 @@ const CpdCredits = () => {
                   <TabsTrigger value="other">Other</TabsTrigger>
                 </TabsList>
               </Tabs>
-              
+
               <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
@@ -275,7 +276,7 @@ const CpdCredits = () => {
                       <SelectItem value="2021">2021</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                     <SelectTrigger className="w-[160px]">
                       <SelectValue placeholder="Category" />
@@ -289,7 +290,7 @@ const CpdCredits = () => {
                   </Select>
                 </div>
               </div>
-              
+
               {activitiesLoading ? (
                 <div className="space-y-2 animate-pulse">
                   {[1, 2, 3, 4, 5].map(i => (

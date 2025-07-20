@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -51,39 +50,34 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { AccreditationBadge, AccreditationBody } from "@/components/accreditation/accreditation-badge";
 import CourseAccreditation from "@/components/accreditation/course-accreditation";
+import { useAsyncToast } from "@/hooks/use-async-toast";
 
 const CourseDetails = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const [isEnrolling, setIsEnrolling] = useState(false);
+  const { executeWithToast, isLoading: actionLoading } = useAsyncToast();
 
   const { data: course, isLoading } = useQuery<Course>({
     queryKey: [`/api/courses/${id}`],
   });
 
   const handleEnroll = async () => {
-    try {
-      setIsEnrolling(true);
-      
+    const enrollAction = async () => {
       await apiRequest("POST", "/api/courses/enroll", {
         courseId: id,
       });
 
       queryClient.invalidateQueries({ queryKey: [`/api/courses/${id}`] });
 
-      toast({
-        title: "Enrollment successful",
-        description: "You have successfully enrolled in this course",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Enrollment failed",
-        description: error.message || "An error occurred during enrollment",
-        variant: "destructive",
-      });
-    } finally {
-      setIsEnrolling(false);
-    }
+      return true;
+    };
+
+    await executeWithToast(enrollAction, {
+      loadingMessage: "Enrolling in course...",
+      successMessage: "Successfully enrolled in course",
+      errorMessage: "Failed to enroll in course. Please try again.",
+    });
   };
 
   if (isLoading) {
@@ -131,7 +125,7 @@ const CourseDetails = () => {
             Back to Courses
           </Link>
         </Button>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
             <Card>
@@ -147,7 +141,7 @@ const CourseDetails = () => {
                   </div>
                 )}
               </div>
-              
+
               <CardHeader>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs px-2 py-0.5 rounded-full bg-primary bg-opacity-10 text-primary">
@@ -184,7 +178,7 @@ const CourseDetails = () => {
                   </div>
                 </CardDescription>
               </CardHeader>
-              
+
               <CardContent>
                 <Tabs defaultValue="overview">
                   <TabsList className="mb-4">
@@ -193,11 +187,11 @@ const CourseDetails = () => {
                     <TabsTrigger value="instructors">Instructors</TabsTrigger>
                     <TabsTrigger value="reviews">Reviews</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="overview">
                     <div className="prose max-w-none">
                       <p className="text-gray-600">{course.description}</p>
-                      
+
                       <h3 className="text-lg font-semibold mt-6 mb-2">What you'll learn</h3>
                       <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {course.learningOutcomes && course.learningOutcomes.map((outcome, index) => (
@@ -207,7 +201,7 @@ const CourseDetails = () => {
                           </li>
                         ))}
                       </ul>
-                      
+
                       <h3 className="text-lg font-semibold mt-6 mb-2">This course is perfect for:</h3>
                       <ul className="space-y-1">
                         {course.targetAudience && course.targetAudience.map((audience, index) => (
@@ -217,7 +211,7 @@ const CourseDetails = () => {
                           </li>
                         ))}
                       </ul>
-                      
+
                       {/* Role-specific content section */}
                       {course.roleSpecificContent && course.roleSpecificContent.length > 0 && (
                         <>
@@ -231,16 +225,16 @@ const CourseDetails = () => {
                                   </TabsTrigger>
                                 ))}
                               </TabsList>
-                              
+
                               {course.roleSpecificContent.map((content) => (
                                 <TabsContent key={content.role} value={content.role} className="space-y-3">
                                   <div className="flex items-center mb-2">
                                     <Users className="mr-2 h-5 w-5 text-blue-600" />
                                     <h4 className="font-medium text-blue-800">Content for {content.role}</h4>
                                   </div>
-                                  
+
                                   <p className="text-gray-700">{content.description}</p>
-                                  
+
                                   <div className="space-y-2 mt-3">
                                     <h5 className="font-medium text-gray-800">Learning outcomes for {content.role}:</h5>
                                     <ul className="space-y-1">
@@ -252,7 +246,7 @@ const CourseDetails = () => {
                                       ))}
                                     </ul>
                                   </div>
-                                  
+
                                   {content.materials && content.materials.length > 0 && (
                                     <div className="space-y-2 mt-3">
                                       <h5 className="font-medium text-gray-800">Additional materials:</h5>
@@ -266,7 +260,7 @@ const CourseDetails = () => {
                                       </ul>
                                     </div>
                                   )}
-                                  
+
                                   {content.case_studies && content.case_studies.length > 0 && (
                                     <div className="space-y-2 mt-3">
                                       <h5 className="font-medium text-gray-800">Case studies:</h5>
@@ -286,7 +280,7 @@ const CourseDetails = () => {
                           </div>
                         </>
                       )}
-                      
+
                       {/* Interactive elements section */}
                       {course.interactiveElements && course.interactiveElements.length > 0 && (
                         <>
@@ -324,7 +318,7 @@ const CourseDetails = () => {
                           </div>
                         </>
                       )}
-                      
+
                       {/* CPD Information section */}
                       <h3 className="text-lg font-semibold mt-6 mb-2">CPD Information</h3>
                       <div className="flex flex-wrap gap-2 mb-3">
@@ -341,7 +335,7 @@ const CourseDetails = () => {
                         <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
                         If you've connected your {course.accreditedBy} account in the Accreditation section, these points will be automatically added to your professional record upon completion.
                       </p>
-                      
+
                       {/* Certification exam */}
                       {course.certificationExam && (
                         <div className="mt-4 p-4 border border-amber-200 rounded-lg bg-amber-50">
@@ -356,13 +350,13 @@ const CourseDetails = () => {
                       )}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="curriculum">
                     <div className="space-y-4">
                       <p className="text-sm text-gray-500 mb-4">
                         {course.modules} modules • {course.lessons || 'Multiple'} lessons • {course.duration} total length
                       </p>
-                      
+
                       {course.modules && course.curriculum && course.curriculum.map((module: CourseModule, moduleIndex) => (
                         <Accordion type="single" collapsible key={moduleIndex}>
                           <AccordionItem value={`module-${moduleIndex}`} className="border rounded-lg px-4">
@@ -410,7 +404,7 @@ const CourseDetails = () => {
                       ))}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="instructors">
                     {course.instructors && course.instructors.length > 0 ? (
                       <div className="space-y-6">
@@ -441,7 +435,7 @@ const CourseDetails = () => {
                       <p className="text-muted-foreground">Instructor information will be updated soon.</p>
                     )}
                   </TabsContent>
-                  
+
                   <TabsContent value="reviews">
                     <div className="space-y-4">
                       {course.reviews && course.reviews > 0 ? (
@@ -460,7 +454,7 @@ const CourseDetails = () => {
                               <p className="text-sm text-gray-500">{course.reviews} reviews</p>
                             </div>
                           </div>
-                          
+
                           <p className="text-center text-gray-500 py-6">
                             Course reviews will be displayed here.
                           </p>
@@ -476,7 +470,7 @@ const CourseDetails = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           <div>
             <Card className="sticky top-6">
               <CardHeader>
@@ -492,7 +486,7 @@ const CourseDetails = () => {
                       </div>
                       <Progress value={course.progress.percentage} className="h-2" />
                     </div>
-                    
+
                     <div className="rounded-lg bg-muted p-4">
                       <h4 className="font-medium flex items-center">
                         <CheckCircle className="h-4 w-4 mr-2 text-success" />
@@ -502,7 +496,7 @@ const CourseDetails = () => {
                         Last accessed: {course.progress.lastAccessed}
                       </p>
                     </div>
-                    
+
                     <Button className="w-full" asChild>
                       <Link href={`/courses/${id}/continue`}>Continue Learning</Link>
                     </Button>
@@ -523,13 +517,13 @@ const CourseDetails = () => {
                       <span className="font-medium">Certificate:</span>
                       <span>Yes, on completion</span>
                     </div>
-                    
-                    <Button className="w-full" onClick={handleEnroll} disabled={isEnrolling}>
-                      {isEnrolling ? "Processing..." : "Enroll Now"}
+
+                    <Button className="w-full" onClick={handleEnroll} disabled={actionLoading}>
+                      {actionLoading ? "Processing..." : "Enroll Now"}
                     </Button>
                   </div>
                 )}
-                
+
                 <div className="pt-4 space-y-3">
                   <div className="mb-4">
                     <h4 className="font-medium mb-2">Accreditation:</h4>
@@ -539,7 +533,7 @@ const CourseDetails = () => {
                       showAdditionalInfo={false}
                     />
                   </div>
-                  
+
                   <h4 className="font-medium">This course includes:</h4>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2">
