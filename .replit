@@ -44,6 +44,10 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
+args = "echo \"Cleaning up any stuck processes...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
 args = "fuser -k 5000/tcp 2>/dev/null || true"
 
 [[workflows.workflow.tasks]]
@@ -60,7 +64,15 @@ args = "pkill -f \"npm.*dev\" 2>/dev/null || true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
+args = "pkill -f \"vite\" 2>/dev/null || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
 args = "netstat -tulpn | grep :5000 | awk '{print $7}' | cut -d'/' -f1 | xargs -r kill -9 2>/dev/null || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Process cleanup complete\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

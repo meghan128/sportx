@@ -86,8 +86,27 @@ app.use((req, res, next) => {
   
   server.on('error', (err: any) => {
     if (err.code === 'EADDRINUSE') {
-      logger.error(`Port ${port} is already in use. Please stop any existing processes.`);
-      process.exit(1);
+      logger.error(`Port ${port} is already in use. Attempting to kill existing processes...`);
+      
+      // Try to kill existing processes
+      const { exec } = require('child_process');
+      exec(`fuser -k ${port}/tcp 2>/dev/null || true`, (error) => {
+        if (error) {
+          logger.error('Failed to kill existing processes:', error);
+          process.exit(1);
+        }
+        
+        // Wait a moment and try to start again
+        setTimeout(() => {
+          server.listen({
+            port,
+            host: "0.0.0.0",
+            reusePort: true,
+          }, () => {
+            log(`serving on port ${port}`);
+          });
+        }, 3000);
+      });
     } else {
       logger.error('Server error:', err);
       throw err;
