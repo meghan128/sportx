@@ -3,12 +3,13 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage-factory";
 import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
+import { authLimiter, apiLimiter } from "./middleware/security";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // AUTH ROUTES
   
   // Login endpoint for general users
-  app.post('/api/auth/login/user', async (req, res) => {
+  app.post('/api/auth/login/user', authLimiter, async (req, res) => {
     try {
       const { email, password } = req.body;
       
@@ -31,7 +32,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Login endpoint for resource persons
-  app.post('/api/auth/login/resource-person', async (req, res) => {
+  app.post('/api/auth/login/resource-person', authLimiter, async (req, res) => {
     try {
       const { email, password } = req.body;
       
