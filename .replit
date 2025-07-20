@@ -48,15 +48,19 @@ args = "fuser -k 5000/tcp 2>/dev/null || true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pkill -f \"tsx.*server\" || true"
+args = "pkill -f \"tsx.*server\" 2>/dev/null || true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pkill -f \"node.*server\" || true"
+args = "pkill -f \"node.*server\" 2>/dev/null || true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pkill -f \"npm.*dev\" || true"
+args = "pkill -f \"npm.*dev\" 2>/dev/null || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "netstat -tulpn | grep :5000 | awk '{print $7}' | cut -d'/' -f1 | xargs -r kill -9 2>/dev/null || true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
