@@ -64,7 +64,7 @@ const WelcomeSection = () => {
   };
 
   return (
-    <Card id="welcome-section" className="h-full border-0 shadow-lg bg-gradient-to-br from-orange-400 via-pink-500 to-purple-600 text-white animate-gradient-wave">
+    <Card id="welcome-section" className="h-full border-0 shadow-xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
       <CardContent className="p-6">
         <div className="flex flex-col h-full">
           <div className="mb-6">
@@ -72,7 +72,7 @@ const WelcomeSection = () => {
               {!isLoading && user?.profileImage && (
                 <Avatar className="h-16 w-16 border-3 border-white shadow-lg animate-pulse-glow">
                   <AvatarImage src={user?.profileImage} />
-                  <AvatarFallback className="text-lg font-bold bg-white text-purple-600">{user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="text-lg font-bold bg-white text-blue-600">{user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
               )}
               <div>

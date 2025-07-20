@@ -20,45 +20,45 @@ const QuickActions = () => {
       icon: <BookOpen className="h-4 w-4" />,
       label: "Browse Courses",
       href: "/courses",
-      color: "bg-blue-500",
+      color: "bg-blue-600",
       description: "Explore new learning opportunities"
     },
     {
       icon: <Calendar className="h-4 w-4" />,
       label: "Find Events",
       href: "/events",
-      color: "bg-green-500",
+      color: "bg-blue-500",
       description: "Discover upcoming workshops"
     },
     {
       icon: <Users className="h-4 w-4" />,
       label: "Join Community",
       href: "/community",
-      color: "bg-purple-500",
+      color: "bg-blue-700",
       description: "Connect with professionals"
     },
     {
       icon: <Award className="h-4 w-4" />,
       label: "Track CPD",
       href: "/cpd-credits",
-      color: "bg-orange-500",
+      color: "bg-blue-800",
       description: "Monitor your progress"
     },
     {
       icon: <MessageSquare className="h-4 w-4" />,
       label: "Get Mentorship",
       href: "/mentorship",
-      color: "bg-pink-500",
+      color: "bg-indigo-600",
       description: "Find expert guidance"
     }
   ];
 
   return (
-    <Card className="bg-gradient-to-r from-gray-50 to-gray-100 border-0">
+    <Card className="bg-white border shadow-sm">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-gray-800">Quick Actions</h3>
-          <Badge variant="secondary" className="text-xs">
+          <h3 className="font-semibold text-gray-900">Quick Actions</h3>
+          <Badge variant="outline" className="text-xs text-blue-600">
             Navigate faster
           </Badge>
         </div>

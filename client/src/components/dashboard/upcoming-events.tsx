@@ -44,10 +44,10 @@ const UpcomingEvents = () => {
     <div id="upcoming-events" className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <CalendarClock className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Upcoming Events</h2>
+          <CalendarClock className="h-5 w-5 text-blue-600" />
+          <h2 className="text-xl font-semibold text-gray-900">Upcoming Events</h2>
         </div>
-        <Link href="/events" className="text-sm text-primary hover:text-primary-dark flex items-center">
+        <Link href="/events" className="text-sm text-blue-600 hover:text-blue-800 flex items-center">
           View all events <ArrowRight className="ml-1 h-4 w-4" />
         </Link>
       </div>

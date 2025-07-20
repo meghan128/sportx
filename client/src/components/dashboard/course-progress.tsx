@@ -20,13 +20,13 @@ const CourseProgress = () => {
   return (
     <div id="course-progress" className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">My Courses</h2>
-        <Link href="/courses" className="text-sm text-primary hover:text-primary-dark flex items-center">
+        <h2 className="text-xl font-semibold text-gray-900">My Courses</h2>
+        <Link href="/courses" className="text-sm text-blue-600 hover:text-blue-800 flex items-center">
           Browse all courses <ArrowRight className="ml-1 h-4 w-4" />
         </Link>
       </div>
       
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium">In Progress ({inProgressCourses?.length || 0})</h3>

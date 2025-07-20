@@ -34,8 +34,8 @@ const SidebarLink = ({ href, icon, children, isActive, collapsed }: SidebarLinkP
     <div 
       className={`flex items-center ${!collapsed ? 'space-x-2' : 'justify-center'} px-2 py-2 rounded-lg ${
         isActive 
-          ? "bg-primary-dark/10 text-primary-dark font-medium" 
-          : "hover:bg-primary-light/20 hover:text-primary-dark text-gray-100"
+          ? "bg-blue-600 text-white shadow-lg" 
+          : "hover:bg-white/10 text-blue-100 hover:text-white"
       } mt-1 cursor-pointer transition-colors duration-200`}
     >
       <span className={collapsed ? "text-center" : ""}>{icon}</span>
@@ -118,7 +118,7 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
     <aside 
       id="main-sidebar" 
       className={cn(
-        "bg-gradient-to-b from-primary to-primary-dark text-white md:fixed md:h-full z-10 transition-all duration-300",
+        "bg-gradient-to-b from-blue-700 to-blue-800 text-white md:fixed md:h-full z-10 transition-all duration-300 shadow-xl",
         collapsed ? "md:w-20" : "md:w-64",
         "w-full"
       )}
@@ -127,8 +127,8 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
         {!collapsed ? (
           <div className="flex items-center space-x-2">
             <CalendarDays className="h-6 w-6 text-white" />
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">
-              Book My Workshop
+            <h1 className="text-xl font-bold text-white">
+              SportX CPD
             </h1>
           </div>
         ) : (
@@ -159,7 +159,7 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
       >
         <div className="mt-6">
           {!collapsed && (
-            <p className="text-xs uppercase tracking-wider text-gray-400 mb-2 px-2">Main</p>
+            <p className="text-xs uppercase tracking-wider text-blue-200 mb-2 px-2">Main</p>
           )}
           <SidebarLink 
             href="/" 

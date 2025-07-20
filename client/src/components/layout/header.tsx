@@ -28,11 +28,11 @@ const Header = ({ title }: HeaderProps) => {
   const [showSearchBar, setShowSearchBar] = useState(false);
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+    <header className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-1 flex items-center justify-between">
-            <h2 className="text-lg md:text-xl font-bold text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">{title}</h2>
+            <h2 className="text-lg md:text-xl font-bold text-gray-900">{title}</h2>
 
             <div className="hidden md:block">
               <GlobalSearch />
@@ -44,7 +44,7 @@ const Header = ({ title }: HeaderProps) => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="text-gray-600 hover:text-primary"
+                className="text-gray-600 hover:text-blue-600"
                 onClick={() => setShowSearchBar(!showSearchBar)}
               >
                 <Search className="h-5 w-5" />
@@ -53,9 +53,9 @@ const Header = ({ title }: HeaderProps) => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-gray-600 hover:text-primary relative">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:text-blue-600 relative">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+                  <span className="absolute -top-0.5 -right-0.5 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80" align="end">
