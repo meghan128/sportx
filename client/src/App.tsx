@@ -28,6 +28,13 @@ const Accreditation = lazy(() => import("@/pages/accreditation"));
 const Settings = lazy(() => import("@/pages/settings"));
 const Login = lazy(() => import("@/pages/login"));
 const NotFound = lazy(() => import("@/pages/not-found"));
+const ResourceCourses = lazy(() => import("./pages/resource-courses"));
+const ResourceSubmissions = lazy(() => import("./pages/resource-submissions"));
+const ResourceApprovals = lazy(() => import("./pages/resource-approvals"));
+const ResourceStudents = lazy(() => import("./pages/resource-students"));
+const ResourceAnalytics = lazy(() => import("./pages/resource-analytics"));
+
+
 
 // Route configuration for better maintainability
 const routes = [
@@ -35,6 +42,11 @@ const routes = [
   { path: "/resource-dashboard", component: ResourceDashboard, protected: true, title: "Resource Dashboard", allowedRoles: ["resource_person"] },
   { path: "/resource/create-course", component: ResourceCourseCreation, protected: true, title: "Create Course", allowedRoles: ["resource_person"] },
   { path: "/resource/create-workshop", component: ResourceWorkshopCreation, protected: true, title: "Create Workshop", allowedRoles: ["resource_person"] },
+  { path: "/resource-courses", component: ResourceCourses, protected: true, title: "My Courses", allowedRoles: ["resource_person"] },
+  { path: "/resource-submissions", component: ResourceSubmissions, protected: true, title: "Submissions", allowedRoles: ["resource_person"] },
+  { path: "/resource-approvals", component: ResourceApprovals, protected: true, title: "Approvals", allowedRoles: ["resource_person"] },
+  { path: "/resource-students", component: ResourceStudents, protected: true, title: "Students", allowedRoles: ["resource_person"] },
+  { path: "/resource-analytics", component: ResourceAnalytics, protected: true, title: "Analytics", allowedRoles: ["resource_person"] },
   { path: "/events", component: Events, protected: true, title: "Events" },
   { path: "/events/:id", component: EventDetails, protected: true, title: "Event Details" },
   { path: "/courses", component: Courses, protected: true, title: "Courses" },

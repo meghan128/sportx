@@ -32,7 +32,7 @@ import {
   Play,
   Download,
   MonitorPlay,
-  PresentationChart,
+  BarChart3,
   ArrowLeft
 } from "lucide-react";
 import { Link as RouterLink } from "wouter";
@@ -418,7 +418,7 @@ export default function ResourceCourseCreation() {
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center">
-                          <PresentationChart className="h-5 w-5 mr-2" />
+                          <BarChart3 className="h-5 w-5 mr-2" />
                           Course Structure & Modules
                         </CardTitle>
                         <CardDescription>
