@@ -1,4 +1,3 @@
-
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { Request, Response, NextFunction } from 'express';
@@ -32,6 +31,7 @@ export const apiLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true, // Trust proxy headers in Replit environment
 });
 
 // Helmet configuration for security headers
@@ -55,7 +55,7 @@ export const helmetConfig = helmet({
 // Cookie security middleware
 export const secureCookies = (req: Request, res: Response, next: NextFunction) => {
   const originalSetCookie = res.cookie;
-  
+
   res.cookie = function(name: string, value: any, options: any = {}) {
     const secureOptions = {
       ...options,
@@ -64,10 +64,10 @@ export const secureCookies = (req: Request, res: Response, next: NextFunction) =
       sameSite: 'strict' as const,
       maxAge: options.maxAge || 24 * 60 * 60 * 1000, // 24 hours default
     };
-    
+
     return originalSetCookie.call(this, name, value, secureOptions);
   };
-  
+
   next();
 };
 
