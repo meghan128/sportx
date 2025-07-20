@@ -1,0 +1,24 @@
+{
+  "name": "SportX India CPD Platform",
+  "short_name": "SportX CPD",
+  "description": "Professional development platform for sports and health professionals",
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "health", "sports", "professional"],
+  "lang": "en-IN"
+}

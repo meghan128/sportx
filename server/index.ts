@@ -3,6 +3,10 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { 
   generalLimiter, 
+  apiLimiter,
+  authLimiter,
+  uploadLimiter,
+  abusePrevention,
   helmetConfig, 
   secureCookies, 
   securityHeaders 

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags -->
+    <title>SportX India CPD Platform | Professional Development for Sports & Health Professionals</title>
+    <meta name="description" content="Comprehensive CPD platform for sports and allied health professionals in India. Manage career development, access courses, events, and community resources." />
+    <meta name="keywords" content="CPD, sports medicine, physiotherapy, professional development, India, healthcare, continuing education" />
+    <meta name="author" content="SportX India" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="SportX India CPD Platform" />
+    <meta property="og:description" content="Professional development platform for sports and health professionals" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sportx.replit.app" />
+    <meta property="og:image" content="https://sportx.replit.app/og-image.png" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SportX India CPD Platform" />
+    <meta name="twitter:description" content="Professional development platform for sports and health professionals" />
+    <meta name="twitter:image" content="https://sportx.replit.app/twitter-image.png" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/main.tsx" as="script" />
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#3b82f6" />
+    
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Performance optimizations -->
+    <meta name="resource-hints" content="preload, prefetch" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Performance monitoring -->
+    <script>
+      // Basic performance monitoring
+      window.addEventListener('load', function() {
+        if ('performance' in window) {
+          const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+          console.log('Page load time:', loadTime + 'ms');
+          
+          // Log Core Web Vitals
+          if ('PerformanceObserver' in window) {
+            new PerformanceObserver((list) => {
+              for (const entry of list.getEntries()) {
+                console.log('Performance metric:', entry.name, entry.value);
+              }
+            }).observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'cumulative-layout-shift'] });
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

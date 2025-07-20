@@ -34,6 +34,41 @@ export const apiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   trustProxy: 1, // Trust the first proxy (Replit environment)
+  skip: (req) => {
+    // Skip rate limiting for static assets
+    return req.url.includes('/assets/') || 
+           req.url.includes('/@fs/') || 
+           req.url.includes('/src/');
+  }
+});
+
+// Upload rate limiting for file operations
+export const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 50, // Limit uploads per hour
+  message: {
+    error: 'Upload limit exceeded, please try again later.',
+    retryAfter: Math.round(60 * 60 * 1000 / 1000)
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  trustProxy: 1,
+});
+
+// Abuse prevention middleware
+export const abusePrevention = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // 30 requests per minute (aggressive protection)
+  message: {
+    error: 'Request rate too high, please slow down.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  trustProxy: 1,
+  skip: (req) => {
+    // Skip for GET requests to public content
+    return req.method === 'GET' && !req.url.startsWith('/api/');
+  }
 });
 
 // Helmet configuration for security headers
