@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/protected-route";
 
 // Lazy load pages for better performance
 const Dashboard = lazy(() => import("@/pages/dashboard"));
+const ResourceDashboard = lazy(() => import("@/pages/resource-dashboard"));
 const Events = lazy(() => import("@/pages/events"));
 const EventDetails = lazy(() => import("@/pages/event-details"));
 const Courses = lazy(() => import("@/pages/courses"));
@@ -28,7 +29,8 @@ const NotFound = lazy(() => import("@/pages/not-found"));
 
 // Route configuration for better maintainability
 const routes = [
-  { path: "/", component: Dashboard, protected: true, title: "Dashboard" },
+  { path: "/", component: Dashboard, protected: true, title: "Dashboard", allowedRoles: ["user"] },
+  { path: "/resource-dashboard", component: ResourceDashboard, protected: true, title: "Resource Dashboard", allowedRoles: ["resource_person"] },
   { path: "/events", component: Events, protected: true, title: "Events" },
   { path: "/events/:id", component: EventDetails, protected: true, title: "Event Details" },
   { path: "/courses", component: Courses, protected: true, title: "Courses" },
@@ -90,13 +92,13 @@ function Router() {
     <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>
         <Switch>
-          {routes.map(({ path, component: Component, protected: isProtected }) => (
+          {routes.map(({ path, component: Component, protected: isProtected, allowedRoles }) => (
             <Route
               key={path}
               path={path}
               component={() => 
                 isProtected ? (
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={allowedRoles}>
                     <Component />
                   </ProtectedRoute>
                 ) : (

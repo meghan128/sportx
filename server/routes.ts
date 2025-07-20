@@ -424,6 +424,228 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // RESOURCE PERSONNEL ROUTES
+  
+  // Middleware to check if user is resource personnel
+  function requireResourceRole(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.includes('mock-token-resource')) {
+      return res.status(403).json({ message: 'Access denied: Resource personnel only' });
+    }
+    next();
+  }
+
+  // Get resource dashboard statistics
+  app.get('/api/resource/stats', requireResourceRole, async (req, res) => {
+    try {
+      // Mock data for demo - replace with real data in production
+      const stats = {
+        totalCourses: 12,
+        activeCourses: 8,
+        totalStudents: 245,
+        pendingReviews: 7,
+        avgRating: 4.6,
+        thisMonthCompletions: 34
+      };
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch resource statistics' });
+    }
+  });
+
+  // Get resource person's courses
+  app.get('/api/resource/courses', requireResourceRole, async (req, res) => {
+    try {
+      // Mock data for demo - replace with real data in production
+      const courses = [
+        {
+          id: 1,
+          title: "Advanced Sports Rehabilitation Techniques",
+          enrolledStudents: 45,
+          completionRate: 78,
+          avgRating: 4.7,
+          status: 'active',
+          lastUpdated: '2024-01-15'
+        },
+        {
+          id: 2,
+          title: "Injury Prevention in Team Sports",
+          enrolledStudents: 32,
+          completionRate: 65,
+          avgRating: 4.5,
+          status: 'active',
+          lastUpdated: '2024-01-10'
+        },
+        {
+          id: 3,
+          title: "Performance Analytics for Coaches",
+          enrolledStudents: 28,
+          completionRate: 92,
+          avgRating: 4.8,
+          status: 'completed',
+          lastUpdated: '2023-12-20'
+        }
+      ];
+      res.json(courses);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch courses' });
+    }
+  });
+
+  // Get pending submissions for review
+  app.get('/api/resource/submissions/pending', requireResourceRole, async (req, res) => {
+    try {
+      // Mock data for demo - replace with real data in production
+      const submissions = [
+        {
+          id: 1,
+          studentName: "Sarah Johnson",
+          courseName: "Advanced Sports Rehabilitation Techniques",
+          submissionType: "Final Assessment",
+          submittedAt: '2024-01-18T10:30:00Z',
+          status: 'pending'
+        },
+        {
+          id: 2,
+          studentName: "Mike Chen",
+          courseName: "Injury Prevention in Team Sports",
+          submissionType: "Case Study Report",
+          submittedAt: '2024-01-17T14:20:00Z',
+          status: 'pending'
+        },
+        {
+          id: 3,
+          studentName: "Emma Davis",
+          courseName: "Advanced Sports Rehabilitation Techniques",
+          submissionType: "Practical Assignment",
+          submittedAt: '2024-01-16T09:45:00Z',
+          status: 'needs_revision'
+        }
+      ];
+      res.json(submissions);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch submissions' });
+    }
+  });
+
+  // Get pending approvals
+  app.get('/api/resource/approvals/pending', requireResourceRole, async (req, res) => {
+    try {
+      // Mock data for demo - replace with real data in production
+      const approvals = [
+        {
+          id: 1,
+          type: 'course',
+          title: 'New Course: Mental Health in Sports',
+          submittedBy: 'Dr. Lisa Wong',
+          submittedAt: '2024-01-19T11:15:00Z',
+          priority: 'high'
+        },
+        {
+          id: 2,
+          type: 'badge',
+          title: 'Sports Psychology Specialist Badge',
+          submittedBy: 'Prof. James Wilson',
+          submittedAt: '2024-01-18T16:30:00Z',
+          priority: 'medium'
+        },
+        {
+          id: 3,
+          type: 'accreditation',
+          title: 'CPD Event: Annual Sports Medicine Conference',
+          submittedBy: 'Dr. Maria Rodriguez',
+          submittedAt: '2024-01-17T13:45:00Z',
+          priority: 'low'
+        }
+      ];
+      res.json(approvals);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch pending approvals' });
+    }
+  });
+
+  // Review submission
+  app.post('/api/resource/submissions/:id/review', requireResourceRole, async (req, res) => {
+    try {
+      const submissionId = parseInt(req.params.id);
+      const { status, feedback } = req.body;
+      
+      // In production, this would update the submission in the database
+      res.json({ 
+        success: true, 
+        message: 'Submission review submitted successfully',
+        submissionId,
+        status,
+        feedback
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to submit review' });
+    }
+  });
+
+  // Approve or reject item
+  app.post('/api/resource/approvals/:id/action', requireResourceRole, async (req, res) => {
+    try {
+      const approvalId = parseInt(req.params.id);
+      const { action, comments } = req.body; // action: 'approve' or 'reject'
+      
+      // In production, this would update the approval status in the database
+      res.json({ 
+        success: true, 
+        message: `Item ${action}d successfully`,
+        approvalId,
+        action,
+        comments
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to process approval' });
+    }
+  });
+
+  // Create new course
+  app.post('/api/resource/courses', requireResourceRole, async (req, res) => {
+    try {
+      const { title, description, category, duration, cpdPoints } = req.body;
+      
+      // In production, this would create a course in the database
+      const newCourse = {
+        id: Math.floor(Math.random() * 1000) + 100,
+        title,
+        description,
+        category,
+        duration,
+        cpdPoints,
+        enrolledStudents: 0,
+        completionRate: 0,
+        avgRating: 0,
+        status: 'draft',
+        lastUpdated: new Date().toISOString()
+      };
+      
+      res.status(201).json(newCourse);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to create course' });
+    }
+  });
+
+  // Update course
+  app.patch('/api/resource/courses/:id', requireResourceRole, async (req, res) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      // In production, this would update the course in the database
+      res.json({ 
+        success: true, 
+        message: 'Course updated successfully',
+        courseId,
+        updateData
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to update course' });
+    }
+  });
+
   // Get recent discussions
   app.get('/api/community/discussions/recent', async (req, res) => {
     try {
