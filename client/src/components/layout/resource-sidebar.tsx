@@ -36,16 +36,6 @@ export default function ResourceSidebar() {
       icon: BarChart3,
     },
     {
-      href: "/resource/create-course",
-      label: "Create Course",
-      icon: PlusCircle,
-    },
-    {
-      href: "/resource/create-workshop",
-      label: "Create Workshop", 
-      icon: Calendar,
-    },
-    {
       href: "/resource-courses",
       label: "My Courses",
       icon: BookOpen,
@@ -71,7 +61,7 @@ export default function ResourceSidebar() {
     {
       href: "/resource-analytics",
       label: "Analytics",
-      icon: BarChart3,
+      icon: Zap,
     },
     {
       href: "/messages",
@@ -112,14 +102,18 @@ export default function ResourceSidebar() {
         {/* Quick Actions */}
         <div className="px-3 py-2">
           <div className="space-y-2">
-            <Button size="sm" className="w-full justify-start">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create Course
-            </Button>
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <FileText className="mr-2 h-4 w-4" />
-              Create Content
-            </Button>
+            <Link href="/resource/create-course">
+              <Button size="sm" className="w-full justify-start">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create Course
+              </Button>
+            </Link>
+            <Link href="/resource/create-workshop">
+              <Button variant="outline" size="sm" className="w-full justify-start">
+                <Calendar className="mr-2 h-4 w-4" />
+                Create Workshop
+              </Button>
+            </Link>
           </div>
         </div>
 

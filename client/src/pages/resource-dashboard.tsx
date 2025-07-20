@@ -1,475 +1,502 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   BookOpen, 
-  Calendar, 
   Users, 
-  MessageSquare, 
-  Award, 
-  BarChart3, 
   FileText, 
-  CheckSquare,
-  Clock,
+  CheckSquare, 
   TrendingUp,
+  Clock,
   Star,
-  AlertCircle
+  Award,
+  Target,
+  Activity,
+  PlusCircle,
+  Calendar,
+  Eye,
+  MessageSquare,
+  DollarSign,
+  BarChart3,
+  AlertCircle,
+  CheckCircle,
+  ArrowRight,
+  Zap
 } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import LoadingSpinner from "@/components/ui/loading-spinner";
+import { Link } from "wouter";
 import ResourceSidebar from "@/components/layout/resource-sidebar";
-import { Link as RouterLink } from "wouter";
+import { format } from "date-fns";
 
-interface ResourceStats {
+interface DashboardStats {
   totalCourses: number;
-  activeCourses: number;
   totalStudents: number;
-  pendingReviews: number;
+  pendingSubmissions: number;
+  pendingApprovals: number;
+  totalRevenue: number;
   avgRating: number;
-  thisMonthCompletions: number;
-}
-
-interface Course {
-  id: number;
-  title: string;
-  enrolledStudents: number;
   completionRate: number;
-  avgRating: number;
-  status: 'active' | 'draft' | 'completed';
-  lastUpdated: string;
+  activeCourses: number;
 }
 
-interface Submission {
+interface RecentActivity {
   id: number;
-  studentName: string;
-  courseName: string;
-  submissionType: string;
-  submittedAt: string;
-  status: 'pending' | 'reviewed' | 'approved' | 'needs_revision';
-}
-
-interface PendingApproval {
-  id: number;
-  type: 'course' | 'badge' | 'accreditation';
+  type: 'submission' | 'enrollment' | 'completion' | 'review';
   title: string;
-  submittedBy: string;
-  submittedAt: string;
-  priority: 'high' | 'medium' | 'low';
+  subtitle: string;
+  timestamp: string;
+  status?: 'pending' | 'completed' | 'approved';
+}
+
+interface TopCourse {
+  id: number;
+  name: string;
+  students: number;
+  rating: number;
+  revenue: number;
+  completionRate: number;
 }
 
 export default function ResourceDashboard() {
-  const { user } = useAuth();
+  // Mock data for demonstration
+  const mockStats: DashboardStats = {
+    totalCourses: 8,
+    totalStudents: 245,
+    pendingSubmissions: 7,
+    pendingApprovals: 3,
+    totalRevenue: 37750,
+    avgRating: 4.7,
+    completionRate: 85,
+    activeCourses: 6
+  };
 
-  // Resource dashboard data queries
-  const { data: stats, isLoading: statsLoading } = useQuery<ResourceStats>({
+  const mockRecentActivity: RecentActivity[] = [
+    {
+      id: 1,
+      type: 'submission',
+      title: 'New Assignment Submission',
+      subtitle: 'Sarah Johnson submitted Module 3 Assignment',
+      timestamp: '2024-01-20T10:30:00Z',
+      status: 'pending'
+    },
+    {
+      id: 2,
+      type: 'enrollment',
+      title: 'New Course Enrollment',
+      subtitle: 'Mike Chen enrolled in Advanced Rehabilitation',
+      timestamp: '2024-01-20T09:15:00Z',
+      status: 'completed'
+    },
+    {
+      id: 3,
+      type: 'completion',
+      title: 'Course Completed',
+      subtitle: 'Emma Davis completed Injury Prevention course',
+      timestamp: '2024-01-20T08:45:00Z',
+      status: 'completed'
+    },
+    {
+      id: 4,
+      type: 'review',
+      title: 'Course Review',
+      subtitle: 'New 5-star review for Performance Analytics',
+      timestamp: '2024-01-19T16:20:00Z',
+      status: 'approved'
+    }
+  ];
+
+  const mockTopCourses: TopCourse[] = [
+    {
+      id: 1,
+      name: 'Advanced Sports Rehabilitation Techniques',
+      students: 89,
+      rating: 4.8,
+      revenue: 12250,
+      completionRate: 87
+    },
+    {
+      id: 2,
+      name: 'Injury Prevention in Team Sports',
+      students: 76,
+      rating: 4.6,
+      revenue: 9900,
+      completionRate: 92
+    },
+    {
+      id: 3,
+      name: 'Performance Analytics for Coaches',
+      students: 65,
+      rating: 4.9,
+      revenue: 15600,
+      completionRate: 78
+    }
+  ];
+
+  const { data: stats = mockStats, isLoading: statsLoading } = useQuery<DashboardStats>({
     queryKey: ['/api/resource/stats'],
+    queryFn: () => Promise.resolve(mockStats),
   });
 
-  const { data: myCourses, isLoading: coursesLoading } = useQuery<Course[]>({
-    queryKey: ['/api/resource/courses'],
+  const { data: recentActivity = mockRecentActivity } = useQuery<RecentActivity[]>({
+    queryKey: ['/api/resource/activity'],
+    queryFn: () => Promise.resolve(mockRecentActivity),
   });
 
-  const { data: submissions, isLoading: submissionsLoading } = useQuery<Submission[]>({
-    queryKey: ['/api/resource/submissions/pending'],
+  const { data: topCourses = mockTopCourses } = useQuery<TopCourse[]>({
+    queryKey: ['/api/resource/top-courses'],
+    queryFn: () => Promise.resolve(mockTopCourses),
   });
 
-  const { data: pendingApprovals, isLoading: approvalsLoading } = useQuery<PendingApproval[]>({
-    queryKey: ['/api/resource/approvals/pending'],
-  });
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'submission': return <FileText className="h-4 w-4" />;
+      case 'enrollment': return <Users className="h-4 w-4" />;
+      case 'completion': return <CheckCircle className="h-4 w-4" />;
+      case 'review': return <Star className="h-4 w-4" />;
+      default: return <Activity className="h-4 w-4" />;
+    }
+  };
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'approved': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   if (statsLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="flex h-screen bg-background">
+        <ResourceSidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Loading dashboard...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen bg-background">
       <ResourceSidebar />
-      <main className="flex-1 ml-64">
-        <div className="container mx-auto p-6 space-y-8">
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Avatar className="h-12 w-12">
-            <AvatarImage src={user?.profileImage} alt={user?.name} />
-            <AvatarFallback>
-              {user?.name?.split(' ').map(n => n[0]).join('')}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <h1 className="text-3xl font-bold">Welcome back, {user?.name}</h1>
-            <div className="flex items-center space-x-2">
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                Resource Personnel
-              </Badge>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-muted-foreground">{user?.profession}</span>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="border-b bg-white p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Resource Dashboard</h1>
+              <p className="text-muted-foreground">
+                Welcome back! Here's what's happening with your courses and students.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Link href="/resource/create-course">
+                <Button>
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Create Course
+                </Button>
+              </Link>
+              <Link href="/resource-analytics">
+                <Button variant="outline">
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  View Analytics
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
-        <Button>
-          <FileText className="h-4 w-4 mr-2" />
-          Create Content
-        </Button>
-      </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalCourses || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats?.activeCourses || 0} active
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalStudents || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all courses
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Reviews</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.pendingReviews || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Submissions waiting
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.avgRating || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Course ratings
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Month</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.thisMonthCompletions || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Completions
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              Unread messages
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="courses" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="courses">My Courses</TabsTrigger>
-          <TabsTrigger value="submissions">Submissions</TabsTrigger>
-          <TabsTrigger value="approvals">Approvals</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="messages">Messages</TabsTrigger>
-          <TabsTrigger value="ai-logs">AI Logs</TabsTrigger>
-        </TabsList>
-
-        {/* My Courses Tab */}
-        <TabsContent value="courses">
-          <div className="grid gap-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">My Courses</h2>
-              <div className="flex space-x-2">
-                <RouterLink href="/resource/create-course">
-                  <Button>
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Create Course
-                  </Button>
-                </RouterLink>
-                <RouterLink href="/resource/create-workshop">
-                  <Button variant="outline">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Create Workshop
-                  </Button>
-                </RouterLink>
-              </div>
-            </div>
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Stats Overview */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <BookOpen className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{stats.totalCourses}</p>
+                    <p className="text-sm text-muted-foreground">Total Courses</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center text-sm">
+                  <span className="text-green-600 font-medium">{stats.activeCourses} active</span>
+                  <span className="text-muted-foreground ml-1">• {stats.totalCourses - stats.activeCourses} archived</span>
+                </div>
+              </CardContent>
+            </Card>
             
-            <div className="grid gap-4">
-              {coursesLoading ? (
-                <LoadingSpinner />
-              ) : myCourses?.length ? (
-                myCourses.map((course) => (
-                  <Card key={course.id}>
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">{course.title}</CardTitle>
-                          <CardDescription className="flex items-center space-x-4 mt-2">
-                            <span className="flex items-center">
-                              <Users className="h-4 w-4 mr-1" />
-                              {course.enrolledStudents} students
-                            </span>
-                            <span className="flex items-center">
-                              <Star className="h-4 w-4 mr-1" />
-                              {course.avgRating}/5.0
-                            </span>
-                          </CardDescription>
-                        </div>
-                        <Badge variant={course.status === 'active' ? 'default' : 'secondary'}>
-                          {course.status}
-                        </Badge>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Users className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{stats.totalStudents}</p>
+                    <p className="text-sm text-muted-foreground">Total Students</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center text-sm">
+                  <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                  <span className="text-green-600 font-medium">+12% this month</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="p-2 bg-yellow-100 rounded-lg">
+                    <Clock className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{stats.pendingSubmissions}</p>
+                    <p className="text-sm text-muted-foreground">Pending Reviews</p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <Link href="/resource-submissions">
+                    <Button variant="outline" size="sm">
+                      Review Now
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <DollarSign className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</p>
+                    <p className="text-sm text-muted-foreground">Total Revenue</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center text-sm">
+                  <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                  <span className="text-green-600 font-medium">+8.2% vs last month</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Performance Metrics */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Average Rating</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-2">
+                  <Star className="h-5 w-5 text-yellow-500 fill-current" />
+                  <span className="text-2xl font-bold">{stats.avgRating}</span>
+                  <span className="text-sm text-muted-foreground">/ 5.0</span>
+                </div>
+                <Progress value={(stats.avgRating / 5) * 100} className="mt-3" />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Completion Rate</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-2">
+                  <Target className="h-5 w-5 text-green-500" />
+                  <span className="text-2xl font-bold">{stats.completionRate}%</span>
+                </div>
+                <Progress value={stats.completionRate} className="mt-3" />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Pending Approvals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-2">
+                  <CheckSquare className="h-5 w-5 text-blue-500" />
+                  <span className="text-2xl font-bold">{stats.pendingApprovals}</span>
+                </div>
+                <div className="mt-3">
+                  <Link href="/resource-approvals">
+                    <Button variant="outline" size="sm">
+                      Review Approvals
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Recent Activity</CardTitle>
+                  <CardDescription>Latest updates from your courses</CardDescription>
+                </div>
+                <Activity className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentActivity.map((activity) => (
+                    <div key={activity.id} className="flex items-start space-x-4">
+                      <div className="p-2 bg-muted rounded-lg">
+                        {getActivityIcon(activity.type)}
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">Completion Rate</span>
-                          <span className="text-sm font-medium">{course.completionRate}%</span>
-                        </div>
-                        <Progress value={course.completionRate} className="h-2" />
-                        <div className="flex justify-between items-center mt-4">
-                          <span className="text-xs text-muted-foreground">
-                            Last updated: {new Date(course.lastUpdated).toLocaleDateString()}
-                          </span>
-                          <div className="space-x-2">
-                            <Button variant="outline" size="sm">Edit</Button>
-                            <Button variant="outline" size="sm">View</Button>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{activity.title}</p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {activity.subtitle}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {format(new Date(activity.timestamp), 'MMM dd, yyyy HH:mm')}
+                        </p>
+                      </div>
+                      {activity.status && (
+                        <Badge className={getStatusColor(activity.status)} variant="secondary">
+                          {activity.status}
+                        </Badge>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <Button variant="outline" className="w-full">
+                    View All Activity
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Top Performing Courses */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Top Performing Courses</CardTitle>
+                  <CardDescription>Your most successful courses</CardDescription>
+                </div>
+                <Award className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {topCourses.map((course, index) => (
+                    <div key={course.id} className="flex items-center space-x-4">
+                      <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
+                        <span className="text-sm font-bold text-primary">#{index + 1}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{course.name}</p>
+                        <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
+                          <div className="flex items-center space-x-1">
+                            <Users className="h-3 w-3" />
+                            <span>{course.students} students</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Star className="h-3 w-3" />
+                            <span>{course.rating}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Target className="h-3 w-3" />
+                            <span>{course.completionRate}%</span>
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <Card>
-                  <CardContent className="text-center py-8">
-                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No courses created yet</p>
-                    <Button className="mt-4">Create Your First Course</Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Submissions Tab */}
-        <TabsContent value="submissions">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Student Submissions</h2>
-              <Badge variant="outline">
-                {submissions?.filter(s => s.status === 'pending').length || 0} pending
-              </Badge>
-            </div>
-
-            <div className="grid gap-4">
-              {submissionsLoading ? (
-                <LoadingSpinner />
-              ) : submissions?.length ? (
-                submissions.map((submission) => (
-                  <Card key={submission.id}>
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">{submission.studentName}</CardTitle>
-                          <CardDescription>
-                            {submission.courseName} - {submission.submissionType}
-                          </CardDescription>
-                        </div>
-                        <Badge 
-                          variant={
-                            submission.status === 'pending' ? 'destructive' :
-                            submission.status === 'approved' ? 'default' :
-                            submission.status === 'needs_revision' ? 'secondary' : 'outline'
-                          }
-                        >
-                          {submission.status.replace('_', ' ')}
-                        </Badge>
+                      <div className="text-right">
+                        <p className="text-sm font-bold">${course.revenue.toLocaleString()}</p>
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">
-                          Submitted: {new Date(submission.submittedAt).toLocaleDateString()}
-                        </span>
-                        <div className="space-x-2">
-                          <Button variant="outline" size="sm">
-                            <CheckSquare className="h-4 w-4 mr-2" />
-                            Review
-                          </Button>
-                          <Button variant="outline" size="sm">Download</Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <Card>
-                  <CardContent className="text-center py-8">
-                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No submissions to review</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Approvals Tab */}
-        <TabsContent value="approvals">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Pending Approvals</h2>
-              <Badge variant="outline">
-                {pendingApprovals?.length || 0} items
-              </Badge>
-            </div>
-
-            <div className="grid gap-4">
-              {approvalsLoading ? (
-                <LoadingSpinner />
-              ) : pendingApprovals?.length ? (
-                pendingApprovals.map((approval) => (
-                  <Card key={approval.id}>
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">{approval.title}</CardTitle>
-                          <CardDescription>
-                            Submitted by {approval.submittedBy} • {approval.type}
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {approval.priority === 'high' && (
-                            <AlertCircle className="h-4 w-4 text-red-500" />
-                          )}
-                          <Badge variant={
-                            approval.priority === 'high' ? 'destructive' :
-                            approval.priority === 'medium' ? 'default' : 'secondary'
-                          }>
-                            {approval.priority} priority
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">
-                          Submitted: {new Date(approval.submittedAt).toLocaleDateString()}
-                        </span>
-                        <div className="space-x-2">
-                          <Button variant="outline" size="sm">Review</Button>
-                          <Button size="sm">
-                            <Award className="h-4 w-4 mr-2" />
-                            Approve
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <Card>
-                  <CardContent className="text-center py-8">
-                    <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No pending approvals</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Analytics Tab */}
-        <TabsContent value="analytics">
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Analytics & Reports</h2>
-            <Card>
-              <CardContent className="text-center py-8">
-                <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Analytics dashboard coming soon</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Track course engagement, completion rates, and student feedback
-                </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <Link href="/resource-courses">
+                    <Button variant="outline" className="w-full">
+                      View All Courses
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
 
-        {/* Messages Tab */}
-        <TabsContent value="messages">
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Messages & Communications</h2>
-            <Card>
-              <CardContent className="text-center py-8">
-                <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Message center coming soon</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Communicate with students and other resource personnel
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+              <CardDescription>Common tasks to help you manage your courses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <Link href="/resource/create-course">
+                  <Button variant="outline" className="w-full justify-start h-auto p-4">
+                    <div className="flex flex-col items-start space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <PlusCircle className="h-4 w-4" />
+                        <span className="font-medium">Create Course</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">Start a new course</span>
+                    </div>
+                  </Button>
+                </Link>
+                
+                <Link href="/resource/create-workshop">
+                  <Button variant="outline" className="w-full justify-start h-auto p-4">
+                    <div className="flex flex-col items-start space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4" />
+                        <span className="font-medium">Create Workshop</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">Schedule new workshop</span>
+                    </div>
+                  </Button>
+                </Link>
 
-        {/* AI Logs Tab */}
-        <TabsContent value="ai-logs">
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Career AI Logs</h2>
-            <Card>
-              <CardContent className="text-center py-8">
-                <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">AI interaction logs coming soon</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Review AI-generated career guidance and user interactions
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+                <Link href="/resource-submissions">
+                  <Button variant="outline" className="w-full justify-start h-auto p-4">
+                    <div className="flex flex-col items-start space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="h-4 w-4" />
+                        <span className="font-medium">Review Submissions</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">{stats.pendingSubmissions} pending</span>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link href="/resource-analytics">
+                  <Button variant="outline" className="w-full justify-start h-auto p-4">
+                    <div className="flex flex-col items-start space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Zap className="h-4 w-4" />
+                        <span className="font-medium">View Analytics</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">Performance insights</span>
+                    </div>
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
