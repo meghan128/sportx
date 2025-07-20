@@ -10,7 +10,7 @@ import {
 import { logger, requestLogger, errorLogger } from "./utils/logger";
 
 const app = express();
-app.set('trust proxy', true); // Trust proxy headers for rate limiting
+app.set('trust proxy', 1); // Trust the first proxy (Replit environment)
 
 // Security middleware
 app.use(helmetConfig);

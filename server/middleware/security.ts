@@ -11,6 +11,7 @@ export const generalLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: 1, // Trust the first proxy (Replit environment)
 });
 
 export const authLimiter = rateLimit({
@@ -21,6 +22,7 @@ export const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: 1, // Trust the first proxy (Replit environment)
 });
 
 export const apiLimiter = rateLimit({
@@ -31,12 +33,12 @@ export const apiLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers in Replit environment
+  trustProxy: 1, // Trust the first proxy (Replit environment)
 });
 
 // Helmet configuration for security headers
 export const helmetConfig = helmet({
-  contentSecurityPolicy: {
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? {
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
@@ -48,7 +50,7 @@ export const helmetConfig = helmet({
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
     },
-  },
+  } : false, // Disable CSP in development for Vite
   crossOriginEmbedderPolicy: false, // Allow embedding for Replit
 });
 

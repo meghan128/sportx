@@ -1,5 +1,3 @@
-// src/index.tsx
-import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
@@ -13,11 +11,9 @@ function startApp() {
   }
 
   createRoot(rootElement).render(
-    <React.StrictMode>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    </React.StrictMode>
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   );
 }
 
