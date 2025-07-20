@@ -22,6 +22,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import ResourceSidebar from "@/components/layout/resource-sidebar";
+import { Link as RouterLink } from "wouter";
 
 interface ResourceStats {
   totalCourses: number;
@@ -216,10 +217,20 @@ export default function ResourceDashboard() {
           <div className="grid gap-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">My Courses</h2>
-              <Button>
-                <BookOpen className="h-4 w-4 mr-2" />
-                Create New Course
-              </Button>
+              <div className="flex space-x-2">
+                <RouterLink href="/resource/create-course">
+                  <Button>
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Create Course
+                  </Button>
+                </RouterLink>
+                <RouterLink href="/resource/create-workshop">
+                  <Button variant="outline">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Create Workshop
+                  </Button>
+                </RouterLink>
+              </div>
             </div>
             
             <div className="grid gap-4">

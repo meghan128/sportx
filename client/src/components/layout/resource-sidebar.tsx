@@ -13,7 +13,8 @@ import {
   Settings,
   User,
   PlusCircle,
-  Zap
+  Zap,
+  Calendar
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -33,6 +34,16 @@ export default function ResourceSidebar() {
       href: "/resource-dashboard",
       label: "Dashboard",
       icon: BarChart3,
+    },
+    {
+      href: "/resource/create-course",
+      label: "Create Course",
+      icon: PlusCircle,
+    },
+    {
+      href: "/resource/create-workshop",
+      label: "Create Workshop", 
+      icon: Calendar,
     },
     {
       href: "/resource-courses",

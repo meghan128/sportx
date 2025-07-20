@@ -803,6 +803,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Advanced Course Creation API Routes for LMS
+  app.post('/api/resource/courses/create', requireResourceRole, async (req, res) => {
+    try {
+      const courseData = req.body;
+      
+      // Validate course data
+      if (!courseData.title || !courseData.description || !courseData.category) {
+        return res.status(400).json({ message: 'Missing required course fields' });
+      }
+
+      // Create course (in real implementation, save to database)
+      const newCourse = {
+        id: Date.now(), // Generate unique ID
+        ...courseData,
+        createdAt: new Date().toISOString(),
+        status: 'draft',
+        createdBy: 'resource-user-id'
+      };
+
+      // Simulate API response
+      res.status(201).json({
+        success: true,
+        message: 'Course created successfully',
+        course: newCourse
+      });
+    } catch (error) {
+      console.error('Error creating course:', error);
+      res.status(500).json({ message: 'Failed to create course' });
+    }
+  });
+
+  // Workshop Creation API Routes
+  app.post('/api/resource/workshops/create', requireResourceRole, async (req, res) => {
+    try {
+      const workshopData = req.body;
+      
+      // Validate workshop data
+      if (!workshopData.title || !workshopData.description || !workshopData.date) {
+        return res.status(400).json({ message: 'Missing required workshop fields' });
+      }
+
+      // Create workshop (in real implementation, save to database)
+      const newWorkshop = {
+        id: Date.now(),
+        ...workshopData,
+        createdAt: new Date().toISOString(),
+        status: 'scheduled',
+        createdBy: 'resource-user-id'
+      };
+
+      res.status(201).json({
+        success: true,
+        message: 'Workshop created successfully',
+        workshop: newWorkshop
+      });
+    } catch (error) {
+      console.error('Error creating workshop:', error);
+      res.status(500).json({ message: 'Failed to create workshop' });
+    }
+  });
+
+  // Content Upload API Routes
+  app.post('/api/resource/content/upload', requireResourceRole, async (req, res) => {
+    try {
+      // Handle file upload (in real implementation, use multer or similar)
+      const uploadedFile = {
+        id: Date.now(),
+        filename: req.body.filename || 'uploaded-file.pdf',
+        type: req.body.type || 'pdf',
+        size: req.body.size || 1024000,
+        url: `/uploads/${Date.now()}-${req.body.filename}`,
+        uploadedAt: new Date().toISOString()
+      };
+
+      res.json({
+        success: true,
+        message: 'File uploaded successfully',
+        file: uploadedFile
+      });
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      res.status(500).json({ message: 'Failed to upload file' });
+    }
+  });
+
   // Storage status endpoint
   app.get("/api/storage/status", (req, res) => {
     const supabaseUrl = process.env.VITE_SUPABASE_URL;

@@ -11,6 +11,8 @@ import { ProtectedRoute } from "@/components/protected-route";
 // Lazy load pages for better performance
 const Dashboard = lazy(() => import("@/pages/dashboard"));
 const ResourceDashboard = lazy(() => import("@/pages/resource-dashboard"));
+const ResourceCourseCreation = lazy(() => import("@/pages/resource-course-creation"));
+const ResourceWorkshopCreation = lazy(() => import("@/pages/resource-workshop-creation"));
 const Events = lazy(() => import("@/pages/events"));
 const EventDetails = lazy(() => import("@/pages/event-details"));
 const Courses = lazy(() => import("@/pages/courses"));
@@ -31,6 +33,8 @@ const NotFound = lazy(() => import("@/pages/not-found"));
 const routes = [
   { path: "/", component: Dashboard, protected: true, title: "Dashboard", allowedRoles: ["user"] },
   { path: "/resource-dashboard", component: ResourceDashboard, protected: true, title: "Resource Dashboard", allowedRoles: ["resource_person"] },
+  { path: "/resource/create-course", component: ResourceCourseCreation, protected: true, title: "Create Course", allowedRoles: ["resource_person"] },
+  { path: "/resource/create-workshop", component: ResourceWorkshopCreation, protected: true, title: "Create Workshop", allowedRoles: ["resource_person"] },
   { path: "/events", component: Events, protected: true, title: "Events" },
   { path: "/events/:id", component: EventDetails, protected: true, title: "Event Details" },
   { path: "/courses", component: Courses, protected: true, title: "Courses" },
