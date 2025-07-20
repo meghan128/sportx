@@ -6,9 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Form,
   FormControl,
@@ -18,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/hooks/useAuth";
-import { Eye, EyeOff, LogIn, Users, GraduationCap } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, CheckCircle, Users, GraduationCap, Sparkles } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -95,10 +93,10 @@ export default function Login() {
     type: "user" | "resource_person" 
   }) => (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+          <Alert variant="destructive" className="border-red-200 bg-red-50">
+            <AlertDescription className="text-red-800">{error}</AlertDescription>
           </Alert>
         )}
 
@@ -107,11 +105,12 @@ export default function Login() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-gray-700 font-medium">Email Address</FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="Enter your email address"
+                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                   {...field}
                 />
               </FormControl>
@@ -125,25 +124,26 @@ export default function Login() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
+                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
                     {...field}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </Button>
                 </div>
@@ -153,16 +153,20 @@ export default function Login() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button 
+          type="submit" 
+          className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl" 
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-              Signing In...
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
+              Signing you in...
             </>
           ) : (
             <>
-              <LogIn className="h-4 w-4 mr-2" />
-              Sign In as {type === "user" ? "User" : "Resource Person"}
+              Continue
+              <ArrowRight className="h-5 w-5 ml-2" />
             </>
           )}
         </Button>
@@ -171,69 +175,136 @@ export default function Login() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome to SportX</CardTitle>
-          <CardDescription>
-            Choose your login type to access the platform
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="user" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                User
-              </TabsTrigger>
-              <TabsTrigger value="resource_person" className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4" />
-                Resource Person
-              </TabsTrigger>
-            </TabsList>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white flex">
+      {/* Left Side - Hero Section */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 flex flex-col justify-center px-12 text-white">
+          <div className="mb-8">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <h1 className="text-2xl font-bold">SportX CPD Platform</h1>
+            </div>
+            <h2 className="text-4xl font-bold mb-6 leading-tight">
+              Advance Your Professional Development
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+              Join thousands of sports and allied health professionals building their careers through continuous learning.
+            </p>
+          </div>
+          
+          <div className="space-y-4 mb-12">
+            <div className="flex items-center">
+              <CheckCircle className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
+              <span className="text-blue-100">Access certified CPD courses and events</span>
+            </div>
+            <div className="flex items-center">
+              <CheckCircle className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
+              <span className="text-blue-100">Track your professional development progress</span>
+            </div>
+            <div className="flex items-center">
+              <CheckCircle className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
+              <span className="text-blue-100">Connect with industry mentors and peers</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
+            <p className="text-gray-600">Sign in to continue your professional journey</p>
+          </div>
+
+          {/* Login Type Selector */}
+          <div className="mb-8">
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setActiveTab("user")}
+                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                  activeTab === "user"
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                <Users className="h-6 w-6 mx-auto mb-2" />
+                <div className="font-medium text-sm">User</div>
+                <div className="text-xs opacity-75">Student/Professional</div>
+              </button>
+              <button
+                onClick={() => setActiveTab("resource_person")}
+                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                  activeTab === "resource_person"
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                <GraduationCap className="h-6 w-6 mx-auto mb-2" />
+                <div className="font-medium text-sm">Educator</div>
+                <div className="text-xs opacity-75">Resource Person</div>
+              </button>
+            </div>
+          </div>
+
+          {/* Login Form */}
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            {activeTab === "user" ? (
+              <>
+                <div className="mb-6">
+                  <h3 className="font-semibold text-lg text-gray-900">User Login</h3>
+                  <p className="text-sm text-gray-600">Access courses, events, and track your CPD progress</p>
+                </div>
+                <LoginForm 
+                  form={userForm} 
+                  onSubmit={onUserSubmit} 
+                  type="user" 
+                />
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className="text-sm font-medium text-blue-900 mb-1">Demo Account</p>
+                  <p className="text-xs text-blue-700">
+                    Email: user@example.com<br />
+                    Password: password
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <h3 className="font-semibold text-lg text-gray-900">Educator Login</h3>
+                  <p className="text-sm text-gray-600">Manage courses, mentor students, and share resources</p>
+                </div>
+                <LoginForm 
+                  form={resourceForm} 
+                  onSubmit={onResourceSubmit} 
+                  type="resource_person" 
+                />
+                <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-100">
+                  <p className="text-sm font-medium text-green-900 mb-1">Demo Account</p>
+                  <p className="text-xs text-green-700">
+                    Email: resource@example.com<br />
+                    Password: password
+                  </p>
+                </div>
+              </>
+            )}
             
-            <TabsContent value="user" className="mt-6">
-              <div className="mb-4">
-                <h3 className="font-semibold text-sm text-gray-700">General User Login</h3>
-                <p className="text-xs text-gray-500">Access courses, events, and CPD tracking</p>
-              </div>
-              <LoginForm 
-                form={userForm} 
-                onSubmit={onUserSubmit} 
-                type="user" 
-              />
-              
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium mb-1">Demo User Account:</p>
-                <p className="text-xs text-blue-600">
-                  Email: user@example.com<br />
-                  Password: password
-                </p>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="resource_person" className="mt-6">
-              <div className="mb-4">
-                <h3 className="font-semibold text-sm text-gray-700">Resource Person Login</h3>
-                <p className="text-xs text-gray-500">Manage courses, mentorship, and resources</p>
-              </div>
-              <LoginForm 
-                form={resourceForm} 
-                onSubmit={onResourceSubmit} 
-                type="resource_person" 
-              />
-              
-              <div className="mt-4 p-3 bg-green-50 rounded-lg">
-                <p className="text-sm text-green-800 font-medium mb-1">Demo Resource Person Account:</p>
-                <p className="text-xs text-green-600">
-                  Email: resource@example.com<br />
-                  Password: password
-                </p>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+            <div className="mt-6 text-center">
+              <p className="text-xs text-gray-500">
+                Don't have an account? Contact your administrator
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
