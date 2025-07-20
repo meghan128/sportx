@@ -1,0 +1,117 @@
+To create **backend dummy data in Supabase** for your SportXTracker app, you should:
+
+---
+
+## ✅ Step-by-Step Plan (Pseudocode Style)
+
+### 1. **Understand Your Schema**
+
+Inspect `supabase-migration.sql` or your `drizzle-orm` models to determine your tables. Common ones likely are:
+
+* `users`
+* `courses`
+* `events`
+* `messages`
+* `career_suggestions`
+
+---
+
+### 2. **Create Dummy Data Using Supabase SQL Editor**
+
+Use SQL to insert fake rows:
+
+```sql
+-- Insert dummy users
+INSERT INTO users (id, name, email, created_at)
+VALUES 
+  (gen_random_uuid(), 'Alice Smith', 'alice@example.com', now()),
+  (gen_random_uuid(), 'Bob Jones', 'bob@example.com', now());
+
+-- Insert dummy courses
+INSERT INTO courses (id, title, description, created_at)
+VALUES
+  (gen_random_uuid(), 'AI Ethics', 'Course on ethical AI practices', now()),
+  (gen_random_uuid(), 'React Native', 'Mobile app dev with React Native', now());
+
+-- Insert dummy events
+INSERT INTO events (id, name, start_date, location)
+VALUES
+  (gen_random_uuid(), 'Hackathon 2024', '2024-11-10', 'NYC'),
+  (gen_random_uuid(), 'AI Summit', '2024-12-15', 'Online');
+```
+
+---
+
+### 3. **Use Supabase “Table Editor” UI**
+
+* Go to [app.supabase.com](https://app.supabase.com)
+* Select your project ➝ click **Table Editor**
+* Add new rows manually to each table.
+
+---
+
+### 4. **Use Supabase CLI + SQL Scripts (Advanced)**
+
+If you want reproducible local data:
+
+```bash
+supabase db reset
+supabase db seed < seed.sql
+```
+
+Where `seed.sql` contains your dummy inserts.
+
+---
+
+### 5. **Generate Fake Data with Faker + Drizzle ORM (Programmatic)**
+
+Install dependencies:
+
+```bash
+npm install @faker-js/faker drizzle-orm
+```
+
+Example script (`scripts/seed.ts`):
+
+```ts
+import { db, users } from '../server/db';
+import { faker } from '@faker-js/faker';
+import { eq } from 'drizzle-orm';
+
+async function seedUsers() {
+  const fakeUsers = Array.from({ length: 10 }).map(() => ({
+    id: faker.string.uuid(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    created_at: new Date(),
+  }));
+  await db.insert(users).values(fakeUsers);
+}
+
+seedUsers();
+```
+
+Run:
+
+```bash
+tsx scripts/seed.ts
+```
+
+---
+
+## ✅ Suggested Dummy Data Scope
+
+| Table      | Sample Fields                         |
+| ---------- | ------------------------------------- |
+| `users`    | id, name, email, avatar, joined\_at   |
+| `courses`  | id, title, description, progress      |
+| `events`   | id, title, start\_date, location      |
+| `messages` | id, from\_user, to\_user, content     |
+| `ai_logs`  | user\_id, prompt, result, created\_at |
+
+---
+
+Want me to generate a full `seed.sql` or `seed.ts` file for your schema?
+
+**a.** Generate `seed.sql` with realistic dummy data
+**b.** Generate a `seed.ts` script using Faker + Drizzle ORM
