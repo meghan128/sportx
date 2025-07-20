@@ -86,12 +86,10 @@ export default function Login() {
 
   const LoginForm = ({ 
     form, 
-    onSubmit, 
-    type 
+    onSubmit
   }: { 
     form: any; 
     onSubmit: (data: LoginForm) => void; 
-    type: "user" | "resource_person" 
   }) => (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
