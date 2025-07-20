@@ -30,7 +30,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white flex flex-col md:flex-row">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-inter">
       <div 
         className={`transition-all duration-300 ease-in-out ${
           sidebarCollapsed ? 'md:w-20' : 'md:w-64'
@@ -59,14 +59,16 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
             </button>
           )}
         
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Breadcrumb />
             {children}
           </div>
         </div>
         
-        <footer className="bg-white/80 backdrop-blur-sm border-t border-gray-100 py-6 px-6 text-center text-gray-500 text-sm mt-12">
-          <p>© {new Date().getFullYear()} SportX India CPD Platform. All rights reserved.</p>
+        <footer className="bg-white border-t border-gray-200 py-8 px-6 text-center text-gray-600 text-sm mt-16">
+          <div className="max-w-7xl mx-auto">
+            <p>© {new Date().getFullYear()} SportX India CPD Platform. All rights reserved.</p>
+          </div>
         </footer>
       </main>
     </div>

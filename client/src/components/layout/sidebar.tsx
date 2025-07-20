@@ -32,14 +32,14 @@ interface SidebarLinkProps {
 const SidebarLink = ({ href, icon, children, isActive, collapsed }: SidebarLinkProps) => {
   const linkContent = (
     <div 
-      className={`flex items-center ${!collapsed ? 'space-x-2' : 'justify-center'} px-2 py-2 rounded-lg ${
+      className={`flex items-center ${!collapsed ? 'space-x-3' : 'justify-center'} px-3 py-3 rounded-lg ${
         isActive 
-          ? "bg-blue-600 text-white shadow-lg" 
-          : "hover:bg-white/10 text-blue-100 hover:text-white"
-      } mt-1 cursor-pointer transition-colors duration-200`}
+          ? "bg-blue-600 text-white shadow-sm" 
+          : "hover:bg-gray-100 text-gray-700 hover:text-gray-900"
+      } mb-1 cursor-pointer transition-colors duration-200`}
     >
       <span className={collapsed ? "text-center" : ""}>{icon}</span>
-      {!collapsed && <span>{children}</span>}
+      {!collapsed && <span className="font-medium">{children}</span>}
     </div>
   );
 
@@ -118,27 +118,27 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
     <aside 
       id="main-sidebar" 
       className={cn(
-        "bg-gradient-to-b from-blue-700 to-blue-800 text-white md:fixed md:h-full z-10 transition-all duration-300 shadow-xl",
+        "bg-white border-r border-gray-200 text-gray-900 md:fixed md:h-full z-10 transition-all duration-300 shadow-sm",
         collapsed ? "md:w-20" : "md:w-64",
         "w-full"
       )}
     >
-      <div className="flex justify-between items-center p-4 md:p-6">
+      <div className="flex justify-between items-center p-4 md:p-6 border-b border-gray-200">
         {!collapsed ? (
           <div className="flex items-center space-x-2">
-            <CalendarDays className="h-6 w-6 text-white" />
-            <h1 className="text-xl font-bold text-white">
+            <Heart className="h-6 w-6 text-blue-600" />
+            <h1 className="text-xl font-bold text-gray-900">
               SportX CPD
             </h1>
           </div>
         ) : (
           <div className="w-full flex justify-center">
-            <CalendarDays className="h-8 w-8 text-white" />
+            <Heart className="h-8 w-8 text-blue-600" />
           </div>
         )}
         
         <button 
-          className="md:hidden text-white focus:outline-none" 
+          className="md:hidden text-gray-500 focus:outline-none hover:text-gray-700" 
           id="sidebar-toggle"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
@@ -159,7 +159,7 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
       >
         <div className="mt-6">
           {!collapsed && (
-            <p className="text-xs uppercase tracking-wider text-blue-200 mb-2 px-2">Main</p>
+            <p className="text-xs uppercase tracking-wider text-gray-500 mb-4 px-2 font-semibold">Main</p>
           )}
           <SidebarLink 
             href="/" 

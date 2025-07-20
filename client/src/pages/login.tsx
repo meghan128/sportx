@@ -175,49 +175,58 @@ export default function Login() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white flex">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* Left Side - Hero Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative z-10 flex flex-col justify-center px-12 text-white">
+      <div className="hidden lg:flex lg:w-1/2 bg-white relative overflow-hidden border-r border-gray-200">
+        <div className="relative z-10 flex flex-col justify-center px-12">
           <div className="mb-8">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                <Sparkles className="h-6 w-6" />
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                <Sparkles className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold">SportX CPD Platform</h1>
+              <h1 className="text-2xl font-bold text-gray-900">SportX CPD</h1>
             </div>
-            <h2 className="text-4xl font-bold mb-6 leading-tight">
-              Advance Your Professional Development
+            <h2 className="text-4xl font-bold mb-6 leading-tight text-gray-900">
+              Free Professional Development & Training Platform
             </h2>
-            <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-              Join thousands of sports and allied health professionals building their careers through continuous learning.
+            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              Track your CPD credits, attend courses, and advance your career with our comprehensive platform.
             </p>
           </div>
           
           <div className="space-y-4 mb-12">
             <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-              <span className="text-blue-100">Access certified CPD courses and events</span>
+              <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+              <span className="text-gray-700">4.5 CUSTOMER RATING</span>
             </div>
             <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-              <span className="text-blue-100">Track your professional development progress</span>
+              <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+              <span className="text-gray-700">COMPLETELY FREE</span>
             </div>
             <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-              <span className="text-blue-100">Connect with industry mentors and peers</span>
+              <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+              <span className="text-gray-700">START SELLING INSTANTLY</span>
             </div>
+            <div className="flex items-center">
+              <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+              <span className="text-gray-700">90% INCREASE IN SALES</span>
+            </div>
+          </div>
+
+          <div>
+            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+              Start Today
+            </button>
           </div>
         </div>
         
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+        {/* Simple geometric decoration */}
+        <div className="absolute bottom-20 right-20 w-32 h-32 bg-blue-50 rounded-full"></div>
+        <div className="absolute top-20 right-32 w-20 h-20 bg-blue-100 rounded-full"></div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">

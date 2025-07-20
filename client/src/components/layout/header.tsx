@@ -28,18 +28,18 @@ const Header = ({ title }: HeaderProps) => {
   const [showSearchBar, setShowSearchBar] = useState(false);
 
   return (
-    <header className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           <div className="flex-1 flex items-center justify-between">
-            <h2 className="text-lg md:text-xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-xl md:text-2xl font-semibold text-gray-900">{title}</h2>
 
             <div className="hidden md:block">
               <GlobalSearch />
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 md:space-x-4">
+          <div className="flex items-center space-x-4 md:space-x-6">
             <div className="md:hidden">
               <Button 
                 variant="ghost" 

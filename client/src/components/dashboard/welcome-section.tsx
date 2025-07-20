@@ -64,15 +64,15 @@ const WelcomeSection = () => {
   };
 
   return (
-    <Card id="welcome-section" className="h-full border-0 shadow-xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
-      <CardContent className="p-6">
+    <Card id="welcome-section" className="h-full border border-gray-200 shadow-sm bg-white">
+      <CardContent className="p-8">
         <div className="flex flex-col h-full">
           <div className="mb-6">
             <div className="flex items-center gap-4 mb-4">
               {!isLoading && user?.profileImage && (
-                <Avatar className="h-16 w-16 border-3 border-white shadow-lg animate-pulse-glow">
+                <Avatar className="h-16 w-16 border-2 border-gray-200 shadow-sm">
                   <AvatarImage src={user?.profileImage} />
-                  <AvatarFallback className="text-lg font-bold bg-white text-blue-600">{user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="text-lg font-bold bg-blue-600 text-white">{user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
               )}
               <div>
