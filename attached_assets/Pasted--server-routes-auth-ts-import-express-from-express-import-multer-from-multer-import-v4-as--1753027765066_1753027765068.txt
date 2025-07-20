@@ -1,0 +1,65 @@
+// server/routes/auth.ts
+import express from 'express';
+import multer from 'multer';
+import { v4 as uuidv4 } from 'uuid';
+import { ocrVerifyDocument } from '../utils/ocr';
+import { db } from '../db';
+import { users } from '../schema';
+
+const router = express.Router();
+const upload = multer({ dest: 'uploads/' });
+
+router.post('/register/student', upload.single('marksheet'), async (req, res) => {
+  const { name, email, mobile, dob, degree, year } = req.body;
+  const marksheet = req.file;
+  const userId = uuidv4();
+
+  if (!name || !email || !mobile || !dob || !degree || !year || !marksheet) {
+    return res.status(400).json({ error: 'All fields required' });
+  }
+
+  const verified = await ocrVerifyDocument(marksheet.path, name);
+  if (!verified) return res.status(400).json({ error: 'Document verification failed' });
+
+  await db.insert(users).values({ id: userId, name, email, mobile, dob, role: 'student', degree, year });
+  res.json({ success: true, userId });
+});
+
+router.post('/register/professional', upload.single('degree'), async (req, res) => {
+  const { name, email, mobile, dob, field, affiliations } = req.body;
+  const degree = req.file;
+  const userId = uuidv4();
+
+  if (!name || !email || !mobile || !dob || !field || !degree) {
+    return res.status(400).json({ error: 'All fields required' });
+  }
+
+  await db.insert(users).values({ id: userId, name, email, mobile, dob, role: 'professional', field, affiliations });
+  res.json({ success: true, userId });
+});
+
+router.post('/register/resource', upload.single('affiliation_proof'), async (req, res) => {
+  const { name, email, mobile, dob, field, affiliation, membership_id } = req.body;
+  const file = req.file;
+  const userId = uuidv4();
+
+  if (!name || !email || !mobile || !dob || !field || !affiliation || !membership_id || !file) {
+    return res.status(400).json({ error: 'All fields required' });
+  }
+
+  await db.insert(users).values({
+    id: userId,
+    name,
+    email,
+    mobile,
+    dob,
+    role: 'resource',
+    field,
+    affiliation,
+    membership_id
+  });
+
+  res.json({ success: true, userId });
+});
+
+export default router;
