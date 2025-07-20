@@ -1,0 +1,83 @@
+Here are **recommendations for a different dashboard tailored for “Resource Personnel” login** in your SportXTracker app.
+
+---
+
+## 🧠 Target Persona: “Resource Personnel”
+
+These are subject matter experts or trainers managing:
+
+* Courses, events, accreditations
+* Student progress & feedback
+* AI career guidance content
+
+---
+
+## 🧩 Dashboard Layout: Recommended Modules
+
+### 📊 1. **Resource Dashboard Overview**
+
+```plaintext
++---------------------------------------------+
+| 👤 Welcome, Dr. Sharma                      |
+| 📅 Upcoming Tasks | ✉️ Messages | ⚙️ Settings |
++---------------------------------------------+
+| 📦 My Courses     | 📍 Events    | 📈 Analytics |
+| 🧑‍🏫 Submissions   | 🧠 AI Logs   | 🗂️ Accreditation |
++---------------------------------------------+
+```
+
+---
+
+## ✅ Key Dashboard Widgets
+
+| Section                 | Component Suggestion                          | Purpose                                    |
+| ----------------------- | --------------------------------------------- | ------------------------------------------ |
+| **My Courses**          | `resource-course-manager.tsx`                 | View/edit/publish own content              |
+| **Student Submissions** | `submission-review.tsx`                       | Review uploaded assessments or tasks       |
+| **Accreditation**       | `pending-approvals.tsx`, `badge-requests.tsx` | Approve courses/badges                     |
+| **Messages**            | `inbox.tsx`, `mentor-conversations.tsx`       | Chat with learners or moderators           |
+| **Career AI Logs**      | `career-ai-logs.tsx`                          | Review prompts/results generated for users |
+| **Analytics**           | `resource-analytics.tsx`                      | Track course engagement, reviews, scores   |
+
+---
+
+## 🎨 Design Enhancements
+
+* **Use Tabs or Side Nav**: Use `@radix-ui/react-tabs` or sidebar layout
+* **Theme**: Offer light/dark toggle + personalization
+* **Role Badge**: Show `Role: Resource` top-right
+* **Access Control**: Restrict routes/components by role
+
+---
+
+## 🔐 Backend Suggestions
+
+Add middleware in Express:
+
+```ts
+function requireResourceRole(req, res, next) {
+  if (req.user?.role !== 'resource') return res.status(403).send('Forbidden');
+  next();
+}
+```
+
+Apply to route:
+
+```ts
+app.get("/api/resource/courses", requireAuth, requireResourceRole, getCourses);
+```
+
+---
+
+## 🛠 Dev Notes
+
+* Create a separate `routes/resource.ts` in backend
+* Add `role` column in Supabase `users` table (`admin`, `student`, `resource`)
+* Seed sample resource accounts in `seed.sql`
+
+---
+
+### Want help scaffolding this dashboard?
+
+**a.** Generate `resource-dashboard.tsx` layout with components
+**b.** Add backend Express routes & role middleware for `resource` login
