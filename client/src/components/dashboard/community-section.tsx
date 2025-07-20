@@ -15,15 +15,31 @@ const CommunitySection = () => {
   });
 
   return (
-    <div id="community-section">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Community Highlights</h2>
-        <Link href="/community" className="text-sm text-primary hover:text-primary-dark flex items-center">
-          Visit forums <ArrowRight className="ml-1 h-4 w-4" />
-        </Link>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div id="community-section" className="mb-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Header Section */}
+        <div className="bg-gradient-to-r from-orange-50 to-red-50 px-8 py-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-600 rounded-xl">
+                <MessageCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Community Highlights</h2>
+                <p className="text-gray-600">Connect with peers and access mentorship opportunities</p>
+              </div>
+            </div>
+            <Link href="/community">
+              <Button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg">
+                Visit forums <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="p-6">
@@ -160,6 +176,8 @@ const CommunitySection = () => {
               )}
             </div>
           </div>
+        </div>
+        </div>
         </div>
       </div>
     </div>

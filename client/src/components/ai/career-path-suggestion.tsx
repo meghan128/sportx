@@ -168,29 +168,135 @@ const CareerPathSuggestion = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="mb-8">
       <ConfettiCanvas />
       
-      <Card ref={cardRef} className="bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 text-white border-0 shadow-xl animate-gradient-wave">
-        <CardHeader className="relative">
-          <div className="absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-yellow-400/30 to-pink-400/40 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-          <div className="flex items-center gap-3 relative">
-            <div className="p-2 bg-white/10 rounded-lg animate-brain-pulse">
-              <Brain className="h-6 w-6 text-yellow-400 animate-ai-thinking" />
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Header Section */}
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-8 py-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-600 rounded-xl">
+                <Brain className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">🤖 AI Career Path Suggestions</h2>
+                <p className="text-gray-600">✨ Personalized recommendations powered by advanced AI</p>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-2xl font-bold neon-glow animate-float">
-                🤖 AI Career Path Suggestions
-              </CardTitle>
-              <p className="text-white/90 font-medium">
-                ✨ Personalized recommendations powered by AI
-              </p>
+            <div className="flex items-center gap-2">
+              <Badge className="bg-purple-600 text-white px-3 py-1">
+                <Sparkles className="h-4 w-4 mr-1" />
+                AI Powered
+              </Badge>
+              <Badge variant="outline" className="border-green-300 text-green-700">
+                94% Match Rate
+              </Badge>
             </div>
-            <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="space-y-4">
+        {/* Content Area */}
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {careerSuggestions.map((suggestion) => (
+              <div 
+                key={suggestion.id} 
+                className="group bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-100 hover:border-purple-300 rounded-xl p-6 transition-all duration-200 hover:shadow-lg cursor-pointer"
+                onClick={() => handleSelectSuggestion(suggestion)}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`p-2 rounded-lg text-white ${getCategoryColor(suggestion.category)}`}>
+                    {getCategoryIcon(suggestion.category)}
+                  </div>
+                  <Badge className="bg-purple-600 text-white px-2 py-1 text-xs">
+                    {suggestion.aiConfidence}% AI Match
+                  </Badge>
+                </div>
+                
+                <h3 className="font-bold text-gray-900 group-hover:text-purple-600 transition-colors mb-2">{suggestion.title}</h3>
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2">{suggestion.description}</p>
+                
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                      <span>Relevance</span>
+                      <span>{suggestion.currentRelevance}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-purple-600 h-2 rounded-full" style={{width: `${suggestion.currentRelevance}%`}}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                      <span>Impact</span>
+                      <span>{suggestion.potentialImpact}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-green-600 h-2 rounded-full" style={{width: `${suggestion.potentialImpact}%`}}></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between mt-4 text-sm">
+                  <div className="flex items-center text-gray-500">
+                    <Clock className="h-4 w-4 mr-1" />
+                    {suggestion.timeToComplete}
+                  </div>
+                  <span className="font-medium text-purple-600">{suggestion.requiredCpdPoints} CPD Points</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {selectedSuggestion && (
+            <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Trophy className="h-6 w-6 text-yellow-600" />
+                <h3 className="font-bold text-gray-900">Next Steps for {selectedSuggestion.title}</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Recommended Actions:
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedSuggestion.nextSteps.map((step, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                        <div className="w-2 h-2 bg-yellow-600 rounded-full mt-2 flex-shrink-0"></div>
+                        {step}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                    <BookOpen className="h-4 w-4" />
+                    Suggested Courses:
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedSuggestion.suggestedCourses.map((course, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                        <div className="w-2 h-2 bg-purple-600 rounded-full mt-2 flex-shrink-0"></div>
+                        {course}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CareerPathSuggestion;
           {careerSuggestions.map((suggestion) => (
             <Card 
               key={suggestion.id} 
