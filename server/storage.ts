@@ -860,72 +860,251 @@ export class MemStorage implements IStorage {
     return true;
   }
 
-  // Initialize sample data
+  // Initialize comprehensive professional data for SportXTracker
   private initializeData() {
-    // Create sample user
-    const user: User = {
-      id: this.currentUserId++,
-      username: "sarah_chen",
-      password: "password123", // In a real app, this would be hashed
-      name: "Dr. Sarah Chen",
-      email: "sarah.chen@example.com",
-      profession: "Sports Physiotherapist",
-      specialization: "Knee Rehabilitation",
-      bio: "Sports physiotherapist with over 10 years of experience working with elite athletes in various sports.",
-      organization: "SportsMed Clinic",
-      location: "Mumbai, India",
-      profileImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80",
-      contactInfo: {
-        phone: "+91 98765 43210",
-        email: "sarah.chen@sportsmed.com",
-        website: "https://www.sportsmed.com/sarah-chen"
+    // Create comprehensive professional users
+    const professionals = [
+      {
+        username: "dr_sarah_smith",
+        password: "password123",
+        name: "Dr. Sarah Smith",
+        email: "sarah.smith@sportsmedicine.com",
+        role: "resource_person" as const,
+        profession: "Physiotherapist",
+        specialization: "Sports Injury Prevention",
+        bio: "Expert physiotherapist with 15 years in sports medicine, specializing in injury prevention and rehabilitation for elite athletes across multiple sports disciplines.",
+        organization: "SportsMed Clinic Mumbai",
+        location: "Mumbai, Maharashtra",
+        profileImage: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face",
+        contactInfo: { phone: "+91-9876543210", website: "https://drsarahsmith.com" },
+        socialLinks: { linkedin: "https://linkedin.com/in/drsarahsmith", twitter: "https://twitter.com/drsarahsmith" },
+        privacySettings: { profilePublic: true, allowMessages: true, allowMentorship: true, showCourses: true, showEvents: true, showCpd: false },
+        isOnline: true,
+        lastSeen: new Date("2025-07-20T10:30:00Z")
       },
-      socialLinks: {
-        linkedin: "https://linkedin.com/in/sarah-chen",
-        twitter: "https://twitter.com/sarahchen"
+      {
+        username: "coach_rahul",
+        password: "password123", 
+        name: "Rahul Sharma",
+        email: "rahul.sharma@performancelab.com",
+        role: "resource_person" as const,
+        profession: "Strength & Conditioning Coach",
+        specialization: "Performance Enhancement",
+        bio: "Certified strength and conditioning specialist working with professional cricket and football teams across India. Expert in Olympic lifting and power development.",
+        organization: "Elite Performance Center Delhi",
+        location: "New Delhi, Delhi",
+        profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+        contactInfo: { phone: "+91-9876543211", website: "https://rahulsharma.fitness" },
+        socialLinks: { linkedin: "https://linkedin.com/in/rahulsharma", instagram: "https://instagram.com/coachrahul" },
+        privacySettings: { profilePublic: true, allowMessages: true, allowMentorship: true, showCourses: true, showEvents: true, showCpd: true },
+        isOnline: false,
+        lastSeen: new Date("2025-07-20T08:15:00Z")
       },
-      createdAt: new Date("2023-01-15"),
-      updatedAt: new Date("2023-05-22")
-    };
-    this.users.set(user.id, user);
+      {
+        username: "nutritionist_priya",
+        password: "password123",
+        name: "Dr. Priya Patel", 
+        email: "priya.patel@sportsnutrition.in",
+        role: "resource_person" as const,
+        profession: "Sports Nutritionist",
+        specialization: "Performance Nutrition",
+        bio: "Sports nutritionist with expertise in performance nutrition for endurance athletes, weight management, and supplement protocols for professional sports teams.",
+        organization: "Sports Nutrition Institute Bangalore",
+        location: "Bangalore, Karnataka",
+        profileImage: "https://images.unsplash.com/photo-1594824681814-2e9c1bfe8dae?w=150&h=150&fit=crop&crop=face",
+        contactInfo: { phone: "+91-9876543212", website: "https://sportsnutrition.in" },
+        socialLinks: { linkedin: "https://linkedin.com/in/drpriyapatel", website: "https://sportsnutrition.in" },
+        privacySettings: { profilePublic: true, allowMessages: true, allowMentorship: true, showCourses: true, showEvents: true, showCpd: true },
+        isOnline: true,
+        lastSeen: new Date("2025-07-20T11:45:00Z")
+      },
+      {
+        username: "physio_rajesh",
+        password: "password123",
+        name: "Rajesh Kumar",
+        email: "rajesh.kumar@rehabcenter.com", 
+        role: "user" as const,
+        profession: "Physiotherapist",
+        specialization: "Orthopedic Rehabilitation",
+        bio: "Experienced physiotherapist specializing in orthopedic rehabilitation and manual therapy techniques. Currently expanding knowledge in sports medicine applications.",
+        organization: "Rehabilitation Institute Pune",
+        location: "Pune, Maharashtra",
+        profileImage: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face",
+        contactInfo: { phone: "+91-9876543213" },
+        socialLinks: { linkedin: "https://linkedin.com/in/rajeshkumar" },
+        privacySettings: { profilePublic: true, allowMessages: true, allowMentorship: false, showCourses: true, showEvents: true, showCpd: false },
+        isOnline: false,
+        lastSeen: new Date("2025-07-19T16:30:00Z")
+      },
+      {
+        username: "student_anjali",
+        password: "password123",
+        name: "Anjali Gupta",
+        email: "anjali.gupta@student.edu",
+        role: "user" as const, 
+        profession: "Exercise Physiologist",
+        specialization: "Cardiac Rehabilitation",
+        bio: "Final year student pursuing Masters in Exercise Physiology with special interest in cardiac rehabilitation programs and exercise prescription for chronic conditions.",
+        organization: "University Sports Medicine Mumbai",
+        location: "Mumbai, Maharashtra",
+        profileImage: "https://images.unsplash.com/photo-1494790108755-2616b15c2d15?w=150&h=150&fit=crop&crop=face",
+        contactInfo: { phone: "+91-9876543214" },
+        socialLinks: { linkedin: "https://linkedin.com/in/anjaligupta", instagram: "https://instagram.com/anjali_exphys" },
+        privacySettings: { profilePublic: true, allowMessages: true, allowMentorship: false, showCourses: true, showEvents: true, showCpd: false },
+        isOnline: true,
+        lastSeen: new Date("2025-07-20T12:00:00Z")
+      }
+    ];
 
-    // Create more sample users for community interactions
-    const user2: User = {
-      id: this.currentUserId++,
-      username: "amit_patel",
-      password: "password123",
-      name: "Dr. Amit Patel",
-      email: "amit.patel@example.com",
-      profession: "Sports Physiotherapist",
-      specialization: "ACL Rehabilitation",
-      profileImage: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
-      bio: "",
-      organization: "Indian Cricket Team",
-      location: "Delhi, India",
-      contactInfo: {},
-      socialLinks: {},
-      createdAt: new Date("2022-12-10"),
-      updatedAt: new Date("2023-04-15")
-    };
-    this.users.set(user2.id, user2);
+    // Create users from professional profiles
+    professionals.forEach((prof) => {
+      const user: User = {
+        id: this.currentUserId++,
+        username: prof.username,
+        password: prof.password,
+        name: prof.name,
+        email: prof.email,
+        role: prof.role,
+        profession: prof.profession,
+        specialization: prof.specialization,
+        bio: prof.bio,
+        organization: prof.organization,
+        location: prof.location,
+        profileImage: prof.profileImage,
+        contactInfo: prof.contactInfo,
+        socialLinks: prof.socialLinks,
+        privacySettings: prof.privacySettings,
+        isOnline: prof.isOnline,
+        lastSeen: prof.lastSeen,
+        createdAt: new Date("2024-01-15"),
+        updatedAt: new Date("2025-07-20")
+      };
+      this.users.set(user.id, user);
+    });
 
-    const user3: User = {
-      id: this.currentUserId++,
-      username: "priya_sharma",
-      password: "password123",
-      name: "Priya Sharma",
-      email: "priya.sharma@example.com",
-      profession: "Sports Nutritionist",
-      specialization: "Endurance Sports",
-      profileImage: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
-      bio: "",
-      organization: "Elite Nutrition Hub",
-      location: "Bangalore, India",
-      contactInfo: {},
-      socialLinks: {},
-      createdAt: new Date("2023-01-22"),      updatedAt: new Date("2023-03-18")
-    };
-    this.users.set(user3.id, user3);
+    // Create comprehensive professional events
+    const professionalEvents = [
+      {
+        title: "Advanced Sports Injury Assessment Workshop",
+        description: "Comprehensive workshop covering latest techniques in sports injury assessment and diagnosis. Learn from leading experts in the field using hands-on practical sessions.",
+        date: "2025-08-15",
+        startTime: "09:00",
+        endTime: "17:00",
+        type: "In-person",
+        category: "Sports Medicine",
+        location: "Mumbai, India",
+        image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop",
+        price: "2500.00",
+        cpdPoints: 6,
+        maxAttendees: 50,
+        currentAttendees: 23,
+        accreditationBody: "Sports Medicine India",
+        status: "upcoming" as const,
+        learningOutcomes: ["Master advanced assessment techniques", "Understand injury biomechanics", "Develop clinical reasoning skills", "Learn evidence-based protocols"],
+        speakers: [{
+          id: "1",
+          name: "Dr. Sarah Smith",
+          bio: "Expert physiotherapist with 15 years experience",
+          image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face",
+          expertise: ["Sports Injury Prevention", "Manual Therapy"]
+        }],
+        schedule: [
+          { time: "09:00", activity: "Registration & Welcome", duration: "30 minutes" },
+          { time: "09:30", activity: "Keynote: Modern Sports Assessment", speaker: "Dr. Sarah Smith", duration: "90 minutes" },
+          { time: "11:00", activity: "Practical Session: Assessment Techniques", duration: "120 minutes" }
+        ],
+        tags: ["workshop", "assessment", "sports", "injury"]
+      },
+      {
+        title: "Nutrition for Endurance Athletes Webinar",
+        description: "Learn evidence-based nutrition strategies for optimizing endurance performance. Covers pre, during, and post-exercise nutrition with real-world case studies.",
+        date: "2025-08-22",
+        startTime: "19:00",
+        endTime: "21:00",
+        type: "Virtual",
+        category: "Nutrition",
+        location: "Online",
+        image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=300&fit=crop",
+        price: "1500.00",
+        cpdPoints: 3,
+        maxAttendees: 100,
+        currentAttendees: 67,
+        accreditationBody: "ACSM",
+        status: "upcoming" as const,
+        learningOutcomes: ["Understand energy systems", "Master fueling strategies", "Learn hydration protocols", "Apply nutrition periodization"],
+        speakers: [{
+          id: "2",
+          name: "Dr. Priya Patel",
+          bio: "Sports nutritionist with expertise in performance nutrition",
+          image: "https://images.unsplash.com/photo-1594824681814-2e9c1bfe8dae?w=150&h=150&fit=crop&crop=face",
+          expertise: ["Performance Nutrition", "Weight Management"]
+        }],
+        schedule: [
+          { time: "19:00", activity: "Introduction to Endurance Nutrition", speaker: "Dr. Priya Patel", duration: "120 minutes" }
+        ],
+        tags: ["nutrition", "endurance", "webinar", "performance"]
+      },
+      {
+        title: "Strength Training for Injury Prevention Conference",
+        description: "Two-day conference exploring the role of strength training in injury prevention across different sports and populations. Features international speakers and practical workshops.",
+        date: "2025-09-05",
+        startTime: "08:30",
+        endTime: "17:30",
+        type: "Hybrid",
+        category: "Exercise Physiology",
+        location: "Delhi, India",
+        image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+        price: "3500.00",
+        cpdPoints: 8,
+        maxAttendees: 150,
+        currentAttendees: 89,
+        accreditationBody: "NSCA",
+        status: "upcoming" as const,
+        learningOutcomes: ["Understand injury mechanisms", "Design prevention programs", "Apply periodization principles", "Evaluate program effectiveness"],
+        speakers: [{
+          id: "3",
+          name: "Rahul Sharma",
+          bio: "Certified strength and conditioning specialist",
+          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+          expertise: ["Performance Enhancement", "Injury Prevention"]
+        }],
+        schedule: [
+          { time: "08:30", activity: "Registration", duration: "30 minutes" },
+          { time: "09:00", activity: "Opening Keynote", speaker: "Rahul Sharma", duration: "60 minutes" },
+          { time: "10:00", activity: "Workshop: Program Design", duration: "120 minutes" }
+        ],
+        tags: ["strength", "prevention", "conference", "training"]
+      }
+    ];
+
+    // Create events from professional data
+    professionalEvents.forEach((eventData) => {
+      const event: Event = {
+        id: this.currentEventId++,
+        title: eventData.title,
+        description: eventData.description,
+        date: eventData.date,
+        startTime: eventData.startTime,
+        endTime: eventData.endTime,
+        type: eventData.type,
+        category: eventData.category,
+        location: eventData.location,
+        image: eventData.image,
+        price: eventData.price,
+        cpdPoints: eventData.cpdPoints,
+        maxAttendees: eventData.maxAttendees,
+        currentAttendees: eventData.currentAttendees,
+        accreditationBody: eventData.accreditationBody,
+        status: eventData.status,
+        learningOutcomes: eventData.learningOutcomes,
+        speakers: eventData.speakers,
+        schedule: eventData.schedule,
+        tags: eventData.tags,
+        createdAt: new Date("2025-06-01"),
+        updatedAt: new Date("2025-07-20")
+      };
+      this.events.set(event.id, event);
+    });
 
     // Create sample events
     const event1: Event = {
