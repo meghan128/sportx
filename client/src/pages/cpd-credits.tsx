@@ -8,6 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { memo, useMemo, useCallback } from "react";
+import { formatShortDate } from "@/lib/formatters";
+import { useActivityIcon } from "@/hooks/use-activity-icon";
 import {
   Tabs,
   TabsContent,
@@ -56,10 +59,11 @@ import {
 } from "recharts";
 import { useAsyncToast } from "@/hooks/use-async-toast";
 
-const CpdCredits = () => {
+const CpdCredits = memo(() => {
   const [searchQuery, setSearchQuery] = useState("");
   const [yearFilter, setYearFilter] = useState("2023");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const { getActivityIcon } = useActivityIcon();
 
   const { data: cpdSummary, isLoading: summaryLoading } = useQuery<CpdSummary>({
     queryKey: ['/api/cpd/summary'],
@@ -69,27 +73,27 @@ const CpdCredits = () => {
     queryKey: ['/api/cpd/activities', yearFilter, categoryFilter, searchQuery],
   });
 
-  const downloadCpdReport = () => {
+  const downloadCpdReport = useCallback(() => {
     // This would trigger a report download
     window.open('/api/cpd/reports/download', '_blank');
-  };
+  }, []);
 
-  const chartColors = [
+  const chartColors = useMemo(() => [
     'hsl(var(--chart-1))',
     'hsl(var(--chart-2))',
     'hsl(var(--chart-3))',
     'hsl(var(--chart-4))',
     'hsl(var(--chart-5))'
-  ];
+  ], []);
 
   return (
     <DashboardLayout title="CPD Credits">
       <div className="space-y-6">
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total CPD Points</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total CPD Points</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -319,7 +323,7 @@ const CpdCredits = () => {
                                 <span className="ml-2">{activity.title}</span>
                               </div>
                             </TableCell>
-                            <TableCell>{formatDate(activity.date)}</TableCell>
+                            <TableCell>{formatShortDate(activity.date)}</TableCell>
                             <TableCell>{activity.category}</TableCell>
                             <TableCell className="text-right font-medium">{activity.points}</TableCell>
                             <TableCell>
@@ -348,29 +352,8 @@ const CpdCredits = () => {
       </div>
     </DashboardLayout>
   );
-};
+});
 
-// Helper functions
-const getActivityIcon = (type: string) => {
-  switch (type) {
-    case 'Event':
-      return <Calendar className="h-4 w-4 text-primary" />;
-    case 'Course':
-      return <FileText className="h-4 w-4 text-secondary" />;
-    case 'Publication':
-      return <ArrowUpRight className="h-4 w-4 text-accent" />;
-    default:
-      return <Medal className="h-4 w-4 text-warning" />;
-  }
-};
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { 
-    day: 'numeric',
-    month: 'short', 
-    year: 'numeric' 
-  });
-};
+CpdCredits.displayName = 'CpdCredits';
 
 export default CpdCredits;

@@ -4,8 +4,9 @@ import DashboardLayout from "@/components/layout/dashboard-layout";
 import { Event, TicketType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
-import { useState } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { formatDate, formatTime, formatCurrency } from "@/lib/formatters";
 import {
   Card,
   CardContent,
@@ -43,7 +44,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAsyncToast } from "@/hooks/use-async-toast";
 
-const EventDetails = () => {
+const EventDetails = memo(() => {
   const { id } = useParams();
   const { toast } = useToast();
   const [selectedTicket, setSelectedTicket] = useState<string>("");
@@ -55,7 +56,7 @@ const EventDetails = () => {
     queryKey: [`/api/events/${id}`],
   });
 
-  const handleRegister = async () => {
+  const handleRegister = useCallback(async () => {
     if (!selectedTicket) {
       toast({
         title: "Select a ticket",
@@ -80,7 +81,7 @@ const EventDetails = () => {
       successMessage: `Successfully registered for "${event?.title}"`,
       errorMessage: "Failed to register for event. Please try again.",
     });
-  };
+  }, [selectedTicket, id, quantity, toast, executeWithToast, event?.title]);
 
   if (isLoading) {
     return (
@@ -102,6 +103,13 @@ const EventDetails = () => {
     );
   }
 
+  // Memoized calculations
+  const totalPrice = useMemo(() => {
+    if (!selectedTicket || !event?.ticketTypes) return 0;
+    const ticket = event.ticketTypes.find(t => t.id === selectedTicket);
+    return (ticket?.price || 0) * quantity;
+  }, [selectedTicket, event?.ticketTypes, quantity]);
+
   if (!event) {
     return (
       <DashboardLayout title="Event Not Found">
@@ -120,25 +128,6 @@ const EventDetails = () => {
       </DashboardLayout>
     );
   }
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long',
-      month: 'long', 
-      day: 'numeric', 
-      year: 'numeric' 
-    });
-  };
-
-  const formatTime = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
 
   return (
     <DashboardLayout title="Event Details">
@@ -181,12 +170,12 @@ const EventDetails = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+          <div className="lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle>About this event</CardTitle>
-                <div className="flex flex-wrap gap-y-3 gap-x-6 text-sm text-muted-foreground mt-2">
+                <div className="flex flex-wrap gap-y-2 gap-x-4 sm:gap-x-6 text-xs sm:text-sm text-muted-foreground mt-2">
                   <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />
                     {formatDate(event.date)}
@@ -368,9 +357,7 @@ const EventDetails = () => {
                   <div className="flex justify-between">
                     <span className="font-medium">Total:</span>
                     <span className="font-bold">
-                      {selectedTicket && event.ticketTypes ? 
-                        `₹${(event.ticketTypes.find(t => t.id === selectedTicket)?.price || 0) * quantity}` : 
-                        '₹0'}
+                      {formatCurrency(totalPrice)}
                     </span>
                   </div>
                 </div>
@@ -393,6 +380,8 @@ const EventDetails = () => {
       </div>
     </DashboardLayout>
   );
-};
+});
+
+EventDetails.displayName = 'EventDetails';
 
 export default EventDetails;

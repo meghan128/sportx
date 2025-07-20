@@ -4,8 +4,10 @@ import DashboardLayout from "@/components/layout/dashboard-layout";
 import { Course, CourseModule, CourseLesson } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useState } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { formatDate, formatTime, formatCurrency } from "@/lib/formatters";
+import { useLessonIcon } from "@/hooks/use-lesson-icon";
 import {
   Card,
   CardContent,
@@ -52,17 +54,18 @@ import { AccreditationBadge, AccreditationBody } from "@/components/accreditatio
 import CourseAccreditation from "@/components/accreditation/course-accreditation";
 import { useAsyncToast } from "@/hooks/use-async-toast";
 
-const CourseDetails = () => {
+const CourseDetails = memo(() => {
   const { id } = useParams();
   const { toast } = useToast();
   const [isEnrolling, setIsEnrolling] = useState(false);
   const { executeWithToast, isLoading: actionLoading } = useAsyncToast();
+  const { getLessonIcon } = useLessonIcon();
 
   const { data: course, isLoading } = useQuery<Course>({
     queryKey: [`/api/courses/${id}`],
   });
 
-  const handleEnroll = async () => {
+  const handleEnroll = useCallback(async () => {
     const enrollAction = async () => {
       await apiRequest("POST", "/api/courses/enroll", {
         courseId: id,
@@ -78,7 +81,7 @@ const CourseDetails = () => {
       successMessage: "Successfully enrolled in course",
       errorMessage: "Failed to enroll in course. Please try again.",
     });
-  };
+  }, [id, executeWithToast]);
 
   if (isLoading) {
     return (
@@ -99,6 +102,17 @@ const CourseDetails = () => {
       </DashboardLayout>
     );
   }
+
+  // Memoize expensive computations
+  const courseStats = useMemo(() => {
+    if (!course) return null;
+    
+    return {
+      totalLessons: course.curriculum?.reduce((acc, module) => acc + module.lessons.length, 0) || course.lessons,
+      estimatedHours: course.videoHours || `${course.modules * 2}+ hours`,
+      completionRate: course.progress?.percentage || 0
+    };
+  }, [course]);
 
   if (!course) {
     return (
@@ -126,10 +140,10 @@ const CourseDetails = () => {
           </Link>
         </Button>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+          <div className="lg:col-span-2">
             <Card>
-              <div className="relative h-56 overflow-hidden rounded-t-lg">
+              <div className="relative h-48 sm:h-56 overflow-hidden rounded-t-lg">
                 <img 
                   src={course.thumbnail} 
                   alt={course.title} 
@@ -156,18 +170,18 @@ const CourseDetails = () => {
                 </div>
                 <CardTitle>{course.title}</CardTitle>
                 <CardDescription>
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm mt-1">
+                  <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2 text-xs sm:text-sm mt-1">
                     <div className="flex items-center">
-                      <Clock className="mr-1 h-4 w-4" />
+                      <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                       {course.duration}
                     </div>
                     <div className="flex items-center">
-                      <BookOpen className="mr-1 h-4 w-4" />
+                      <BookOpen className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                       {course.modules} modules
                     </div>
                     <div className="flex items-center">
-                      <Award className="mr-1 h-4 w-4" />
-                      Accredited by {course.accreditedBy}
+                      <Award className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="hidden sm:inline">Accredited by </span>{course.accreditedBy}
                     </div>
                     {course.rating && (
                       <div className="flex items-center">
@@ -569,32 +583,8 @@ const CourseDetails = () => {
       </div>
     </DashboardLayout>
   );
-};
+});
 
-// Helper function to get the appropriate icon based on lesson type
-const getLessonIcon = (type: string) => {
-  switch (type) {
-    case 'video':
-      return <Play className="h-4 w-4 text-primary" />;
-    case 'text':
-      return <FileText className="h-4 w-4 text-primary" />;
-    case 'quiz':
-      return <ChevronRight className="h-4 w-4 text-primary" />;
-    case 'download':
-      return <Download className="h-4 w-4 text-primary" />;
-    case 'interactive':
-      return <Zap className="h-4 w-4 text-purple-600" />;
-    case 'case_study':
-      return <Users className="h-4 w-4 text-blue-600" />;
-    case 'simulation':
-      return <Layers className="h-4 w-4 text-orange-600" />;
-    case 'reflective':
-      return <BookOpen className="h-4 w-4 text-teal-600" />;
-    case 'discussion':
-      return <MessageCircle className="h-4 w-4 text-indigo-600" />;
-    default:
-      return <BookOpen className="h-4 w-4 text-primary" />;
-  }
-};
+CourseDetails.displayName = 'CourseDetails';
 
 export default CourseDetails;
