@@ -74,7 +74,7 @@ const routes = [
 ];
 
 // Custom hook for page title management
-function usePageTitle(title) {
+function usePageTitle(title: string | undefined) {
   useEffect(() => {
     document.title = title ? `${title} - Your App` : "Your App";
   }, [title]);

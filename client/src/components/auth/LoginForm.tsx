@@ -39,10 +39,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     setError('');
 
     try {
-      const response = await apiRequest('/api/auth/login', {
-        method: 'POST',
-        body: data,
-      });
+      await apiRequest('POST', '/api/auth/login', data);
 
       // Login successful
       onSuccess();
