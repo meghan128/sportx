@@ -28,6 +28,10 @@ const Accreditation = lazy(() => import("@/pages/accreditation"));
 const Settings = lazy(() => import("@/pages/settings"));
 const Login = lazy(() => import("@/pages/login"));
 const AuthLanding = lazy(() => import("@/pages/AuthLanding"));
+const UserTypeSelection = lazy(() => import("@/pages/UserTypeSelection"));
+const StudentRegistration = lazy(() => import("@/pages/StudentRegistration"));
+const ProfessionalRegistration = lazy(() => import("@/pages/ProfessionalRegistration"));
+const ResourcePersonRegistration = lazy(() => import("@/pages/ResourcePersonRegistration"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const ResourceCourses = lazy(() => import("./pages/resource-courses"));
 const ResourceSubmissions = lazy(() => import("./pages/resource-submissions"));
@@ -62,6 +66,10 @@ const routes = [
   { path: "/profile", component: Profile, protected: true, title: "Profile" },
   { path: "/settings", component: Settings, protected: true, title: "Settings" },
   { path: "/auth", component: AuthLanding, protected: false, title: "Authentication" },
+  { path: "/select-type", component: UserTypeSelection, protected: false, title: "Select User Type" },
+  { path: "/register/student", component: StudentRegistration, protected: false, title: "Student Registration" },
+  { path: "/register/professional", component: ProfessionalRegistration, protected: false, title: "Professional Registration" },
+  { path: "/register/resource_person", component: ResourcePersonRegistration, protected: false, title: "Resource Person Registration" },
   { path: "/login", component: Login, protected: false, title: "Login" },
 ];
 
