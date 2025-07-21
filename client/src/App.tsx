@@ -5,7 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import ErrorBoundary from "@/components/error-boundary";
-import { useAuth, AuthProvider } from "@/hooks/useAuth";
+import { useAuth, AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/protected-route";
 
 // Lazy load pages for better performance
@@ -27,6 +27,7 @@ const Resources = lazy(() => import("@/pages/resources"));
 const Accreditation = lazy(() => import("@/pages/accreditation"));
 const Settings = lazy(() => import("@/pages/settings"));
 const Login = lazy(() => import("@/pages/login"));
+const AuthLanding = lazy(() => import("@/pages/AuthLanding"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const ResourceCourses = lazy(() => import("./pages/resource-courses"));
 const ResourceSubmissions = lazy(() => import("./pages/resource-submissions"));
@@ -60,6 +61,7 @@ const routes = [
   { path: "/resources", component: Resources, protected: true, title: "Resources" },
   { path: "/profile", component: Profile, protected: true, title: "Profile" },
   { path: "/settings", component: Settings, protected: true, title: "Settings" },
+  { path: "/auth", component: AuthLanding, protected: false, title: "Authentication" },
   { path: "/login", component: Login, protected: false, title: "Login" },
 ];
 
@@ -101,6 +103,18 @@ function Router() {
 
   // Show loading spinner while checking authentication
   if (isLoading) {
+    return <PageLoader />;
+  }
+
+  // Redirect to auth page if not authenticated and trying to access a protected route
+  if (!isAuthenticated && currentRoute?.protected) {
+    window.location.href = '/auth';
+    return <PageLoader />;
+  }
+
+  // Redirect to dashboard if authenticated and trying to access auth page
+  if (isAuthenticated && location === '/auth') {
+    window.location.href = '/';
     return <PageLoader />;
   }
 

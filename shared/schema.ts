@@ -1,15 +1,50 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, decimal } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+  jsonb,
+  decimal,
+  varchar,
+  index,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
-// Users table - Enhanced with real-time features
+// Session storage table for authentication
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// User types enum for authentication
+export const userTypes = ["student", "professional", "resource_person"] as const;
+export type UserType = (typeof userTypes)[number];
+
+// Authentication status enum
+export const authStatusTypes = ["pending", "approved", "rejected", "under_review"] as const;
+export type AuthStatus = (typeof authStatusTypes)[number];
+
+// Users table - Enhanced with authentication system
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  role: text("role").notNull().default("user"), // "user" or "resource_person"
+  phone: text("phone").notNull(),
+  name: text("name").notNull(),
+  dateOfBirth: text("date_of_birth"),
+  alternativeNames: jsonb("alternative_names").$type<string[]>().default([]),
+  password: text("password").notNull(),
+  userType: text("user_type").$type<UserType>().notNull(),
+  authStatus: text("auth_status").$type<AuthStatus>().notNull().default("pending"),
   profession: text("profession"),
   specialization: text("specialization"),
   bio: text("bio"),
@@ -48,6 +83,105 @@ export const users = pgTable("users", {
   }),
   isOnline: boolean("is_online").default(false),
   lastSeen: timestamp("last_seen"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Student-specific information
+export const studentProfiles = pgTable("student_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  degreeProgram: text("degree_program").notNull(),
+  currentYear: integer("current_year").notNull(),
+  expectedGraduation: text("expected_graduation"),
+  university: text("university").notNull(),
+  studentId: text("student_id"),
+  marksheetUrl: text("marksheet_url").notNull(),
+  marksheetVerified: boolean("marksheet_verified").default(false),
+  verificationNotes: text("verification_notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Professional-specific information
+export const professionalProfiles = pgTable("professional_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  degreeType: text("degree_type").notNull(), // "bachelor", "master", "doctorate", etc.
+  degreeName: text("degree_name").notNull(),
+  university: text("university").notNull(),
+  graduationYear: text("graduation_year").notNull(),
+  degreeUrl: text("degree_url").notNull(),
+  degreeVerified: boolean("degree_verified").default(false),
+  licenseNumber: text("license_number"),
+  licenseExpiryDate: text("license_expiry_date"),
+  affiliations: jsonb("affiliations").$type<Array<{
+    name: string;
+    membershipNumber?: string;
+    type: string;
+    status: string;
+  }>>().default([]),
+  yearsOfExperience: integer("years_of_experience"),
+  currentWorkplace: text("current_workplace"),
+  verificationNotes: text("verification_notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Resource person-specific information
+export const resourcePersonProfiles = pgTable("resource_person_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  degreeType: text("degree_type").notNull(),
+  degreeName: text("degree_name").notNull(),
+  university: text("university").notNull(),
+  graduationYear: text("graduation_year").notNull(),
+  degreeUrl: text("degree_url").notNull(),
+  degreeVerified: boolean("degree_verified").default(false),
+  mandatoryAffiliations: jsonb("mandatory_affiliations").$type<Array<{
+    name: string;
+    membershipNumber: string;
+    type: string;
+    status: string;
+    verificationStatus: "pending" | "verified" | "rejected";
+  }>>().notNull(),
+  additionalCertifications: jsonb("additional_certifications").$type<Array<{
+    name: string;
+    issuer: string;
+    issueDate: string;
+    expiryDate?: string;
+    certificateUrl: string;
+  }>>().default([]),
+  yearsOfExperience: integer("years_of_experience").notNull(),
+  expertiseAreas: jsonb("expertise_areas").$type<string[]>().default([]),
+  publications: jsonb("publications").$type<Array<{
+    title: string;
+    journal: string;
+    year: string;
+    url?: string;
+  }>>().default([]),
+  verificationNotes: text("verification_notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Document verification logs
+export const documentVerifications = pgTable("document_verifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  documentType: text("document_type").notNull(), // "marksheet", "degree", "certificate"
+  documentUrl: text("document_url").notNull(),
+  ocrExtractedText: text("ocr_extracted_text"),
+  ocrConfidence: decimal("ocr_confidence", { precision: 5, scale: 2 }),
+  nameMatches: jsonb("name_matches").$type<Array<{
+    extractedName: string;
+    confidence: number;
+    matched: boolean;
+  }>>(),
+  verificationStatus: text("verification_status").$type<AuthStatus>().default("pending"),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  verificationDate: timestamp("verification_date"),
+  verificationNotes: text("verification_notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -124,57 +258,41 @@ export const courses = pgTable("courses", {
   description: text("description").notNull(),
   thumbnail: text("thumbnail").notNull(),
   category: text("category").notNull(),
+  price: text("price").notNull(),
+  cpdPoints: integer("cpd_points").notNull().default(0),
   duration: text("duration").notNull(),
-  modules: integer("modules").notNull(),
-  lessons: integer("lessons").notNull(),
-  cpdPoints: integer("cpd_points").notNull(),
-  difficulty: text("difficulty").notNull(), // "Beginner", "Intermediate", "Advanced"
-  accreditedBy: text("accredited_by").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
-  rating: decimal("rating", { precision: 3, scale: 2 }),
-  reviews: integer("reviews").default(0),
-  enrollmentCount: integer("enrollment_count").default(0),
+  level: text("level").notNull(), // "beginner", "intermediate", "advanced"
+  instructor: text("instructor").notNull(),
+  instructorBio: text("instructor_bio"),
+  instructorImage: text("instructor_image"),
+  accreditationBody: text("accreditation_body").notNull(),
   learningOutcomes: jsonb("learning_outcomes").$type<string[]>(),
-  targetAudience: jsonb("target_audience").$type<string[]>(),
-  prerequisites: jsonb("prerequisites").$type<string[]>(),
-  videoHours: text("video_hours"),
-  resources: text("resources"),
-  instructors: jsonb("instructors").$type<Array<{
+  modules: jsonb("modules").$type<Array<{
     id: string;
-    name: string;
-    bio: string;
-    image?: string;
-    expertise: string[];
-  }>>(),
-  curriculum: jsonb("curriculum").$type<Array<{
-    module: number;
     title: string;
-    description: string;
-    lessons: Array<{
-      id: string;
-      title: string;
-      duration: string;
-      type: "video" | "reading" | "quiz" | "assignment";
-    }>;
+    duration: string;
+    type: "video" | "reading" | "quiz" | "assignment";
   }>>(),
   tags: jsonb("tags").$type<string[]>(),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  reviewCount: integer("review_count").default(0),
+  enrollmentCount: integer("enrollment_count").default(0),
   isPublished: boolean("is_published").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Course enrollments with detailed progress tracking
+// Course enrollments
 export const courseEnrollments = pgTable("course_enrollments", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
   courseId: integer("course_id").notNull().references(() => courses.id),
-  progress: integer("progress").notNull().default(0), // 0-100
-  status: text("status").notNull().default("in_progress"), // "enrolled", "in_progress", "completed", "dropped"
-  completedLessons: jsonb("completed_lessons").$type<string[]>().default([]),
+  progress: integer("progress").default(0), // 0-100
+  status: text("status").notNull().default("active"), // "active", "completed", "dropped"
   completedModules: jsonb("completed_modules").$type<number[]>().default([]),
-  currentLesson: text("current_lesson"),
+  currentLesson: integer("current_lesson").default(1),
   timeSpent: integer("time_spent").default(0), // in minutes
-  lastAccessedAt: timestamp("last_accessed_at").defaultNow().notNull(),
+  lastAccessedAt: timestamp("last_accessed_at").defaultNow(),
   enrolledAt: timestamp("enrolled_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
   certificateIssued: boolean("certificate_issued").default(false),
@@ -182,439 +300,147 @@ export const courseEnrollments = pgTable("course_enrollments", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// CPD Categories
-export const cpdCategories = pgTable("cpd_categories", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull().unique(),
-  description: text("description"),
-  requiredPoints: integer("required_points").notNull(),
-  color: text("color").default("#3B82F6"),
-  icon: text("icon"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+// Define relations
+export const usersRelations = relations(users, ({ one }) => ({
+  studentProfile: one(studentProfiles, {
+    fields: [users.id],
+    references: [studentProfiles.userId],
+  }),
+  professionalProfile: one(professionalProfiles, {
+    fields: [users.id],
+    references: [professionalProfiles.userId],
+  }),
+  resourcePersonProfile: one(resourcePersonProfiles, {
+    fields: [users.id],
+    references: [resourcePersonProfiles.userId],
+  }),
+}));
 
-// CPD Activities with enhanced tracking
-export const cpdActivities = pgTable("cpd_activities", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  title: text("title").notNull(),
-  description: text("description"),
-  date: text("date").notNull(),
-  type: text("type").notNull(), // "Event", "Course", "Workshop", "Conference", "Webinar", "Publication", "Research", "Other"
-  category: text("category").notNull(),
-  categoryId: integer("category_id").references(() => cpdCategories.id),
-  points: integer("points").notNull(),
-  hours: decimal("hours", { precision: 5, scale: 2 }),
-  source: text("source").notNull(),
-  certificateUrl: text("certificate_url"),
-  verificationStatus: text("verification_status").notNull().default("pending"), // "pending", "verified", "rejected"
-  verifiedBy: integer("verified_by").references(() => users.id),
-  verifiedAt: timestamp("verified_at"),
-  evidenceUrls: jsonb("evidence_urls").$type<string[]>(),
-  reflectionNotes: text("reflection_notes"),
-  isPublic: boolean("is_public").default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const studentProfilesRelations = relations(studentProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [studentProfiles.userId],
+    references: [users.id],
+  }),
+}));
 
-// Forum Categories
-export const forumCategories = pgTable("forum_categories", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull().unique(),
-  description: text("description").notNull(),
-  icon: text("icon"),
-  color: text("color").default("#3B82F6"),
-  topics: integer("topics").default(0),
-  posts: integer("posts").default(0),
-  lastActivity: timestamp("last_activity"),
-  isActive: boolean("is_active").default(true),
-  sortOrder: integer("sort_order").default(0),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const professionalProfilesRelations = relations(professionalProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [professionalProfiles.userId],
+    references: [users.id],
+  }),
+}));
 
-// Discussions/Topics
-export const discussions = pgTable("discussions", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  authorId: integer("author_id").notNull().references(() => users.id),
-  categoryId: integer("category_id").notNull().references(() => forumCategories.id),
-  comments: integer("comments").default(0),
-  likes: integer("likes").default(0),
-  views: integer("views").default(0),
-  tags: jsonb("tags").$type<string[]>(),
-  isPinned: boolean("is_pinned").default(false),
-  isClosed: boolean("is_closed").default(false),
-  lastReplyAt: timestamp("last_reply_at"),
-  lastReplyBy: integer("last_reply_by").references(() => users.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const resourcePersonProfilesRelations = relations(resourcePersonProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [resourcePersonProfiles.userId],
+    references: [users.id],
+  }),
+}));
 
-// Discussion replies/comments
-export const discussionReplies = pgTable("discussion_replies", {
-  id: serial("id").primaryKey(),
-  discussionId: integer("discussion_id").notNull().references(() => discussions.id),
-  authorId: integer("author_id").notNull().references(() => users.id),
-  content: text("content").notNull(),
-  parentId: integer("parent_id").references(() => discussionReplies.id), // For nested replies
-  likes: integer("likes").default(0),
-  isAcceptedAnswer: boolean("is_accepted_answer").default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-// Mentorship opportunities
-export const mentorshipOpportunities = pgTable("mentorship_opportunities", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  title: text("title").notNull(),
-  description: text("description"),
-  position: text("position").notNull(),
-  specialties: jsonb("specialties").$type<string[]>().notNull(),
-  availability: text("availability"),
-  maxMentees: integer("max_mentees").default(5),
-  currentMentees: integer("current_mentees").default(0),
-  preferredExperience: text("preferred_experience"),
-  meetingFormat: text("meeting_format"), // "Virtual", "In-person", "Both"
-  rating: decimal("rating", { precision: 3, scale: 2 }),
-  reviews: integer("reviews").default(0),
-  isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-// Mentorship connections
-export const mentorshipConnections = pgTable("mentorship_connections", {
-  id: serial("id").primaryKey(),
-  mentorId: integer("mentor_id").notNull().references(() => users.id),
-  menteeId: integer("mentee_id").notNull().references(() => users.id),
-  opportunityId: integer("opportunity_id").references(() => mentorshipOpportunities.id),
-  status: text("status").notNull().default("pending"), // "pending", "active", "completed", "cancelled"
-  startDate: timestamp("start_date"),
-  endDate: timestamp("end_date"),
-  goals: text("goals"),
-  notes: text("notes"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-// Professional Credentials
-export const credentials = pgTable("credentials", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  type: text("type").notNull(), // "certification", "license", "degree", "course", "award"
-  name: text("name").notNull(),
-  organization: text("organization").notNull(),
-  issueDate: text("issue_date").notNull(),
-  expiryDate: text("expiry_date"),
-  credentialId: text("credential_id"),
-  credentialUrl: text("credential_url"),
-  verificationUrl: text("verification_url"),
-  status: text("status").notNull().default("active"), // "active", "expired", "pending", "revoked"
-  isPublic: boolean("is_public").default(true),
-  attachments: jsonb("attachments").$type<string[]>(),
-  verifiedBy: text("verified_by"),
-  verifiedAt: timestamp("verified_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-// Messages for direct communication
-export const messages = pgTable("messages", {
-  id: serial("id").primaryKey(),
-  senderId: integer("sender_id").notNull().references(() => users.id),
-  receiverId: integer("receiver_id").notNull().references(() => users.id),
-  subject: text("subject"),
-  content: text("content").notNull(),
-  messageType: text("message_type").notNull().default("direct"), // "direct", "system", "notification"
-  isRead: boolean("is_read").default(false),
-  readAt: timestamp("read_at"),
-  parentId: integer("parent_id").references(() => messages.id), // For reply chains
-  attachments: jsonb("attachments").$type<string[]>(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-// Notifications
-export const notifications = pgTable("notifications", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  title: text("title").notNull(),
-  message: text("message").notNull(),
-  type: text("type").notNull(), // "info", "success", "warning", "error", "course", "event", "cpd", "community"
-  actionUrl: text("action_url"),
-  actionText: text("action_text"),
-  isRead: boolean("is_read").default(false),
-  readAt: timestamp("read_at"),
-  metadata: jsonb("metadata"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-// Create schema definitions for validation
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-  name: true,
-  email: true,
-  profession: true,
-  role: true,
-});
-
+// Zod schemas for validation
+export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
+export const insertStudentProfileSchema = createInsertSchema(studentProfiles);
+export const selectStudentProfileSchema = createSelectSchema(studentProfiles);
+export const insertProfessionalProfileSchema = createInsertSchema(professionalProfiles);
+export const selectProfessionalProfileSchema = createSelectSchema(professionalProfiles);
+export const insertResourcePersonProfileSchema = createInsertSchema(resourcePersonProfiles);
+export const selectResourcePersonProfileSchema = createSelectSchema(resourcePersonProfiles);
+export const insertDocumentVerificationSchema = createInsertSchema(documentVerifications);
+export const selectDocumentVerificationSchema = createSelectSchema(documentVerifications);
 
-export const insertEventSchema = createInsertSchema(events);
-export const selectEventSchema = createSelectSchema(events);
-
-export const insertCourseSchema = createInsertSchema(courses);
-export const selectCourseSchema = createSelectSchema(courses);
-
-export const insertCpdActivitySchema = createInsertSchema(cpdActivities);
-export const selectCpdActivitySchema = createSelectSchema(cpdActivities);
-
-export const insertDiscussionSchema = createInsertSchema(discussions);
-export const selectDiscussionSchema = createSelectSchema(discussions);
-
-export const insertCredentialSchema = createInsertSchema(credentials);
-export const selectCredentialSchema = createSelectSchema(credentials);
-
-// Update schemas for API validation
-export const updateUserSchema = z.object({
-  username: z.string().min(3).optional(),
-  name: z.string().min(2).optional(),
-  email: z.string().email().optional(),
-  profession: z.string().optional(),
-  specialization: z.string().optional(),
-  bio: z.string().optional(),
-  organization: z.string().optional(),
-  location: z.string().optional(),
-  profileImage: z.string().url().optional(),
-  contactInfo: z.record(z.any()).optional(),
-  socialLinks: z.record(z.any()).optional(),
-  privacySettings: z.record(z.any()).optional(),
-});
-
-export const updateEventSchema = z.object({
-  title: z.string().min(5).optional(),
-  description: z.string().min(10).optional(),
-  date: z.string().optional(),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
-  type: z.enum(["In-person", "Virtual", "Hybrid"]).optional(),
-  category: z.string().optional(),
-  location: z.string().optional(),
-  image: z.string().url().optional(),
-  price: z.number().min(0).optional(),
-  cpdPoints: z.number().min(0).optional(),
-  maxAttendees: z.number().min(1).optional(),
-  accreditationBody: z.string().optional(),
-  learningOutcomes: z.array(z.string()).optional(),
-  speakers: z.array(z.record(z.any())).optional(),
-  schedule: z.array(z.record(z.any())).optional(),
-  tags: z.array(z.string()).optional(),
-});
-
-export const updateCourseSchema = z.object({
-  title: z.string().min(5).optional(),
-  description: z.string().min(10).optional(),
-  thumbnail: z.string().url().optional(),
-  category: z.string().optional(),
-  duration: z.string().optional(),
-  modules: z.number().min(1).optional(),
-  lessons: z.number().min(1).optional(),
-  cpdPoints: z.number().min(0).optional(),
-  difficulty: z.enum(["Beginner", "Intermediate", "Advanced"]).optional(),
-  accreditedBy: z.string().optional(),
-  price: z.number().min(0).optional(),
-  learningOutcomes: z.array(z.string()).optional(),
-  targetAudience: z.array(z.string()).optional(),
-  prerequisites: z.array(z.string()).optional(),
-  videoHours: z.string().optional(),
-  resources: z.string().optional(),
-  instructors: z.array(z.record(z.any())).optional(),
-  curriculum: z.array(z.record(z.any())).optional(),
-  tags: z.array(z.string()).optional(),
-});
-
-// Export types for TypeScript
-export type InsertUser = z.infer<typeof insertUserSchema>;
+// Types
 export type User = typeof users.$inferSelect;
-export type SelectUser = z.infer<typeof selectUserSchema>;
+export type InsertUser = typeof users.$inferInsert;
+export type StudentProfile = typeof studentProfiles.$inferSelect;
+export type InsertStudentProfile = typeof studentProfiles.$inferInsert;
+export type ProfessionalProfile = typeof professionalProfiles.$inferSelect;
+export type InsertProfessionalProfile = typeof professionalProfiles.$inferInsert;
+export type ResourcePersonProfile = typeof resourcePersonProfiles.$inferSelect;
+export type InsertResourcePersonProfile = typeof resourcePersonProfiles.$inferInsert;
+export type DocumentVerification = typeof documentVerifications.$inferSelect;
+export type InsertDocumentVerification = typeof documentVerifications.$inferInsert;
 
-export type InsertEvent = z.infer<typeof insertEventSchema>;
-export type Event = typeof events.$inferSelect;
-export type SelectEvent = z.infer<typeof selectEventSchema>;
+// Registration schemas for different user types
+export const studentRegistrationSchema = z.object({
+  username: z.string().min(3).max(50),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  name: z.string().min(2),
+  dateOfBirth: z.string(),
+  alternativeNames: z.array(z.string()).optional().default([]),
+  password: z.string().min(6),
+  degreeProgram: z.string().min(2),
+  currentYear: z.number().min(1).max(10),
+  expectedGraduation: z.string().optional(),
+  university: z.string().min(2),
+  studentId: z.string().optional(),
+  marksheet: z.string().url(), // File URL after upload
+});
 
-export type TicketType = typeof ticketTypes.$inferSelect;
-export type EventRegistration = typeof eventRegistrations.$inferSelect;
+export const professionalRegistrationSchema = z.object({
+  username: z.string().min(3).max(50),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  name: z.string().min(2),
+  dateOfBirth: z.string().optional(),
+  alternativeNames: z.array(z.string()).optional().default([]),
+  password: z.string().min(6),
+  profession: z.string().min(2),
+  specialization: z.string().optional(),
+  degreeType: z.string().min(2),
+  degreeName: z.string().min(2),
+  university: z.string().min(2),
+  graduationYear: z.string(),
+  degree: z.string().url(), // File URL after upload
+  licenseNumber: z.string().optional(),
+  licenseExpiryDate: z.string().optional(),
+  affiliations: z.array(z.object({
+    name: z.string(),
+    membershipNumber: z.string().optional(),
+    type: z.string(),
+  })).optional().default([]),
+  yearsOfExperience: z.number().min(0).optional(),
+  currentWorkplace: z.string().optional(),
+});
 
-export type InsertCourse = z.infer<typeof insertCourseSchema>;
-export type Course = typeof courses.$inferSelect;
-export type SelectCourse = z.infer<typeof selectCourseSchema>;
-export type CourseEnrollment = typeof courseEnrollments.$inferSelect;
+export const resourcePersonRegistrationSchema = z.object({
+  username: z.string().min(3).max(50),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  name: z.string().min(2),
+  dateOfBirth: z.string().optional(),
+  alternativeNames: z.array(z.string()).optional().default([]),
+  password: z.string().min(6),
+  profession: z.string().min(2),
+  specialization: z.string().optional(),
+  degreeType: z.string().min(2),
+  degreeName: z.string().min(2),
+  university: z.string().min(2),
+  graduationYear: z.string(),
+  degree: z.string().url(), // File URL after upload
+  mandatoryAffiliations: z.array(z.object({
+    name: z.string().min(2),
+    membershipNumber: z.string().min(1),
+    type: z.string(),
+  })).min(1),
+  additionalCertifications: z.array(z.object({
+    name: z.string(),
+    issuer: z.string(),
+    issueDate: z.string(),
+    expiryDate: z.string().optional(),
+    certificateUrl: z.string().url(),
+  })).optional().default([]),
+  yearsOfExperience: z.number().min(0),
+  expertiseAreas: z.array(z.string()).optional().default([]),
+  publications: z.array(z.object({
+    title: z.string(),
+    journal: z.string(),
+    year: z.string(),
+    url: z.string().url().optional(),
+  })).optional().default([]),
+});
 
-export type CpdCategory = typeof cpdCategories.$inferSelect;
-export type InsertCpdActivity = z.infer<typeof insertCpdActivitySchema>;
-export type CpdActivity = typeof cpdActivities.$inferSelect;
-export type SelectCpdActivity = z.infer<typeof selectCpdActivitySchema>;
-
-export type ForumCategory = typeof forumCategories.$inferSelect;
-export type InsertDiscussion = z.infer<typeof insertDiscussionSchema>;
-export type Discussion = typeof discussions.$inferSelect;
-export type SelectDiscussion = z.infer<typeof selectDiscussionSchema>;
-export type DiscussionReply = typeof discussionReplies.$inferSelect;
-
-export type MentorshipOpportunity = typeof mentorshipOpportunities.$inferSelect;
-export type MentorshipConnection = typeof mentorshipConnections.$inferSelect;
-
-export type InsertCredential = z.infer<typeof insertCredentialSchema>;
-export type Credential = typeof credentials.$inferSelect;
-export type SelectCredential = z.infer<typeof selectCredentialSchema>;
-
-export type Message = typeof messages.$inferSelect;
-export type Notification = typeof notifications.$inferSelect;
-
-// API Response types
-export type ApiResponse<T> = {
-  data?: T;
-  error?: string;
-  message?: string;
-  status: number;
-};
-
-export type PaginatedResponse<T> = {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-};
-
-// Real-time event types
-export type RealtimeEvent = {
-  type: "INSERT" | "UPDATE" | "DELETE";
-  table: string;
-  record: any;
-  old_record?: any;
-};
-import { faker } from "@faker-js/faker";
-import { InsertUserSchema } from "./zod";
-
-// Mock Data Generation Functions
-export const generateMockUser = (): InsertUserSchema => {
-  return {
-    username: faker.internet.userName(),
-    password: faker.internet.password(),
-    name: faker.name.fullName(),
-    email: faker.internet.email(),
-    profession: faker.name.jobTitle(),
-    role: "user",
-  };
-};
-
-export const generateMockEvent = () => {
-  return {
-    title: faker.lorem.sentence(),
-    description: faker.lorem.paragraph(),
-    date: faker.date.future().toISOString().split("T")[0],
-    startTime: "09:00",
-    endTime: "17:00",
-    type: faker.helpers.arrayElement(["Conference", "Workshop", "Webinar"]),
-    category: faker.helpers.arrayElement(["Technology", "Health", "Finance"]),
-    location: faker.address.city(),
-    image: faker.image.imageUrl(),
-    price: faker.datatype.number({ min: 0, max: 500 }),
-    cpdPoints: faker.datatype.number({ min: 1, max: 20 }),
-    accreditationBody: faker.company.name(),
-    learningOutcomes: [faker.lorem.sentence(), faker.lorem.sentence()],
-    speakers: [{ name: faker.name.fullName(), bio: faker.lorem.sentence() }],
-    schedule: [{ time: "09:00", activity: "Registration" }],
-    tags:[]
-  };
-};
-
-export const generateMockCourse = () => {
-  return {
-    title: faker.lorem.sentence(),
-    description: faker.lorem.paragraph(),
-    thumbnail: faker.image.imageUrl(),
-    category: faker.helpers.arrayElement(["Technology", "Health", "Finance"]),
-    duration: "4 weeks",
-    modules: faker.datatype.number({ min: 3, max: 10 }),
-    cpdPoints: faker.datatype.number({ min: 5, max: 30 }),
-    difficulty: faker.helpers.arrayElement(["Beginner", "Intermediate", "Advanced"]),
-    accreditedBy: faker.company.name(),
-    learningOutcomes: [faker.lorem.sentence(), faker.lorem.sentence()],
-    targetAudience: [faker.lorem.sentence(), faker.lorem.sentence()],
-    videoHours: "10 hours",
-    resources: faker.internet.url(),
-    instructors: [{ name: faker.name.fullName(), bio: faker.lorem.sentence() }],
-    curriculum: [{ week: 1, topic: faker.lorem.sentence() }],
-    lessons: faker.datatype.number({ min: 10, max: 50 }),
-    tags: []
-  };
-};
-
-export const generateMockCPDActivity = () => {
-  return {
-    userId: 1, // Replace with a valid user ID
-    title: faker.lorem.sentence(),
-    date: faker.date.past().toISOString().split("T")[0],
-    type: faker.helpers.arrayElement(["Course", "Event", "Reading"]),
-    category: faker.helpers.arrayElement(["Course", "Event", "Reading"]),
-    categoryId: 1, // Replace with a valid category ID
-    points: faker.datatype.number({ min: 1, max: 10 }),
-    hours: 1,
-    source: faker.company.name(),
-    certificateUrl: faker.internet.url(),
-    evidenceUrls: [],
-    reflectionNotes: faker.lorem.sentence()
-  };
-};
-
-export const generateMockForumCategory = () => {
-  return {
-    name: faker.lorem.word(),
-    description: faker.lorem.sentence(),
-    icon: faker.image.imageUrl(),
-  };
-};
-
-export const generateMockDiscussion = () => {
-  return {
-    title: faker.lorem.sentence(),
-    content: faker.lorem.paragraph(),
-    authorId: 1, // Replace with a valid user ID
-    categoryId: 1, // Replace with a valid forum ID
-    tags: []
-  };
-};
-
-export const generateMockMentorshipOpportunity = () => {
-  return {
-    userId: 1, // Replace with a valid user ID
-    title: faker.lorem.sentence(),
-    description: faker.lorem.paragraph(),
-    position: faker.name.jobTitle(),
-    specialties: [faker.lorem.word(), faker.lorem.word()],
-    availability: "Evenings and weekends",
-  };
-};
-
-export const generateMockCredential = () => {
-  return {
-    userId: 1,
-    type: faker.helpers.arrayElement(["certification", "license", "degree", "course"]),
-    name: faker.lorem.sentence(),
-    organization: faker.company.name(),
-    issueDate: faker.date.past().toISOString().split("T")[0],
-    expiryDate: faker.date.future().toISOString().split("T")[0],
-    credentialId: faker.random.alphaNumeric(10),
-    credentialUrl: faker.internet.url(),
-    verificationUrl: faker.internet.url(),
-    attachments: []
-  };
-};
-
-// Zod Schemas for Updates/Validations
+export type StudentRegistration = z.infer<typeof studentRegistrationSchema>;
+export type ProfessionalRegistration = z.infer<typeof professionalRegistrationSchema>;
+export type ResourcePersonRegistration = z.infer<typeof resourcePersonRegistrationSchema>;
