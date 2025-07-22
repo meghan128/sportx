@@ -114,14 +114,14 @@ function Router() {
     return <PageLoader />;
   }
 
-  // Redirect to auth page if not authenticated and trying to access a protected route
+  // Redirect to login page if not authenticated and trying to access a protected route
   if (!isAuthenticated && currentRoute?.protected) {
-    window.location.href = '/auth';
+    window.location.href = '/login';
     return <PageLoader />;
   }
 
-  // Redirect to dashboard if authenticated and trying to access auth page
-  if (isAuthenticated && location === '/auth') {
+  // Redirect to dashboard if authenticated and trying to access login page
+  if (isAuthenticated && (location === '/login' || location === '/auth')) {
     window.location.href = '/';
     return <PageLoader />;
   }
