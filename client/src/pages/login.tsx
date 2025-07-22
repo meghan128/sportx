@@ -15,36 +15,28 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Eye, EyeOff, ArrowRight, CheckCircle, Users, GraduationCap, Sparkles } from "lucide-react";
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const [, navigate] = useLocation();
-  const { loginUser, loginResourcePerson, isAuthenticated } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("user");
 
-  const userForm = useForm<LoginForm>({
+  const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const resourceForm = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -56,26 +48,12 @@ export default function Login() {
     }
   }, [isAuthenticated, navigate]);
 
-  const onUserSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await loginUser(data);
-      navigate("/");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onResourceSubmit = async (data: LoginForm) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await loginResourcePerson(data);
+      await login(data.username, data.password);
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
@@ -101,14 +79,14 @@ export default function Login() {
 
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 font-medium">Email Address</FormLabel>
+              <FormLabel className="text-gray-700 font-medium">Username</FormLabel>
               <FormControl>
                 <Input
-                  type="email"
-                  placeholder="Enter your email address"
+                  type="text"
+                  placeholder="Enter your username"
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                   {...field}
                 />
@@ -265,45 +243,22 @@ export default function Login() {
 
           {/* Login Form */}
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-            {activeTab === "user" ? (
-              <>
-                <div className="mb-6">
-                  <h3 className="font-semibold text-lg text-gray-900">User Login</h3>
-                  <p className="text-sm text-gray-600">Access courses, events, and track your CPD progress</p>
-                </div>
-                <LoginForm 
-                  form={userForm} 
-                  onSubmit={onUserSubmit} 
-                  type="user" 
-                />
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                  <p className="text-sm font-medium text-blue-900 mb-1">Demo Account</p>
-                  <p className="text-xs text-blue-700">
-                    Email: user@example.com<br />
-                    Password: password
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="mb-6">
-                  <h3 className="font-semibold text-lg text-gray-900">Educator Login</h3>
-                  <p className="text-sm text-gray-600">Manage courses, mentor students, and share resources</p>
-                </div>
-                <LoginForm 
-                  form={resourceForm} 
-                  onSubmit={onResourceSubmit} 
-                  type="resource_person" 
-                />
-                <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-100">
-                  <p className="text-sm font-medium text-green-900 mb-1">Demo Account</p>
-                  <p className="text-xs text-green-700">
-                    Email: resource@example.com<br />
-                    Password: password
-                  </p>
-                </div>
-              </>
-            )}
+            <div className="mb-6">
+              <h3 className="font-semibold text-lg text-gray-900">Login to your account</h3>
+              <p className="text-sm text-gray-600">Access courses, events, and track your CPD progress</p>
+            </div>
+            <LoginForm 
+              form={form} 
+              onSubmit={onSubmit} 
+            />
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <p className="text-sm font-medium text-blue-900 mb-1">Demo Accounts</p>
+              <p className="text-xs text-blue-700">
+                Student: student1 / demo123<br />
+                Professional: prof1 / demo123<br />
+                Resource Person: resource1 / demo123
+              </p>
+            </div>
             
             <div className="mt-6 text-center">
               <p className="text-xs text-gray-500">
