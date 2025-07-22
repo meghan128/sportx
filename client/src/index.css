@@ -176,6 +176,19 @@ a {
   background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
 }
 
+/* Input styling - ensure black text for all inputs */
+input,
+textarea,
+select {
+  color: #000000 !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: #6b7280;
+}
+
 /* Focus styles for accessibility */
 button:focus-visible,
 input:focus-visible,
