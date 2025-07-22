@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import SimpleApp from "./SimpleApp";
 import "./index.css";
 import ErrorBoundary from './components/error-boundary';
 
@@ -12,7 +12,7 @@ function startApp() {
 
   createRoot(rootElement).render(
     <ErrorBoundary>
-      <App />
+      <SimpleApp />
     </ErrorBoundary>
   );
 }

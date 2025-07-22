@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug App</title>
+</head>
+<body>
+    <h1>Debug Test</h1>
+    <div id="debug-info">
+        <p>Testing basic functionality...</p>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testLogin() {
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'student1',
+                        password: 'demo123'
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                
+                // Test getting user
+                const userResponse = await fetch('/api/auth/user');
+                const userData = await userResponse.json();
+                document.getElementById('result').innerHTML += '<h3>User Data:</h3><pre>' + JSON.stringify(userData, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        // Test basic app loading
+        console.log('Debug page loaded successfully');
+    </script>
+</body>
+</html>
