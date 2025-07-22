@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { 
   BookOpen, 
   Users, 
@@ -16,14 +16,11 @@ import {
   Target,
   Activity,
   PlusCircle,
-  Calendar,
-  Eye,
-  MessageSquare,
   DollarSign,
   BarChart3,
-  AlertCircle,
   CheckCircle,
   ArrowRight,
+  Calendar,
   Zap
 } from "lucide-react";
 import { Link } from "wouter";
