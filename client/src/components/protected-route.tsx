@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 
@@ -21,7 +21,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     if (!isLoading && isAuthenticated && user) {
       // Role-based dashboard routing
       if (location === "/") {
-        if (user.userType === "resource_person") {
+        if (user.role === "resource_person") {
           setLocation("/resource-dashboard");
         } else {
           // Default to regular dashboard for other roles
@@ -29,9 +29,9 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
       }
       
       // Check role-based access for specific routes
-      if (allowedRoles && !allowedRoles.includes(user.userType)) {
+      if (allowedRoles && !allowedRoles.includes(user.role)) {
         // Redirect to appropriate dashboard based on role
-        if (user.userType === "resource_person") {
+        if (user.role === "resource_person") {
           setLocation("/resource-dashboard");
         } else {
           setLocation("/");
@@ -53,7 +53,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   // Check if user has permission for this route
-  if (allowedRoles && user && !allowedRoles.includes(user.userType)) {
+  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
     return null; // Component will be redirected via useEffect
   }
 

@@ -43,7 +43,7 @@ const ResourceAnalytics = lazy(() => import("./pages/resource-analytics"));
 
 // Route configuration for better maintainability
 const routes = [
-  { path: "/", component: Dashboard, protected: true, title: "Dashboard", allowedRoles: ["student", "professional"] },
+  { path: "/", component: Dashboard, protected: true, title: "Dashboard", allowedRoles: ["user"] },
   { path: "/resource-dashboard", component: ResourceDashboard, protected: true, title: "Resource Dashboard", allowedRoles: ["resource_person"] },
   { path: "/resource/create-course", component: ResourceCourseCreation, protected: true, title: "Create Course", allowedRoles: ["resource_person"] },
   { path: "/resource/create-workshop", component: ResourceWorkshopCreation, protected: true, title: "Create Workshop", allowedRoles: ["resource_person"] },
@@ -93,7 +93,7 @@ function PageLoader() {
 // Router component with enhanced features
 function Router() {
   const [location] = useLocation();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   // Find current route for title management
   const currentRoute = routes.find(route => {
@@ -122,12 +122,7 @@ function Router() {
 
   // Redirect to dashboard if authenticated and trying to access auth page
   if (isAuthenticated && location === '/auth') {
-    // Redirect based on user type
-    if (user?.userType === 'resource_person') {
-      window.location.href = '/resource-dashboard';
-    } else {
-      window.location.href = '/';
-    }
+    window.location.href = '/';
     return <PageLoader />;
   }
 

@@ -3,10 +3,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Login from '@/pages/login';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 // Mock the useAuth hook
-vi.mock('@/contexts/AuthContext');
+vi.mock('@/hooks/useAuth');
 
 const createWrapper = () => {
   const queryClient = new QueryClient({

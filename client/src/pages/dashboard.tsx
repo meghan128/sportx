@@ -27,7 +27,7 @@ import {
 import { Link } from "wouter";
 import Sidebar from "@/components/layout/sidebar";
 import { format } from "date-fns";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UserStats {
   totalCourses: number;

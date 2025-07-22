@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, AlertCircle, Mail, Lock, Eye, EyeOff, Info } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { apiRequest } from '@/lib/queryClient';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -25,7 +25,6 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -40,7 +39,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     setError('');
 
     try {
-      await login(data.username, data.password);
+      await apiRequest('POST', '/api/auth/login', data);
+
+      // Login successful
       onSuccess();
     } catch (err: any) {
       setError(err.message || 'Login failed. Please try again.');
