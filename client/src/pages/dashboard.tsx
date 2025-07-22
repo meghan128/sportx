@@ -27,7 +27,7 @@ import {
 import { Link } from "wouter";
 import Sidebar from "@/components/layout/sidebar";
 import { format } from "date-fns";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UserStats {
   totalCourses: number;
@@ -61,7 +61,7 @@ interface UpcomingEvent {
 const Dashboard = () => {
   const { user } = useAuth();
 
-  // Enhanced stats for better demo experience
+  // Mock data for demonstration
   const mockStats: UserStats = {
     totalCourses: 12,
     completedCourses: 8,
@@ -191,8 +191,8 @@ const Dashboard = () => {
         <div className="border-b bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-5xl font-bold tracking-tight text-gray-900">Welcome back, {user?.name}!</h1>
-              <p className="text-xl text-gray-600 mt-2">
+              <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.name}!</h1>
+              <p className="text-muted-foreground">
                 Continue your professional development journey and track your progress.
               </p>
             </div>
@@ -224,8 +224,8 @@ const Dashboard = () => {
                     <BookOpen className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">{stats.completedCourses}/{stats.totalCourses}</p>
-                    <p className="text-lg text-gray-600">Courses Completed</p>
+                    <p className="text-2xl font-bold">{stats.completedCourses}/{stats.totalCourses}</p>
+                    <p className="text-sm text-muted-foreground">Courses Completed</p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center text-sm">
@@ -241,8 +241,8 @@ const Dashboard = () => {
                     <Award className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">{stats.cpdCredits}</p>
-                    <p className="text-lg text-gray-600">CPD Credits Earned</p>
+                    <p className="text-2xl font-bold">{stats.cpdCredits}</p>
+                    <p className="text-sm text-muted-foreground">CPD Credits Earned</p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center text-sm">
@@ -259,8 +259,8 @@ const Dashboard = () => {
                     <Calendar className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">{stats.upcomingEvents}</p>
-                    <p className="text-lg text-gray-600">Upcoming Events</p>
+                    <p className="text-2xl font-bold">{stats.upcomingEvents}</p>
+                    <p className="text-sm text-muted-foreground">Upcoming Events</p>
                   </div>
                 </div>
                 <div className="mt-4">
@@ -281,8 +281,8 @@ const Dashboard = () => {
                     <Target className="h-6 w-6 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">{stats.progressPercentage}%</p>
-                    <p className="text-lg text-gray-600">CPD Progress</p>
+                    <p className="text-2xl font-bold">{stats.progressPercentage}%</p>
+                    <p className="text-sm text-muted-foreground">CPD Progress</p>
                   </div>
                 </div>
                 <div className="mt-4">
@@ -300,8 +300,8 @@ const Dashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl font-bold text-gray-900">Recent Activity</CardTitle>
-                  <CardDescription className="text-lg text-gray-600">Your latest learning activities</CardDescription>
+                  <CardTitle>Recent Activity</CardTitle>
+                  <CardDescription>Your latest learning activities</CardDescription>
                 </div>
                 <Activity className="h-5 w-5 text-muted-foreground" />
               </CardHeader>
@@ -344,8 +344,8 @@ const Dashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl font-bold text-gray-900">Upcoming Events</CardTitle>
-                  <CardDescription className="text-lg text-gray-600">Don't miss these learning opportunities</CardDescription>
+                  <CardTitle>Upcoming Events</CardTitle>
+                  <CardDescription>Don't miss these learning opportunities</CardDescription>
                 </div>
                 <Calendar className="h-5 w-5 text-muted-foreground" />
               </CardHeader>
@@ -354,7 +354,7 @@ const Dashboard = () => {
                   {upcomingEvents.map((event) => (
                     <div key={event.id} className="flex items-center space-x-4">
                       <div className="flex-1 min-w-0">
-                        <p className="text-lg font-bold text-gray-900 truncate">{event.title}</p>
+                        <p className="text-sm font-medium truncate">{event.title}</p>
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge className={getEventTypeColor(event.type)} variant="secondary">
                             {event.type}

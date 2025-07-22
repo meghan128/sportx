@@ -95,31 +95,35 @@ function Router() {
   const [location] = useLocation();
   const { isAuthenticated, isLoading } = useAuth();
 
+  // Find current route for title management
+  const currentRoute = routes.find(route => {
+    if (route.path.includes(':')) {
+      const routeRegex = new RegExp(
+        '^' + route.path.replace(/:([^/]+)/g, '([^/]+)') + '$'
+      );
+      return routeRegex.test(location);
+    }
+    return route.path === location;
+  });
+
+  // Set page title
+  usePageTitle(currentRoute?.title);
+
   // Show loading spinner while checking authentication
   if (isLoading) {
     return <PageLoader />;
   }
 
-  // Simple routing logic - if not authenticated and trying to access protected route, show login
-  if (!isAuthenticated && location !== '/login' && location !== '/auth' && !location.startsWith('/register') && !location.startsWith('/select-type')) {
-    return (
-      <ErrorBoundary>
-        <Suspense fallback={<PageLoader />}>
-          <Login />
-        </Suspense>
-      </ErrorBoundary>
-    );
+  // Redirect to auth page if not authenticated and trying to access a protected route
+  if (!isAuthenticated && currentRoute?.protected) {
+    window.location.href = '/auth';
+    return <PageLoader />;
   }
 
-  // If authenticated and trying to access login page, show dashboard
-  if (isAuthenticated && (location === '/login' || location === '/')) {
-    return (
-      <ErrorBoundary>
-        <Suspense fallback={<PageLoader />}>
-          <Dashboard />
-        </Suspense>
-      </ErrorBoundary>
-    );
+  // Redirect to dashboard if authenticated and trying to access auth page
+  if (isAuthenticated && location === '/auth') {
+    window.location.href = '/';
+    return <PageLoader />;
   }
 
   return (

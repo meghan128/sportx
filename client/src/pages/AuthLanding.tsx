@@ -26,18 +26,18 @@ export default function AuthLanding() {
         <div className="text-center mb-12">
           <div className="mb-6 flex justify-center">
             <div className="relative">
-              <div className="w-28 h-28 bg-white/20 rounded-3xl backdrop-blur-sm border border-white/30 flex items-center justify-center mb-6 shadow-2xl">
-                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-20 h-20 bg-white/20 rounded-2xl backdrop-blur-sm border border-white/30 flex items-center justify-center mb-4 shadow-2xl">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full animate-ping"></div>
             </div>
           </div>
-          <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
+          <h1 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
             SportX India CPD Platform
           </h1>
-          <p className="text-2xl text-blue-100 max-w-4xl mx-auto leading-relaxed font-medium">
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
             Welcome to our comprehensive platform for sports and allied health professionals. 
             Access your account or create a new one to start your professional development journey.
           </p>
@@ -50,11 +50,11 @@ export default function AuthLanding() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100 to-transparent rounded-bl-full"></div>
               <div className="relative z-10">
                 <div className="text-center mb-8">
-                  <div className="mx-auto w-28 h-28 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center mb-6 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                    <LogIn className="w-16 h-16 text-white" />
+                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                    <LogIn className="w-10 h-10 text-white" />
                   </div>
-                  <h2 className="text-4xl font-bold text-gray-900 mb-4">Welcome Back</h2>
-                  <p className="text-lg text-gray-600 leading-relaxed font-medium">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+                  <p className="text-gray-600 leading-relaxed">
                     Sign in to access your account and continue your professional development journey
                   </p>
                 </div>
@@ -68,11 +68,11 @@ export default function AuthLanding() {
               <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-green-100 to-transparent rounded-br-full"></div>
               <div className="relative z-10">
                 <div className="text-center mb-8">
-                  <div className="mx-auto w-28 h-28 bg-gradient-to-br from-green-500 to-green-600 rounded-3xl flex items-center justify-center mb-6 shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                    <UserPlus className="w-16 h-16 text-white" />
+                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+                    <UserPlus className="w-10 h-10 text-white" />
                   </div>
-                  <h2 className="text-4xl font-bold text-gray-900 mb-4">Join Our Platform</h2>
-                  <p className="text-lg text-gray-600 leading-relaxed font-medium">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Join Our Platform</h2>
+                  <p className="text-gray-600 leading-relaxed">
                     Create your account as a student, professional, or resource person
                   </p>
                 </div>

@@ -15,28 +15,36 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAuth } from "@/contexts/AuthContext";
-import { Eye, EyeOff, ArrowRight, CheckCircle, Sparkles } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff, ArrowRight, CheckCircle, Users, GraduationCap, Sparkles } from "lucide-react";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const [, navigate] = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const { loginUser, loginResourcePerson, isAuthenticated } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("user");
 
-
-  const form = useForm<LoginForm>({
+  const userForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  const resourceForm = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
       password: "",
     },
   });
@@ -48,12 +56,12 @@ export default function Login() {
     }
   }, [isAuthenticated, navigate]);
 
-  const onSubmit = async (data: LoginForm) => {
+  const onUserSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await login(data.username, data.password);
+      await loginUser(data);
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
@@ -62,7 +70,21 @@ export default function Login() {
     }
   };
 
-  const LoginFormComponent = ({ 
+  const onResourceSubmit = async (data: LoginForm) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await loginResourcePerson(data);
+      navigate("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const LoginForm = ({ 
     form, 
     onSubmit
   }: { 
@@ -79,14 +101,14 @@ export default function Login() {
 
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 font-medium">Username</FormLabel>
+              <FormLabel className="text-gray-700 font-medium">Email Address</FormLabel>
               <FormControl>
                 <Input
-                  type="text"
-                  placeholder="Enter your username"
+                  type="email"
+                  placeholder="Enter your email address"
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                   {...field}
                 />
@@ -211,26 +233,77 @@ export default function Login() {
             <p className="text-gray-600">Sign in to continue your professional journey</p>
           </div>
 
-
+          {/* Login Type Selector */}
+          <div className="mb-8">
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setActiveTab("user")}
+                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                  activeTab === "user"
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                <Users className="h-6 w-6 mx-auto mb-2" />
+                <div className="font-medium text-sm">User</div>
+                <div className="text-xs opacity-75">Student/Professional</div>
+              </button>
+              <button
+                onClick={() => setActiveTab("resource_person")}
+                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                  activeTab === "resource_person"
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                <GraduationCap className="h-6 w-6 mx-auto mb-2" />
+                <div className="font-medium text-sm">Educator</div>
+                <div className="text-xs opacity-75">Resource Person</div>
+              </button>
+            </div>
+          </div>
 
           {/* Login Form */}
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-            <div className="mb-6">
-              <h3 className="font-semibold text-lg text-gray-900">Login to your account</h3>
-              <p className="text-sm text-gray-600">Access courses, events, and track your CPD progress</p>
-            </div>
-            <LoginFormComponent 
-              form={form} 
-              onSubmit={onSubmit} 
-            />
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-              <p className="text-sm font-medium text-blue-900 mb-1">Demo Accounts</p>
-              <p className="text-xs text-blue-700">
-                Student: student1 / demo123<br />
-                Professional: prof1 / demo123<br />
-                Resource Person: resource1 / demo123
-              </p>
-            </div>
+            {activeTab === "user" ? (
+              <>
+                <div className="mb-6">
+                  <h3 className="font-semibold text-lg text-gray-900">User Login</h3>
+                  <p className="text-sm text-gray-600">Access courses, events, and track your CPD progress</p>
+                </div>
+                <LoginForm 
+                  form={userForm} 
+                  onSubmit={onUserSubmit} 
+                  type="user" 
+                />
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className="text-sm font-medium text-blue-900 mb-1">Demo Account</p>
+                  <p className="text-xs text-blue-700">
+                    Email: user@example.com<br />
+                    Password: password
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <h3 className="font-semibold text-lg text-gray-900">Educator Login</h3>
+                  <p className="text-sm text-gray-600">Manage courses, mentor students, and share resources</p>
+                </div>
+                <LoginForm 
+                  form={resourceForm} 
+                  onSubmit={onResourceSubmit} 
+                  type="resource_person" 
+                />
+                <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-100">
+                  <p className="text-sm font-medium text-green-900 mb-1">Demo Account</p>
+                  <p className="text-xs text-green-700">
+                    Email: resource@example.com<br />
+                    Password: password
+                  </p>
+                </div>
+              </>
+            )}
             
             <div className="mt-6 text-center">
               <p className="text-xs text-gray-500">
