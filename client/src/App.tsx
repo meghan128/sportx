@@ -93,7 +93,7 @@ function PageLoader() {
 // Router component with enhanced features
 function Router() {
   const [location] = useLocation();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   // Find current route for title management
   const currentRoute = routes.find(route => {
@@ -122,7 +122,12 @@ function Router() {
 
   // Redirect to dashboard if authenticated and trying to access auth page
   if (isAuthenticated && location === '/auth') {
-    window.location.href = '/';
+    // Redirect based on user type
+    if (user?.userType === 'resource_person') {
+      window.location.href = '/resource-dashboard';
+    } else {
+      window.location.href = '/';
+    }
     return <PageLoader />;
   }
 
