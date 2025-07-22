@@ -33,8 +33,8 @@ export default function UserTypeSelection() {
         <div className="text-center mb-16">
           <div className="mb-8 flex justify-center">
             <div className="relative">
-              <div className="w-24 h-24 bg-white/10 rounded-3xl backdrop-blur-sm border-2 border-white/20 flex items-center justify-center shadow-2xl">
-                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-32 h-32 bg-white/10 rounded-3xl backdrop-blur-sm border-2 border-white/20 flex items-center justify-center shadow-2xl">
+                <svg className="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
               </div>
@@ -45,10 +45,10 @@ export default function UserTypeSelection() {
               </div>
             </div>
           </div>
-          <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">
+          <h1 className="text-6xl md:text-7xl font-bold text-white mb-8 drop-shadow-lg">
             Choose Your Path
           </h1>
-          <p className="text-xl text-purple-100 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-2xl text-purple-100 max-w-4xl mx-auto leading-relaxed font-medium">
             Select your professional category to access tailored resources and join the right community for your career development journey.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function UserTypeSelection() {
         {/* User Type Selection */}
         <div className="grid md:grid-cols-3 gap-6 mb-8 max-w-6xl mx-auto">
           <UserTypeCard
-            icon={<GraduationCap className="w-8 h-8" />}
+            icon={<GraduationCap className="w-16 h-16" />}
             title="Student"
             description="Currently pursuing education in any field"
             features={[
@@ -88,7 +88,7 @@ export default function UserTypeSelection() {
           />
 
           <UserTypeCard
-            icon={<Briefcase className="w-8 h-8" />}
+            icon={<Briefcase className="w-16 h-16" />}
             title="Professional"
             description="Qualified professional in any field"
             features={[
@@ -107,7 +107,7 @@ export default function UserTypeSelection() {
           />
 
           <UserTypeCard
-            icon={<Users className="w-8 h-8" />}
+            icon={<Users className="w-16 h-16" />}
             title="Resource Person"
             description="Expert educator or industry leader"
             features={[
@@ -130,28 +130,28 @@ export default function UserTypeSelection() {
         {/* Authentication Process Info */}
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-8 max-w-4xl mx-auto">
           <div className="flex items-start space-x-3">
-            <Shield className="w-6 h-6 text-amber-600 mt-1" />
+            <Shield className="w-10 h-10 text-amber-600 mt-1" />
             <div>
-              <h3 className="font-semibold text-amber-800 mb-2">Document Verification Process</h3>
-              <div className="grid md:grid-cols-3 gap-4 text-sm text-amber-700">
+              <h3 className="text-xl font-bold text-amber-800 mb-3">Document Verification Process</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-base text-amber-700">
                 <div className="flex items-start space-x-2">
-                  <FileCheck className="w-4 h-4 mt-0.5" />
+                  <FileCheck className="w-6 h-6 mt-0.5" />
                   <div>
-                    <p className="font-medium">1. Upload Documents</p>
+                    <p className="font-bold text-lg">1. Upload Documents</p>
                     <p>Submit required certificates and identification</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <Clock className="w-4 h-4 mt-0.5" />
+                  <Clock className="w-6 h-6 mt-0.5" />
                   <div>
-                    <p className="font-medium">2. AI Processing</p>
+                    <p className="font-bold text-lg">2. AI Processing</p>
                     <p>Advanced OCR extracts and verifies information</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <Shield className="w-4 h-4 mt-0.5" />
+                  <Shield className="w-6 h-6 mt-0.5" />
                   <div>
-                    <p className="font-medium">3. Admin Approval</p>
+                    <p className="font-bold text-lg">3. Admin Approval</p>
                     <p>Final verification by our expert team</p>
                   </div>
                 </div>
@@ -166,10 +166,10 @@ export default function UserTypeSelection() {
             onClick={handleContinue}
             disabled={!selectedType}
             size="lg"
-            className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-12 py-6 h-20 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-2xl font-bold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {selectedType ? `Continue as ${selectedType === 'resource_person' ? 'Resource Person' : selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}` : 'Select a role to continue'}
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <ArrowRight className="w-8 h-8 ml-4" />
           </Button>
         </div>
       </div>
@@ -215,23 +215,23 @@ function UserTypeCard({ icon, title, description, features, requirements, isSele
               {icon}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-              <p className="text-sm text-gray-600">{description}</p>
+              <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
+              <p className="text-lg text-gray-600">{description}</p>
             </div>
           </div>
 
           {/* Features */}
           <div className="mb-4">
-            <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
-              <svg className="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+              <svg className="w-6 h-6 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
               What you'll get:
             </h4>
             <ul className="space-y-1">
               {features.map((feature, index) => (
-                <li key={index} className="text-sm text-gray-600 flex items-center">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 flex-shrink-0"></div>
+                <li key={index} className="text-base text-gray-600 flex items-center">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
                   {feature}
                 </li>
               ))}
@@ -240,16 +240,16 @@ function UserTypeCard({ icon, title, description, features, requirements, isSele
 
           {/* Requirements */}
           <div className="mb-4">
-            <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
-              <svg className="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+              <svg className="w-6 h-6 mr-3 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Required documents:
             </h4>
             <ul className="space-y-1">
               {requirements.map((requirement, index) => (
-                <li key={index} className="text-sm text-gray-600 flex items-center">
-                  <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-2 flex-shrink-0"></div>
+                <li key={index} className="text-base text-gray-600 flex items-center">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-3 flex-shrink-0"></div>
                   {requirement}
                 </li>
               ))}

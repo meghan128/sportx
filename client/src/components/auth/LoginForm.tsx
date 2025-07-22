@@ -69,15 +69,15 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
+                  <FormLabel className="text-lg font-semibold text-gray-700">
                     Username
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-3 h-6 w-6 text-gray-400" />
                       <Input
                         placeholder="Enter your username"
-                        className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="pl-12 h-14 border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg"
                         {...field}
                       />
                     </div>
@@ -92,16 +92,16 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
+                  <FormLabel className="text-lg font-semibold text-gray-700">
                     Password
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-3 h-6 w-6 text-gray-400" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your password"
-                        className="pl-10 pr-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="pl-12 pr-12 h-14 border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-lg"
                         {...field}
                       />
                       <button
@@ -110,9 +110,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
                         className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                       >
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
+                          <EyeOff className="h-6 w-6" />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-6 w-6" />
                         )}
                       </button>
                     </div>
@@ -123,14 +123,14 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             />
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-              <span className="text-gray-600">Remember me</span>
+          <div className="flex items-center justify-between text-lg">
+            <label className="flex items-center space-x-3 cursor-pointer">
+              <input type="checkbox" className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+              <span className="text-gray-600 font-medium">Remember me</span>
             </label>
             <button
               type="button"
-              className="text-blue-600 hover:text-blue-500 font-medium"
+              className="text-blue-600 hover:text-blue-500 font-semibold"
             >
               Forgot password?
             </button>
@@ -139,12 +139,12 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           <Button
             type="submit"
             size="lg"
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm"
+            className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white text-xl font-semibold shadow-sm"
             disabled={isLoading || !form.watch('username') || !form.watch('password')}
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-3 h-6 w-6 animate-spin" />
                 Signing in...
               </>
             ) : (
