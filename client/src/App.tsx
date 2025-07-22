@@ -1,11 +1,9 @@
 import { Suspense, lazy, useEffect } from "react";
 import { Switch, Route, useLocation } from "wouter";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import ErrorBoundary from "@/components/error-boundary";
-import { useAuth, AuthProvider } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/protected-route";
 
 // Lazy load pages for better performance
@@ -90,10 +88,9 @@ function PageLoader() {
   );
 }
 
-// Router component with enhanced features
+// Router component with enhanced features - simplified for now
 function Router() {
   const [location] = useLocation();
-  const { isAuthenticated, isLoading } = useAuth();
 
   // Find current route for title management
   const currentRoute = routes.find(route => {
@@ -109,20 +106,10 @@ function Router() {
   // Set page title
   usePageTitle(currentRoute?.title);
 
-  // Show loading spinner while checking authentication
-  if (isLoading) {
-    return <PageLoader />;
-  }
-
-  // Redirect to auth page if not authenticated and trying to access a protected route
-  if (!isAuthenticated && currentRoute?.protected) {
+  // Simplified routing for testing - authentication will be handled by ProtectedRoute
+  if (location === '/' || location === '') {
+    // Default to auth page
     window.location.href = '/auth';
-    return <PageLoader />;
-  }
-
-  // Redirect to dashboard if authenticated and trying to access auth page
-  if (isAuthenticated && location === '/auth') {
-    window.location.href = '/';
     return <PageLoader />;
   }
 
@@ -153,19 +140,15 @@ function Router() {
   );
 }
 
-// Enhanced App component with additional providers
+// Enhanced App component - providers are now in main.tsx
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ErrorBoundary>
-          <div className="min-h-screen bg-background">
-            <Router />
-            <Toaster />
-          </div>
-        </ErrorBoundary>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-background">
+        <Router />
+        <Toaster />
+      </div>
+    </ErrorBoundary>
   );
 }
 
