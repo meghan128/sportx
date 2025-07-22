@@ -43,7 +43,7 @@ const ResourceAnalytics = lazy(() => import("./pages/resource-analytics"));
 
 // Route configuration for better maintainability
 const routes = [
-  { path: "/", component: Dashboard, protected: true, title: "Dashboard", allowedRoles: ["user"] },
+  { path: "/", component: Dashboard, protected: true, title: "Dashboard", allowedRoles: ["student", "professional"] },
   { path: "/resource-dashboard", component: ResourceDashboard, protected: true, title: "Resource Dashboard", allowedRoles: ["resource_person"] },
   { path: "/resource/create-course", component: ResourceCourseCreation, protected: true, title: "Create Course", allowedRoles: ["resource_person"] },
   { path: "/resource/create-workshop", component: ResourceWorkshopCreation, protected: true, title: "Create Workshop", allowedRoles: ["resource_person"] },

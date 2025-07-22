@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Eye, EyeOff, ArrowRight, CheckCircle, Users, GraduationCap, Sparkles } from "lucide-react";
 
 const loginSchema = z.object({
