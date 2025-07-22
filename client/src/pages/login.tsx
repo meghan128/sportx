@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/contexts/AuthContext";
-import { Eye, EyeOff, ArrowRight, CheckCircle, Users, GraduationCap, Sparkles } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, CheckCircle, Sparkles } from "lucide-react";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -31,7 +31,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("user");
+
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -62,7 +62,7 @@ export default function Login() {
     }
   };
 
-  const LoginForm = ({ 
+  const LoginFormComponent = ({ 
     form, 
     onSubmit
   }: { 
@@ -211,35 +211,7 @@ export default function Login() {
             <p className="text-gray-600">Sign in to continue your professional journey</p>
           </div>
 
-          {/* Login Type Selector */}
-          <div className="mb-8">
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setActiveTab("user")}
-                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                  activeTab === "user"
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
-                }`}
-              >
-                <Users className="h-6 w-6 mx-auto mb-2" />
-                <div className="font-medium text-sm">User</div>
-                <div className="text-xs opacity-75">Student/Professional</div>
-              </button>
-              <button
-                onClick={() => setActiveTab("resource_person")}
-                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                  activeTab === "resource_person"
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
-                }`}
-              >
-                <GraduationCap className="h-6 w-6 mx-auto mb-2" />
-                <div className="font-medium text-sm">Educator</div>
-                <div className="text-xs opacity-75">Resource Person</div>
-              </button>
-            </div>
-          </div>
+
 
           {/* Login Form */}
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
@@ -247,7 +219,7 @@ export default function Login() {
               <h3 className="font-semibold text-lg text-gray-900">Login to your account</h3>
               <p className="text-sm text-gray-600">Access courses, events, and track your CPD progress</p>
             </div>
-            <LoginForm 
+            <LoginFormComponent 
               form={form} 
               onSubmit={onSubmit} 
             />

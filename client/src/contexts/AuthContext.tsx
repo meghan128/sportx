@@ -78,7 +78,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     },
     onSuccess: () => {
       queryClient.clear();
-      window.location.href = '/auth';
+      window.location.href = '/login';
     },
   });
 
