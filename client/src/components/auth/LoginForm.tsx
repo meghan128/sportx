@@ -11,7 +11,7 @@ import { Loader2, AlertCircle, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  username: z.string().min(1, 'Email or username is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -70,13 +70,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-gray-700">
-                    Username
+                    Email or Username
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
-                        placeholder="Enter your username"
+                        placeholder="Enter your email or username"
                         className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                         {...field}
                       />

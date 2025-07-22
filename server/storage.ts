@@ -30,32 +30,32 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
-  
+
   // Student operations
   createStudentProfile(profile: InsertStudentProfile): Promise<StudentProfile>;
   getStudentProfile(userId: number): Promise<StudentProfile | undefined>;
   updateStudentProfile(userId: number, updates: Partial<StudentProfile>): Promise<StudentProfile | undefined>;
-  
+
   // Professional operations
   createProfessionalProfile(profile: InsertProfessionalProfile): Promise<ProfessionalProfile>;
   getProfessionalProfile(userId: number): Promise<ProfessionalProfile | undefined>;
   updateProfessionalProfile(userId: number, updates: Partial<ProfessionalProfile>): Promise<ProfessionalProfile | undefined>;
-  
+
   // Resource person operations
   createResourcePersonProfile(profile: InsertResourcePersonProfile): Promise<ResourcePersonProfile>;
   getResourcePersonProfile(userId: number): Promise<ResourcePersonProfile | undefined>;
   updateResourcePersonProfile(userId: number, updates: Partial<ResourcePersonProfile>): Promise<ResourcePersonProfile | undefined>;
-  
+
   // Document verification operations
   createDocumentVerification(verification: InsertDocumentVerification): Promise<DocumentVerification>;
   getDocumentVerifications(userId: number): Promise<DocumentVerification[]>;
   updateDocumentVerification(id: number, updates: Partial<DocumentVerification>): Promise<DocumentVerification | undefined>;
-  
+
   // Registration methods
   registerStudent(registration: StudentRegistration): Promise<{ user: User; profile: StudentProfile }>;
   registerProfessional(registration: ProfessionalRegistration): Promise<{ user: User; profile: ProfessionalProfile }>;
   registerResourcePerson(registration: ResourcePersonRegistration): Promise<{ user: User; profile: ResourcePersonProfile }>;
-  
+
   // Authentication methods
   authenticateUser(username: string, password: string): Promise<User | null>;
   verifyUserDocument(userId: number, documentType: string, extractedText: string, nameMatches: any[]): Promise<DocumentVerification>;
@@ -187,7 +187,7 @@ export class DatabaseStorage implements IStorage {
   // Registration methods
   async registerStudent(registration: StudentRegistration): Promise<{ user: User; profile: StudentProfile }> {
     const hashedPassword = await bcrypt.hash(registration.password, 10);
-    
+
     const userData: InsertUser = {
       username: registration.username,
       email: registration.email,
@@ -228,7 +228,7 @@ export class DatabaseStorage implements IStorage {
 
   async registerProfessional(registration: ProfessionalRegistration): Promise<{ user: User; profile: ProfessionalProfile }> {
     const hashedPassword = await bcrypt.hash(registration.password, 10);
-    
+
     const userData: InsertUser = {
       username: registration.username,
       email: registration.email,
@@ -277,7 +277,7 @@ export class DatabaseStorage implements IStorage {
 
   async registerResourcePerson(registration: ResourcePersonRegistration): Promise<{ user: User; profile: ResourcePersonProfile }> {
     const hashedPassword = await bcrypt.hash(registration.password, 10);
-    
+
     const userData: InsertUser = {
       username: registration.username,
       email: registration.email,
@@ -336,8 +336,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Authentication methods
-  async authenticateUser(username: string, password: string): Promise<User | null> {
-    const user = await this.getUserByUsername(username);
+  async authenticateUser(usernameOrEmail: string, password: string): Promise<User | null> {
+    let user = await this.getUserByUsername(usernameOrEmail);
+    if (!user) {
+      user = await this.getUserByEmail(usernameOrEmail);
+    }
     if (!user) return null;
 
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -381,7 +384,7 @@ export class DatabaseStorage implements IStorage {
       // Check if all required documents are verified
       const allVerifications = await this.getDocumentVerifications(userId);
       const allVerified = allVerifications.every(v => v.verificationStatus === "approved");
-      
+
       if (allVerified) {
         await this.updateUser(userId, { authStatus: "approved" });
       }
