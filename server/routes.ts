@@ -226,7 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Login endpoint
+  // Login endpoint with dummy credentials for seamless demo
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { username, password } = req.body;
@@ -235,6 +235,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Username and password are required" });
       }
 
+      // Dummy credentials for instant demo experience
+      const dummyUsers = {
+        'student1': {
+          id: 1,
+          username: 'student1',
+          email: 'student1@demo.com',
+          name: 'John Smith',
+          userType: 'student' as const,
+          authStatus: 'approved' as const,
+          profession: 'Student',
+          specialization: 'Sports Science',
+        },
+        'prof1': {
+          id: 2,
+          username: 'prof1', 
+          email: 'prof1@demo.com',
+          name: 'Dr. Sarah Johnson',
+          userType: 'professional' as const,
+          authStatus: 'approved' as const,
+          profession: 'Physiotherapist',
+          specialization: 'Sports Medicine',
+        },
+        'resource1': {
+          id: 3,
+          username: 'resource1',
+          email: 'resource1@demo.com', 
+          name: 'Prof. Michael Chen',
+          userType: 'resource_person' as const,
+          authStatus: 'approved' as const,
+          profession: 'Sports Psychologist',
+          specialization: 'Performance Psychology',
+        }
+      };
+
+      // Check dummy credentials (password: demo123)
+      if (dummyUsers[username as keyof typeof dummyUsers] && password === 'demo123') {
+        const user = dummyUsers[username as keyof typeof dummyUsers];
+        
+        // Set up session
+        (req as any).session.userId = user.id;
+        (req as any).session.userType = user.userType;
+        
+        return res.json({ user });
+      }
+
+      // Fallback to database authentication
       const user = await storage.authenticateUser(username, password);
       
       if (!user) {
