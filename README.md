@@ -108,7 +108,20 @@ See `SEEDING_GUIDE.md` for detailed instructions.
 
 ## 🔐 Environment Variables
 
-Required environment variables:
+Copy `.env.example` to `.env` and provide the values for your
+environment. Any variables containing tokens or credentials should be
+stored as **secrets** in your hosting provider (e.g. Replit Secrets).
+
+Sensitive variables include:
+
+- `DATABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `JWT_SECRET`
+- `SESSION_SECRET`
+- `EMAIL_API_KEY`
+- `ERROR_TRACKING_API_KEY`
+
+Example configuration:
 
 ```bash
 # Database
@@ -120,6 +133,8 @@ VITE_SUPABASE_ANON_KEY=your_supabase_key
 NODE_ENV=production
 PORT=5000
 ```
+
+Use `node scripts/check-env.js` to verify required variables are set.
 
 ## 📝 Contributing
 
